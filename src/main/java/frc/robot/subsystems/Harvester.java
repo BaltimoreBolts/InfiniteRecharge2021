@@ -11,8 +11,11 @@ import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+
 import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HarvesterConstants;
 import frc.robot.commands.*;
@@ -25,6 +28,7 @@ public class Harvester extends SubsystemBase {
   private Relay harvesterRelease;
   private Shooter roboShooter;
   private TimeOfFlight harvesterTOF;
+  NetworkTableEntry desiredFrontSpeedNT, desiredBackSpeedNT;
 
   /**
    * Creates a new Harvester.
@@ -50,12 +54,18 @@ public class Harvester extends SubsystemBase {
 
     harvesterMickeyMotor.burnFlash();
     harvesterMinnieMotor.burnFlash();
+
+    ShuffleboardTab harvesterTab = Shuffleboard.getTab("Harvester");
+    desiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();
+    desiredBackSpeedNT = harvesterTab.add("Desired Back Speed = ", 0).getEntry();
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
     SmartDashboard.putNumber("Harvester TOF Val", harvesterTOF.getRange());
+    desiredFrontSpeedNT.getDouble(0);
+    desiredBackSpeedNT.getDouble(0);
     if (this.getHarvesterTOF() == true){
         //new IndexerHarvestMayhem(roboIndexer, this, roboShooter);
     }
@@ -68,6 +78,15 @@ public class Harvester extends SubsystemBase {
   
   public void setMinnieSpeed(double speed){
     harvesterMinnieMotor.set(speed);
+  }
+
+  //For testing, this will be disabled later
+  public double getFrontDesiredSpeed() {
+    return desiredFrontSpeedNT.getDouble(0);
+  }
+  //For testing, this will be disabled later
+  public double getBackDesiredSpeed() {
+    return desiredBackSpeedNT.getDouble(0);
   }
 
   //Return value of first position optical sensor

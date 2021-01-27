@@ -10,10 +10,13 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Harvester;
 
 public class moveIndexer extends CommandBase {
   Indexer roboIndexer;
-  double speed = 0; 
+  Harvester roboHarvester;
+  double IndexerSpeed = 0; 
+  double HarvesterSpeed = 0;
   double currentPosition = 0;
   double desiredPosition = 0;
   double initialPosition= 0;
@@ -22,23 +25,27 @@ public class moveIndexer extends CommandBase {
   /**
    * Creates a new moveIndexer.
    */
-  public moveIndexer(Indexer robotIndexer) {
+  public moveIndexer(Indexer robotIndexer, Harvester robotHarvester) {
     roboIndexer = robotIndexer;
+    roboHarvester = robotHarvester;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(robotIndexer);
+    addRequirements(robotHarvester);
   }
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     // This is negative to move the indexer up
-    speed = -roboIndexer.getdesiredSpeed();
+    IndexerSpeed = -roboIndexer.getdesiredSpeed();
+    HarvesterSpeed = roboHarvester.getBackDesiredSpeed();
     initialPosition = roboIndexer.getEncoderValue();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    roboIndexer.Movement(speed); // for PID comment this out and add ...
+    roboHarvester.setMinnieSpeed(HarvesterSpeed);
+    roboIndexer.Movement(IndexerSpeed); // for PID comment this out and add ...
     // roboIndexer.SetIndexerSpeedPID(); // ??? 
   }
 
@@ -47,6 +54,7 @@ public class moveIndexer extends CommandBase {
   public void end(boolean interrupted) {
   //The speed is being set to 0/
     roboIndexer.Movement(0);
+    roboHarvester.setMinnieSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -61,13 +69,13 @@ public class moveIndexer extends CommandBase {
     // return roboIndexer.MoveToPosition 
     // 
 
-    return roboIndexer.MoveToPosition(desiredPosition);
-  //   currentPosition = roboIndexer.getEncoderValue();
-  //   if (currentPosition >= desiredPosition){
-  //     return true;
-  // } else {
-  //   return false;
-  // }
+    //return roboIndexer.MoveToPosition(desiredPosition);
+     currentPosition = roboIndexer.getEncoderValue();
+     if (currentPosition >= desiredPosition){
+       return true;
+   } else {
+     return false;
+   }
     
   }
 }

@@ -20,6 +20,7 @@ import frc.robot.commands.ElevatorGoUp;
 import frc.robot.commands.ElevatorGoDown;
 import frc.robot.commands.moveIndexer;
 import frc.robot.commands.reverseIndexer;
+import frc.robot.commands.HarvesterIn;
 import frc.robot.commands.Autonomous;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Harvester;
@@ -123,7 +124,8 @@ public class RobotContainer {
     //rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
     rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
     //leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
-    xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
+    //xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
+    xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
 
     bOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, -1.0, true)); // top (near indexer) sucks in 
     xOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, 1.0, true)); // top (near indexer) pushes out 
@@ -134,7 +136,7 @@ public class RobotContainer {
     aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
 
     //Testing Indexer rotation
-    aDriverButton.whenPressed(new moveIndexer(roboIndexer));
+    aDriverButton.whenPressed(new moveIndexer(roboIndexer, roboHarvest));
     bDriverButton.whenPressed(new reverseIndexer(roboIndexer));
 
   }
