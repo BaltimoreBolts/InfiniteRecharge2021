@@ -10,6 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
+/* 
+** PURPOSE: Suck in the power cells!
+** STATUS: Never tested,a bunch is commented out so not sure if it would work in current configuration
+** Speed directions are definitely wrong.
+*/
 public class PowerCellSucker extends CommandBase {
   Harvester roboKirby;
   double harDir; 

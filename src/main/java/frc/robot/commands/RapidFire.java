@@ -10,6 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
+
+/* 
+** PURPOSE: Rapid fire all power cells in the indexer until it's empty
+** STATUS: Not tested, not sure if current configuration of code works
+*/
 public class RapidFire extends CommandBase {
   Indexer indexer;
   boolean[] indexerArray;

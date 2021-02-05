@@ -10,6 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
 
+/* 
+** PURPOSE: This lifts the elevator mechanism so we can drive up and hook over the switch
+** STATUS: Tested and worked
+*/ 
+//
 public class ElevatorGoUp extends CommandBase {
   Elevator RoboVader;
   /**

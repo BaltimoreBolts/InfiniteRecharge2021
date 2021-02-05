@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.subsystems.Elevator;
 
+/* 
+** PURPOSE: This brings the elevator mechanism down (how we pull the robot up)
+** STATUS: Tested and worked
+*/ 
+
 public class ElevatorGoDown extends CommandBase {
   Elevator RoboDarth;
   /**
@@ -25,6 +30,7 @@ public class ElevatorGoDown extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    // Engage ratchet so the robot doesn't fall down
     RoboDarth.engageRatchet();
     RoboDarth.setSpeed(-0.85);
   }

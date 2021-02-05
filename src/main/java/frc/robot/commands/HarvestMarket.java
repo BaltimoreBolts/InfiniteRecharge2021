@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Harvester;
 import frc.robot.subsystems.Indexer;
 
+/* 
+** PURPOSE: Meant to run harvester until a PC is no longer in harvester TOF view
+** STATUS: Not tested, probably not finished coding (there's no mention of mickey/front harvester motor)
+*/ 
+
 public class HarvestMarket extends CommandBase {
   Harvester harvestMarket;
   Indexer indexerCaptain;

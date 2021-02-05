@@ -20,6 +20,11 @@ import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Relay;
 
 
+/* 
+** PURPOSE: Elevator sub-system. 
+** STATUS: Tested pretty well
+*/
+
 public class Elevator extends SubsystemBase {
   private CANSparkMax ElevatorGoofyMotor;
   private Relay elevatoRelay;
@@ -44,14 +49,18 @@ public class Elevator extends SubsystemBase {
     ElevatorGoofyMotor.set(speed);
   }
 
+  // engage ratched by having the relay off. 
+  // This way when power is cut to the robot, it doesn't drop
   public void engageRatchet () {
     elevatoRelay.set(Value.kOff);
   }
 
+  // Must turn relay on to disengage ratchet and allow elevator movement
   public void disengageRatchet() {
     elevatoRelay.set(Value.kOn);
   }
 
+  // Encoder was reading negative (I think), which is why we return the negative value
   public double getElevatorEncoder() {
     return -elevatorEncoder.getPosition();
   }

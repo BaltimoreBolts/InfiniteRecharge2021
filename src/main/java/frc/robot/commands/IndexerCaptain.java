@@ -11,6 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
+/* 
+** PURPOSE: Meant to coordinate the moving of the indexer to shift PCs up, correctly adjust
+** PC locator array so we know where PCs are located in the indexer. Also adjust any overshoot
+** of the indexer.
+** STATUS: Not tested. A lot of the functionality is commented out.
+*/ 
 
 public class IndexerCaptain extends CommandBase {
   Indexer indexerCaptain;

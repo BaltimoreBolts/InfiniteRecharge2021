@@ -13,6 +13,12 @@ import frc.robot.subsystems.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+
+/* 
+** PURPOSE: Meant to run indexerCaptain to shift power cells up and then call HarvestMarket to 
+** intake a PC
+** STATUS: Not tested.
+*/ 
 public class IndexerHarvestMayhem extends SequentialCommandGroup {
   /**
    * Creates a new IndexerHarvestMayhem.

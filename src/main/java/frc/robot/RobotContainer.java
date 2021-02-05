@@ -82,6 +82,9 @@ public class RobotContainer {
 
     // Set default drive command
     // Negative in the Y direction makes robot go forward 2/6
+    // This seemed like kinda wonky way to get drive to work, but it was the only way
+    // we could figure out in 2019/2020 for command based programming. There may be 
+    // a better way
     
     roboDT.setDefaultCommand(
       new RunCommand(() -> roboDT
@@ -90,15 +93,15 @@ public class RobotContainer {
         RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
     
+    // Camera code
     /** serverOne = CameraServer.getInstance();
 	    //serverOne.startAutomaticCapture();
 	    //serverOne.startAutomaticCapture(0);
 	    camera = serverOne.startAutomaticCapture(0);
 	    camera.setResolution(RobotMap.IMG_WIDTH, RobotMap.IMG_HEIGHT);
 	    camera.setBrightness(50);
-	    camera.setExposureManual(50); **/
-
-  
+      camera.setExposureManual(50); **/
+      
 
   }
   /**
@@ -108,12 +111,17 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {  
+
+
+    // INITIALIZE DRIVER CONTROLLER BUTTONS
     rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
     //leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
     xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
     aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
     bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
 
+
+    // INITIALIZE OPERATOR CONTROLLER BUTTONS
     aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
     bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
     xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
@@ -121,12 +129,20 @@ public class RobotContainer {
     rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
     leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
     
+
+    // DRIVER BUTTON ASSIGNMENTS
     //rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
     rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
     //leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
     //xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
     xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
 
+    //Testing Indexer rotation
+    aDriverButton.whenPressed(new moveIndexer(roboIndexer, roboHarvest));
+    bDriverButton.whenPressed(new reverseIndexer(roboIndexer));
+
+
+    // OPERATOR BUTTON ASSIGNMENTS
     bOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, -1.0, true)); // top (near indexer) sucks in 
     xOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, 1.0, true)); // top (near indexer) pushes out 
     rightOperatorBumper.whenPressed(new PowerCellSucker(roboHarvest, 1.0, false)); // front pushes out 
@@ -135,9 +151,6 @@ public class RobotContainer {
     yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
     aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
 
-    //Testing Indexer rotation
-    aDriverButton.whenPressed(new moveIndexer(roboIndexer, roboHarvest));
-    bDriverButton.whenPressed(new reverseIndexer(roboIndexer));
 
   }
 

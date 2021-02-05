@@ -26,7 +26,13 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-/*THIS PID CONTROLLER NEEDS WORK JMK*/
+/* 
+** PURPOSE: Shooter subsystem 
+** STATUS: Motor functions are good. PID is not. 
+** I believe network table connection was working (we were getting values from the pi), 
+** but not sure if things have changed since chameleon vision changed
+*/
+
 public class Shooter extends SubsystemBase {
   private CANSparkMax SMotorChip;
   private CANSparkMax SMotorDale;
@@ -184,9 +190,6 @@ public class Shooter extends SubsystemBase {
 
   }
   
-  public void getPitch(){
-    
-  }
 
   public void SetShooterSpeed(double speed) {
     //shooterPID.setReference(speed, ControlType.kVelocity);

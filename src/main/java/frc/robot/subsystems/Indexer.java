@@ -22,6 +22,13 @@ import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.AlternateEncoderType;
 import java.lang.Math;
 
+/* 
+** PURPOSE: Indexer subsystem 
+** STATUS: There's a lot of functions in here, probably 50% tested
+** Bang bang controller for indexer rotation works if speed is set low enough. 
+** PID breaks everything.
+*/
+
 public class Indexer extends SubsystemBase {
   private CANSparkMax IndexerDonaldMotor;
   private CANPIDController indexerPID;
@@ -122,6 +129,7 @@ public class Indexer extends SubsystemBase {
     desiredRotationNT.getDouble(0);
   } 
 
+  // Shift array locations up
   public void ShiftPCArray(boolean PC0) {
     PCArray[3] = PCArray[2];
     PCArray[2] = PCArray[1];
@@ -129,6 +137,7 @@ public class Indexer extends SubsystemBase {
     PCArray[0] = PC0;
   }
 
+  // Initialize PC array.
   public void SetPCArray(boolean[] inputArray){
     PCArray[0] = inputArray[0];
     PCArray[1] = inputArray[1];
@@ -155,17 +164,15 @@ public class Indexer extends SubsystemBase {
   }
 
   //Return value of first position optical sensor
+  // If indexer TOF sees PC, this returns true. These values likely need to be adjusted
   public boolean getP0(){
     double distance = IndexerTOF.getRange(); // in mm
     //return OpticalSensor.get();
     // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range 
+    
     return distance >= 15 && distance <= 25;
   }
 
-  //For testing, this will be disabled later
-  public double getdesiredSpeed() {
-    return desiredSpeedNT.getDouble(0);
-  }
 
   public boolean isIndexerFull() {
     if (PCArray[3] == true) {
@@ -191,17 +198,19 @@ public class Indexer extends SubsystemBase {
     alternateEncoder.setPosition(0);
   }
 
-  public double getSpeed() {
-    this.indexerSpeed = SmartDashboard.getNumber("Indexer Speed", 0);
-    return this.indexerSpeed;
-  }
-
+  // Functions for compenstating based on indexer overshoot. We never tested these.
   public void CalculateOvershoot(double encoderVal, double desiredPosition) {
     overShoot = encoderVal - desiredPosition;
   }
 
   public double GetOvershoot() {
     return overShoot;
+  }
+
+  //TESTING FUNCTIONS 
+  //For testing, this will be disabled later
+  public double getdesiredSpeed() {
+    return desiredSpeedNT.getDouble(0);
   }
 
 }

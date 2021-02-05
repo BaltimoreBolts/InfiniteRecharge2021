@@ -12,6 +12,11 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
 
+/* 
+** PURPOSE: This was a testing function to exclusively move the indexer up one. 
+** Also calls inner harvester motor so PC doesn't get stuck in the first slot
+** STATUS: Works!
+*/
 public class moveIndexer extends CommandBase {
   Indexer roboIndexer;
   Harvester roboHarvester;

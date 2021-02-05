@@ -10,6 +10,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
+/* 
+** PURPOSE: Shoot a power cell. 
+** STATUS: Never tested and probably doesn't work. 
+** Needed to get interface with raspi vision processing to work (in shooter subsystem)
+** Also velocity PID control was never completely worked through/still in testing
+*/
 public class ShootPowerCell extends CommandBase {
   Shooter roboShooter;
   double calculatedRPM = 0;

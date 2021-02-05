@@ -13,6 +13,12 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
 
+
+/* 
+** PURPOSE: This is the command to shoot for autonomous mode
+** STATUS: Not tested to my knowledge
+*/ 
+
 public class AutonomousShoot extends CommandBase {
   Shooter robotShooter;
   Indexer roboIndexer;

@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
+/* 
+** PURPOSE: This was a testing function to reverse indexer and spit out the power cells
+** STATUS: Works!
+*/
+
 public class reverseIndexer extends CommandBase {
   Indexer roboIndexer;
   double speed = 0; 

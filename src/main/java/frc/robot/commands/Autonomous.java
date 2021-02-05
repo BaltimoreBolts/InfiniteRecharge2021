@@ -12,11 +12,14 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Shooter;
 
 
-//cringe - i am alive dylan
-
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+
+/* 
+** PURPOSE: This is the sequential command to drive forwards/backwards and shoot for autonomous mode
+** STATUS: Never tested, but logic should be ok
+*/ 
 
 public class Autonomous extends SequentialCommandGroup {
 
@@ -24,10 +27,9 @@ public class Autonomous extends SequentialCommandGroup {
    * Creates a new Autonomous.
    */
   public Autonomous (DriveTrain drive, Shooter shoot) {
-    
-    //i was here
 
-    //Sets shooter speed, shoots all power cells, sets shooter speed to 0, and moves drive train
+    //Sets shooter speed, shoots all power cells, sets shooter speed to 0, 
+    //and moves drive train a set distance 
 
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());

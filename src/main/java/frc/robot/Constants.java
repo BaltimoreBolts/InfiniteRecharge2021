@@ -17,6 +17,9 @@ import java.lang.Math;
  * constants are needed, to reduce verbosity.
  */
 
+ /* 
+** PURPOSE: Constants file */
+
 public final class Constants {
     //General constants
     public static final class GenConstants {

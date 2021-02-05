@@ -12,7 +12,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 
-
+/* 
+** PURPOSE: This is the autonmous drive commmand. Drives robot 
+** forward/backward until certain distance has been travelled
+** STATUS: Tested and works (signs of encoders, motor speeds should all be correct)
+*/ 
  
 public class AutonomousDrive extends CommandBase {
   /**
@@ -42,7 +46,8 @@ public class AutonomousDrive extends CommandBase {
   public void initialize() {
     roboDT.resetEncoders();
     
-    // Reset the variables so our desired change in position is the same everytime and not (desiredPosition) * numberOfCycles
+    // Reset the variables so our desired change in position is the same 
+    // everytime and not (desiredPosition) * numberOfCycles
     initialLeftPosition = (int)roboDT.getLeftPosition();
     initialRightPosition = (int)roboDT.getRightPosition();
     desiredLeftPosition = 0;
@@ -84,6 +89,7 @@ public class AutonomousDrive extends CommandBase {
     SmartDashboard.putNumber("Initial Left", initialLeftPosition);
     SmartDashboard.putNumber("Initial Right", initialRightPosition);
 
+    // We drive forward until the right and left encoders reach at or past the desired position
     if ((currentRightPosition >= desiredRightPosition) && (currentLeftPosition<=desiredLeftPosition)){
       return true;
   } else {

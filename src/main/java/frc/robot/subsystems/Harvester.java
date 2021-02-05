@@ -20,6 +20,13 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HarvesterConstants;
 import frc.robot.commands.*;
 
+/* 
+** PURPOSE: Harvester subsystem 
+** STATUS: Motor functions are good. Note correct directions are set in the commands, 
+** not here (may or may not have been the best idea). TOF sensor stuff has not been tested
+** or really completed coding
+*/
+
 public class Harvester extends SubsystemBase {
   private CANSparkMax harvesterMickeyMotor; // The front one dawg
   private CANSparkMax harvesterMinnieMotor; // The back one (closer to the indexer)
@@ -66,20 +73,31 @@ public class Harvester extends SubsystemBase {
     SmartDashboard.putNumber("Harvester TOF Val", harvesterTOF.getRange());
     desiredFrontSpeedNT.getDouble(0);
     desiredBackSpeedNT.getDouble(0);
+
+    // Idea here was, if we see a PC in front of us, automatically start ingesting if we have room
     if (this.getHarvesterTOF() == true){
         //new IndexerHarvestMayhem(roboIndexer, this, roboShooter);
     }
   }
 
-  // This method will be called once per scheduler run
+  // Mickey is the front harvester motor
   public void setMickeySpeed(double speed){
     harvesterMickeyMotor.set(speed);
   }
   
+  // Minnie is the back harvester motor
   public void setMinnieSpeed(double speed){
     harvesterMinnieMotor.set(speed);
   }
 
+  //Return value of first position optical sensor
+  public boolean getHarvesterTOF(){
+    // return LimitSwitch0.get();
+    // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range 
+    return harvesterTOF.getRange() >= 15 && harvesterTOF.getRange() <= 25; 
+  }
+
+  // TESTING FUNCTIONS
   //For testing, this will be disabled later
   public double getFrontDesiredSpeed() {
     return desiredFrontSpeedNT.getDouble(0);
@@ -89,10 +107,5 @@ public class Harvester extends SubsystemBase {
     return desiredBackSpeedNT.getDouble(0);
   }
 
-  //Return value of first position optical sensor
-  public boolean getHarvesterTOF(){
-    // return LimitSwitch0.get();
-    // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range 
-    return harvesterTOF.getRange() >= 15 && harvesterTOF.getRange() <= 25; 
-  }
+
 }

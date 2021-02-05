@@ -15,6 +15,11 @@ import frc.robot.subsystems.Harvester;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+
+/* 
+** PURPOSE: This is the sequential command to shoot power cells, move indexer up, and then harvest
+** STATUS: Never tested
+*/ 
 public class FirePowerCell extends SequentialCommandGroup {
   /**
    * Creates a new FirePowerCell.

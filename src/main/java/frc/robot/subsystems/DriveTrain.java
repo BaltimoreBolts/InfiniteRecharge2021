@@ -33,7 +33,14 @@ public class DriveTrain extends SubsystemBase {
   /**
    * Creates a new DriveTrain.
    */
+
+/* 
+** PURPOSE: DriveTrain subsystem
+** STATUS: Tested pretty well
+*/
   public DriveTrain() {
+
+    // Initialize all of the drive motors and set to correct settings. Burn to flash.
     leftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
     leftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
     rightDriveMotor1 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR1, MotorType.kBrushless);
