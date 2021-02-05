@@ -26,7 +26,7 @@ import java.lang.Math;
 ** PURPOSE: Indexer subsystem 
 ** STATUS: There's a lot of functions in here, probably 50% tested
 ** Bang bang controller for indexer rotation works if speed is set low enough. 
-** PID breaks everything.
+** PID might work now? I just added the magic line
 */
 
 public class Indexer extends SubsystemBase {
@@ -75,11 +75,18 @@ public class Indexer extends SubsystemBase {
     double overShoot = 0;
 
     indexerPID = IndexerDonaldMotor.getPIDController();
-    //alternateEncoder = IndexerDonaldMotor.getEncoder();
+  /*
+  * By default, the PID controller will use the Hall sensor from a NEO or NEO 550 for
+  * its feedback device. Instead, we can set the feedback device to the alternate
+  * encoder object
+  */
+    indexerPID.setFeedbackDevice(alternateEncoder);
+
     indexerPID.setP(kP);
     indexerPID.setI(kI);
     indexerPID.setD(kD); 
     indexerPID.setOutputRange(-1, 1);  
+    IndexerDonaldMotor.getPIDController().
 
     ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
