@@ -86,7 +86,7 @@ public class Indexer extends SubsystemBase {
     indexerPID.setI(kI);
     indexerPID.setD(kD); 
     indexerPID.setOutputRange(-1, 1);  
-    IndexerDonaldMotor.getPIDController().
+    IndexerDonaldMotor.getPIDController();
 
     ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();

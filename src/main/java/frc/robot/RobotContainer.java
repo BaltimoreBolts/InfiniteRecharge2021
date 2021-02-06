@@ -60,8 +60,8 @@ public class RobotContainer {
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
 
-  JoystickButton rightDriverBumper;
-  JoystickButton leftDriverBumper;
+  JoystickButton rightDriverBumper; 
+  JoystickButton leftDriverBumper; 
   JoystickButton xDriverButton;
   JoystickButton aDriverButton;
   JoystickButton bDriverButton;
@@ -135,7 +135,7 @@ public class RobotContainer {
     rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
     //leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
     //xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
-    xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
+    //xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
 
     //Testing Indexer rotation
     aDriverButton.whenPressed(new moveIndexer(roboIndexer, roboHarvest));
@@ -143,15 +143,13 @@ public class RobotContainer {
 
 
     // OPERATOR BUTTON ASSIGNMENTS
-    bOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, -1.0, true)); // top (near indexer) sucks in 
-    xOperatorButton.whenPressed(new PowerCellSucker(roboHarvest, 1.0, true)); // top (near indexer) pushes out 
-    rightOperatorBumper.whenPressed(new PowerCellSucker(roboHarvest, 1.0, false)); // front pushes out 
-    leftOperatorBumper.whenPressed(new PowerCellSucker(roboHarvest, -1.0, false)); // front sucks in 
+    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in 
+    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out 
+    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out 
+    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in 
 
     yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
     aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
-
-
   }
 
   /**
