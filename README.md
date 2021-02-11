@@ -23,8 +23,8 @@ Start -> Main.java
 | Operator | Joystick | B | Run harvester |
 | Operator | Joystick | A | Move indexer updward one rotation |
 | Operator | Joystick | Y | Move indexer downward one rotation |
-| Operator | DPAD Up | Expand the elevator |  |
-| Operator | DPAD Down | Contract the elevator |  |
+| Operator | Right Trigger Up | Expand the elevator |  |
+| Operator | Left Trigger | Contract the elevator |  |
 | Operator | Right Bumper | Fire powercell |  |
 
 ### Developer Notes
