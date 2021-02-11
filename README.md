@@ -26,3 +26,9 @@ Start -> Main.java
 | Operator | DPAD Up | Expand the elevator |  |
 | Operator | DPAD Down | Contract the elevator |  |
 | Operator | Right Bumper | Fire powercell |  |
+
+### Developer Notes
+- subsystems are single threaded
+    - this essentially means you can only run one command on a particular subsystem at a time
+    - if you want to run multiple commands on a subsystem, it must be broken into multiple subsystems 
+        - front and back harvester for instance
