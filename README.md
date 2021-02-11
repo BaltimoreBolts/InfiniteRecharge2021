@@ -8,10 +8,10 @@ Start -> Main.java
          Robot.java
              |
      RobotContainer.java
-             |
-       <Command>.java
-             |
-      <Subsystem>.java
+     |                 |
+<Command>.java    <XboxController>
+     |
+<Subsystem>.java
 ```
 
 ### Drive Mapping
