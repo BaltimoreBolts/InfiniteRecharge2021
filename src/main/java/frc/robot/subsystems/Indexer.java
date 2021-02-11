@@ -12,6 +12,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANError;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.shuffleboard.*;
@@ -32,14 +33,16 @@ import java.lang.Math;
 public class Indexer extends SubsystemBase {
   private CANSparkMax IndexerDonaldMotor;
   private CANPIDController indexerPID;
-  private double kP = 0.1; // 2e-5 initial test value 
-  private double kI = 1e-4; // 0 initial test value 
-  private double kD = 1; // 0 initial test value 
-  private double kFF = 0.000165; // 0.000165 initial test value
+  private double kP = 1; // 2e-5 initial test value 
+  private double kI = 0; // 0 initial test value 
+  private double kD = 0; // 0 initial test value 
+  private double kFF = 0; //0.000165; // 0.000165 initial test value
+  private double commandPos = 0;
 
   //private DigitalInput OpticalSensor;
   private TimeOfFlight IndexerTOF;
   private CANEncoder alternateEncoder;
+  private CANEncoder mainEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
   private boolean PCArray[] = {false,false,false,false};
 
@@ -63,8 +66,11 @@ public class Indexer extends SubsystemBase {
     IndexerDonaldMotor.setIdleMode(CANSparkMax.IdleMode.kBrake); 
     // OpticalSensor = new DigitalInput(IndexerConstants.INDEXER_LIMIT_SWITCH1);
     IndexerTOF = new TimeOfFlight(IndexerConstants.INDEXER_TOF);
-    alternateEncoder = IndexerDonaldMotor.getAlternateEncoder(kAltEncType, 
-                        Constants.GenConstants.REV_ENCODER_CPR);
+    alternateEncoder = IndexerDonaldMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature,
+            Constants.GenConstants.REV_ENCODER_CPR);
+    alternateEncoder.setInverted(true); //We do need this
+    mainEncoder = IndexerDonaldMotor.getEncoder();
+                        
     IndexerDonaldMotor.burnFlash();
     //PCArray= {false,false,false,false};
     PCArray[0] = false;
@@ -80,13 +86,17 @@ public class Indexer extends SubsystemBase {
   * its feedback device. Instead, we can set the feedback device to the alternate
   * encoder object
   */
-    indexerPID.setFeedbackDevice(alternateEncoder);
+  
+  CANError pid_error = indexerPID.setFeedbackDevice(mainEncoder);
+    if (pid_error != CANError.kOk) {
+      SmartDashboard.putString("PID", pid_error.toString());
+    }
 
     indexerPID.setP(kP);
     indexerPID.setI(kI);
     indexerPID.setD(kD); 
+    //indexerPID.setFF(kFF);
     indexerPID.setOutputRange(-1, 1);  
-    IndexerDonaldMotor.getPIDController();
 
     ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
@@ -100,9 +110,10 @@ public class Indexer extends SubsystemBase {
 
     //indexerSpeed = 0; // Debug stuff 
     SmartDashboard.putNumber("Indexer Speed", indexerSpeed);
-    SmartDashboard.putNumber("Current pVal = ", kP);
-    SmartDashboard.putNumber("Current iVal = ", kI);
-    SmartDashboard.putNumber("Current dVal = ", kD);
+    SmartDashboard.putNumber("P Gain", kP);
+    SmartDashboard.putNumber("I Gain", kI);
+    SmartDashboard.putNumber("D Gain", kD);
+    //SmartDashboard.putNumber("Set Rotations", 0); //for PID from smartdashboard
 
     this.ResetEncoder();
   }
@@ -115,9 +126,24 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putBoolean("Indexer TOF", this.getP0());
     SmartDashboard.putNumber("Indexer TOF Val", IndexerTOF.getRange());
     SmartDashboard.putNumber("Indexer Encoder", this.getEncoderValue());
+    SmartDashboard.putNumber("Motor Encoder", IndexerDonaldMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Motor Alternate Encoder" , IndexerDonaldMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition()); 
     SmartDashboard.putBooleanArray("Indexer Array", PCArray);
     indexerSpeed = SmartDashboard.getNumber("Indexer Speed", 0);
     SmartDashboard.putNumber("Indexer Overshoot", overShoot);
+    SmartDashboard.putNumber("Command Position", commandPos);
+
+    double p = SmartDashboard.getNumber("P Gain", 0);
+    double i = SmartDashboard.getNumber("I Gain", 0);
+    double d = SmartDashboard.getNumber("D Gain", 0);
+
+    if((p != kP)) { indexerPID.setP(p); kP = p; }
+    if((i != kI)) { indexerPID.setI(i); kI = i; }
+    if((d != kD)) { indexerPID.setD(d); kD = d; }
+
+    //use to run indexer PID from smartdashboard
+    //double rotations = SmartDashboard.getNumber("Set Rotations", 0);
+    indexerPID.setReference(70/3, ControlType.kPosition);
 
     //IndexerDonaldMotor.set(indexerSpeed);
   }
@@ -131,7 +157,7 @@ public class Indexer extends SubsystemBase {
   
   /*Publish values we want to look at to dashboard */
   public void UpdateDashboard() {
-    currentRotationNT.setDouble(alternateEncoder.getPosition());
+    //currentRotationNT.setDouble(alternateEncoder.getPosition());
     desiredSpeedNT.getDouble(0);
     desiredRotationNT.getDouble(0);
   } 
@@ -161,13 +187,16 @@ public class Indexer extends SubsystemBase {
 
   public boolean MoveToPosition(double desiredPosition) {
     // Pass in the position you want to be in, return true / false if you're there? 
-    // this.indexerPID.setReference(desiredPosition, ControlType.kPosition); // well this breaks things but is PID control.......
+    this.commandPos = desiredPosition;
+    this.indexerPID.setReference(70/3, ControlType.kPosition); // well this breaks things but is PID control.......
     
-    return this.getEncoderValue() >= desiredPosition;
+    return false; //return this.getEncoderValue() >= desiredPosition;
   }
 
   public double getEncoderValue(){
-    return alternateEncoder.getPosition();
+    //return alternateEncoder.getPosition();
+    // this returns built-in motor controller position
+    return IndexerDonaldMotor.getEncoder().getPosition();
   }
 
   //Return value of first position optical sensor
@@ -179,7 +208,6 @@ public class Indexer extends SubsystemBase {
     
     return distance >= 15 && distance <= 25;
   }
-
 
   public boolean isIndexerFull() {
     if (PCArray[3] == true) {

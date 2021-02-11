@@ -56,16 +56,20 @@ public class reverseIndexer extends CommandBase {
   @Override
   public boolean isFinished() {
 
-
     /*Upwards is positive encoder, but the speed is negative to go up*/
-    desiredPosition = -degreesToRotate/360.0+initialPosition;
+    //desiredPosition = -degreesToRotate/360.0+initialPosition;
+    desiredPosition =  roboIndexer.getEncoderValue()-(70/3);
     
+    // ... for PID comment out everything below here, replace with 
+    return roboIndexer.MoveToPosition(desiredPosition); 
+    // 
+    /*
     currentPosition = roboIndexer.getEncoderValue();
     if (currentPosition <= desiredPosition){
       return true;
   } else {
     return false;
   }
-    
+    */
   }
 }

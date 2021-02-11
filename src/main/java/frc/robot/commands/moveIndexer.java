@@ -49,9 +49,9 @@ public class moveIndexer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    roboHarvester.setMinnieSpeed(HarvesterSpeed);
-    roboIndexer.Movement(IndexerSpeed); // for PID comment this out and add ...
-    // roboIndexer.SetIndexerSpeedPID(); // ??? 
+    //roboHarvester.setMinnieSpeed(HarvesterSpeed);
+    //roboIndexer.Movement(IndexerSpeed); // for PID comment this out and add ...
+    //roboIndexer.SetIndexerSpeedPID(); // ???
   }
 
   // Called once the command ends or is interrupted.
@@ -68,19 +68,20 @@ public class moveIndexer extends CommandBase {
 
 
     /*Upwards is positive encoder, but the speed is negative to go up*/
-    desiredPosition = degreesToRotate/360.0+initialPosition;
-    
+    //desiredPosition = degreesToRotate/360.0+initialPosition;
+    //desiredPosition = roboIndexer.getEncoderValue() + (70.0/3.0);
+    desiredPosition = 1;
     // ... for PID comment out everything below here, replace with 
-    // return roboIndexer.MoveToPosition 
+    return roboIndexer.MoveToPosition(desiredPosition); 
     // 
 
     //return roboIndexer.MoveToPosition(desiredPosition);
-     currentPosition = roboIndexer.getEncoderValue();
+    /* currentPosition = roboIndexer.getEncoderValue();
      if (currentPosition >= desiredPosition){
        return true;
    } else {
      return false;
-   }
+   }*/
     
   }
 }
