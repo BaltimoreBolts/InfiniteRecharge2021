@@ -139,7 +139,7 @@ public class RobotContainer {
 
     //Testing Indexer rotation
     aDriverButton.whenPressed(new moveIndexer(roboIndexer, roboHarvest));
-    //bDriverButton.whenPressed(new reverseIndexer(roboIndexer));
+    bDriverButton.whenPressed(new reverseIndexer(roboIndexer));
 
 
     // OPERATOR BUTTON ASSIGNMENTS

@@ -34,8 +34,8 @@ import java.lang.Math;
 public class Indexer extends SubsystemBase {
   private CANSparkMax IndexerDonaldMotor;
   private CANPIDController indexerPID;
-  private double kP = 1; // 2e-5 initial test value 
-  private double kI = 0; // 0 initial test value 
+  private double kP = 0.5; // 2e-5 initial test value 
+  private double kI = 0.001; // 0 initial test value 
   private double kD = 0; // 0 initial test value 
   private double kFF = 0; //0.000165; // 0.000165 initial test value
   private double commandPos = 0;
@@ -135,7 +135,7 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putNumber("Indexer Overshoot", overShoot);
     SmartDashboard.putNumber("Command Position", commandPos);
 
-    double p = SmartDashboard.getNumber("P Gain", 0.05);
+    double p = SmartDashboard.getNumber("P Gain", 0.5);
     double i = SmartDashboard.getNumber("I Gain", 0.001);
     double d = SmartDashboard.getNumber("D Gain", 0);
 
