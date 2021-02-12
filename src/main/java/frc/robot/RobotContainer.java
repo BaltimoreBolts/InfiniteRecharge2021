@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.commands.FirePowerCell;
 import frc.robot.commands.IndexerCaptain;
@@ -59,6 +60,9 @@ public class RobotContainer {
   private Command autoShoot = new AutonomousShoot(roboShoot); // Stupid way to do this but a hot fix for testing 
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
+  private Joystick joystick = new Joystick(1);
+  private Joystick leftJoystick = new Joystick(2);
+
 
   JoystickButton rightDriverBumper; 
   JoystickButton leftDriverBumper; 
@@ -86,11 +90,37 @@ public class RobotContainer {
     // we could figure out in 2019/2020 for command based programming. There may be 
     // a better way
     
+    /*roboDT.setDefaultCommand(
+      new RunCommand(
+        () -> roboDT.arcadeDrive(
+          driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
+          -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+        roboDT
+      )
+    );
+    */
+
+    // closed loop driving with xbox controller
+    /*roboDT.setDefaultCommand(
+      new RunCommand(
+        () -> roboDT.closedLoopArcadeDrive(
+          driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
+          -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+        roboDT
+      )
+    );
+    */
+
+    //closed loop arcade drive with two joysticks
     roboDT.setDefaultCommand(
-      new RunCommand(() -> roboDT
-        .arcadeDrive(driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
-        -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), roboDT));
-        RobotCamera = CameraServer.getInstance();
+      new RunCommand(
+        () -> roboDT.closedLoopArcadeDrive(
+          joystick.getX(), 
+          -leftJoystick.getY()), 
+        roboDT
+      )
+    );
+    RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
     
     // Camera code
