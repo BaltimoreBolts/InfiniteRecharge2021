@@ -69,8 +69,8 @@ public class moveIndexer extends CommandBase {
 
     /*Upwards is positive encoder, but the speed is negative to go up*/
     //desiredPosition = degreesToRotate/360.0+initialPosition;
-    //desiredPosition = roboIndexer.getEncoderValue() + (70.0/3.0);
-    desiredPosition = 1;
+    desiredPosition = initialPosition - (70.0/3.0);
+    //desiredPosition = 1;
     // ... for PID comment out everything below here, replace with 
     return roboIndexer.MoveToPosition(desiredPosition); 
     // 

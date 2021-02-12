@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANError;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
@@ -97,6 +98,7 @@ public class Indexer extends SubsystemBase {
     indexerPID.setD(kD); 
     //indexerPID.setFF(kFF);
     indexerPID.setOutputRange(-1, 1);  
+    indexerPID.setIZone(1);
 
     ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
@@ -133,8 +135,8 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putNumber("Indexer Overshoot", overShoot);
     SmartDashboard.putNumber("Command Position", commandPos);
 
-    double p = SmartDashboard.getNumber("P Gain", 0);
-    double i = SmartDashboard.getNumber("I Gain", 0);
+    double p = SmartDashboard.getNumber("P Gain", 0.05);
+    double i = SmartDashboard.getNumber("I Gain", 0.001);
     double d = SmartDashboard.getNumber("D Gain", 0);
 
     if((p != kP)) { indexerPID.setP(p); kP = p; }
@@ -143,7 +145,8 @@ public class Indexer extends SubsystemBase {
 
     //use to run indexer PID from smartdashboard
     //double rotations = SmartDashboard.getNumber("Set Rotations", 0);
-    indexerPID.setReference(70/3, ControlType.kPosition);
+    //
+    //indexerPID.setReference(70, ControlType.kPosition);
 
     //IndexerDonaldMotor.set(indexerSpeed);
   }
@@ -188,9 +191,9 @@ public class Indexer extends SubsystemBase {
   public boolean MoveToPosition(double desiredPosition) {
     // Pass in the position you want to be in, return true / false if you're there? 
     this.commandPos = desiredPosition;
-    this.indexerPID.setReference(70/3, ControlType.kPosition); // well this breaks things but is PID control.......
-    
-    return false; //return this.getEncoderValue() >= desiredPosition;
+    CANError pidError = this.indexerPID.setReference(desiredPosition, ControlType.kPosition); // well this breaks things but is PID control.......
+    SmartDashboard.putString("PID Error", pidError.toString());
+    return Math.abs(this.getEncoderValue() - desiredPosition) < 0.1;
   }
 
   public double getEncoderValue(){
@@ -230,7 +233,8 @@ public class Indexer extends SubsystemBase {
   }
 
   public void ResetEncoder() {
-    alternateEncoder.setPosition(0);
+    mainEncoder.setPosition(0);
+    //alternateEncoder.setPosition(0);
   }
 
   // Functions for compenstating based on indexer overshoot. We never tested these.
