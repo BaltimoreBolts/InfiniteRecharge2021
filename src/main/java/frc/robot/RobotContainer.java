@@ -10,6 +10,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FirePowerCell;
 import frc.robot.commands.IndexerCaptain;
 import frc.robot.commands.PowerCellSucker;
@@ -83,6 +84,7 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    //initializeRobot(); //doesnt work, goal was to move the indexer on boot
 
     // Set default drive command
     // Negative in the Y direction makes robot go forward 2/6
@@ -180,6 +182,14 @@ public class RobotContainer {
 
     yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
     aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
+  }
+  
+  public void initializeRobot(){
+    double initialPosition = roboIndexer.getEncoderValue();
+    double startingPos = roboIndexer.getAbsEncoderValue();
+    double resetDistance = (startingPos % (1.0/3.0)) > 1/6 ? 1.0/3.0 - (startingPos % (1.0/3.0 )) : -(startingPos % (1.0/3.0)); //determine which +-1/3 is closer
+    SmartDashboard.putNumber("Initialize Distance", initialPosition + 70*resetDistance);
+    roboIndexer.MoveToPosition(initialPosition + 70*resetDistance, 0);
   }
 
   /**

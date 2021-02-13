@@ -188,18 +188,23 @@ public class Indexer extends SubsystemBase {
     IndexerDonaldMotor.set(speed);
   } 
 
-  public boolean MoveToPosition(double desiredPosition) {
+  public boolean MoveToPosition(double desiredPosition, double resetDistance) {
     // Pass in the position you want to be in, return true / false if you're there? 
-    this.commandPos = desiredPosition;
-    CANError pidError = this.indexerPID.setReference(desiredPosition, ControlType.kPosition); // well this breaks things but is PID control.......
+    this.commandPos = desiredPosition + 70.0*resetDistance;
+  
+    CANError pidError = this.indexerPID.setReference(this.commandPos, ControlType.kPosition); 
     SmartDashboard.putString("PID Error", pidError.toString());
-    return Math.abs(this.getEncoderValue() - desiredPosition) < 0.1;
+    return Math.abs(this.getEncoderValue() - this.commandPos) < 0.1;
   }
 
   public double getEncoderValue(){
     //return alternateEncoder.getPosition();
     // this returns built-in motor controller position
     return IndexerDonaldMotor.getEncoder().getPosition();
+  }
+
+  public double getAbsEncoderValue(){
+    return IndexerDonaldMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition();
   }
 
   //Return value of first position optical sensor

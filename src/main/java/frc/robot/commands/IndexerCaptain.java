@@ -44,7 +44,7 @@ public class IndexerCaptain extends CommandBase {
     encoderValue = indexerCaptain.getEncoderValue();
     targetPosition = encoderValue + (1.0 / 3.0);
 
-    indexerCaptain.MoveToPosition(targetPosition);
+    indexerCaptain.MoveToPosition(targetPosition, 0);
     indexerCaptain.Movement(-0.15);
     // indexerCaptain.ResetEncoder();
   }
@@ -79,6 +79,6 @@ public class IndexerCaptain extends CommandBase {
     }
     **/
 
-    return indexerCaptain.MoveToPosition(targetPosition);
+    return indexerCaptain.MoveToPosition(targetPosition, 0);
   }
 }
