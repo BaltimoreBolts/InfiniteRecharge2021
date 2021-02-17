@@ -16,6 +16,7 @@ import com.revrobotics.ControlType;
 import com.revrobotics.EncoderType;
 import java.lang.Math;
 
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -40,10 +41,10 @@ public class Shooter extends SubsystemBase {
   private double motor1ShooterSpeed = 0;
 
   private CANPIDController shooterPID;
-  private double kP = 2e-5; 
-  private double kI = 0; 
+  private double kP = 5e-4; 
+  private double kI = 5e-6; 
   private double kD = 0; 
-  private double kFF = 0.000165;//0.000015;
+  private double kFF = 0.00009; //0.000165;
   private CANEncoder ShooterEncoder;
 
   // Network table for chameleon vision
@@ -81,6 +82,7 @@ public class Shooter extends SubsystemBase {
     shooterPID.setD(kD);
     shooterPID.setFF(kFF);
     shooterPID.setOutputRange(-1,1);
+    shooterPID.setIZone(1000);
 
     // Prints the initial PID values to smart dashboard
     SmartDashboard.putNumber("Current pVal = ", kP);
@@ -193,15 +195,25 @@ public class Shooter extends SubsystemBase {
 
   public void SetShooterSpeed(double speed) {
     //shooterPID.setReference(speed, ControlType.kVelocity);
-    SMotorChip.set(speed);
+    double voltage = 1.02e-3*speed + 0.459;
+    SMotorChip.setVoltage(-voltage); //manually set motor speed (voltage), negative shoots
+    //double shooterSpeed = ShooterEncoder.getVelocity();
+    //boolean isDone = shooterSpeed > speed;
+    //return isDone;
   }
 
   public boolean AtSpeed(double referenceSpeed) {
-    return ShooterEncoder.getVelocity() == referenceSpeed;
+    double shooterSpeed = ShooterEncoder.getVelocity();
+    boolean isDone = Math.abs(shooterSpeed) > Math.abs(referenceSpeed);
+    return isDone;
   }
 
   public boolean getReadyToFire() {
     return readyToFire;
+  }
+
+  public void stopFlywheel(){
+    SMotorChip.setVoltage(0);
   }
 
   public void setReadyToFire(boolean newValue) {

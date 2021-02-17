@@ -147,7 +147,7 @@ public class RobotContainer {
 
     // INITIALIZE DRIVER CONTROLLER BUTTONS
     rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
-    //leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
+    leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
     xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
     aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
     bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
@@ -164,7 +164,9 @@ public class RobotContainer {
 
     // DRIVER BUTTON ASSIGNMENTS
     //rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
-    rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
+    //rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
+    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
+    leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
     //leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
     //xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
     //xDriverButton.whenHeld(new HarvesterIn(roboHarvest));

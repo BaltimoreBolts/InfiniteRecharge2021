@@ -16,6 +16,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANPIDController.AccelStrategy;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -92,6 +93,7 @@ public class DriveTrain extends SubsystemBase {
     //leftDrivePID.setIZone(kIz);
     //leftDrivePID.setFF(kFF);
     leftDrivePID.setOutputRange(-1, 1);
+    leftDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
     rightDrivePID.setP(kP);
     rightDrivePID.setI(kI);
@@ -99,7 +101,7 @@ public class DriveTrain extends SubsystemBase {
     //rightDrivePID.setIZone(kIz);
     //rightDrivePID.setFF(kFF);
     rightDrivePID.setOutputRange(-1, 1);
-    
+    rightDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
   }
 
   @Override

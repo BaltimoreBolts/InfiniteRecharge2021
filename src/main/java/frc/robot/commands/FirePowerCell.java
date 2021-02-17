@@ -7,6 +7,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
@@ -28,11 +31,10 @@ public class FirePowerCell extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(
-      new ShootPowerCell(roboShooter),
-      //new IndexerCaptain(roboIndexer),
-      new moveIndexer(roboIndexer,roboHarvester),
-      new HarvestMarket(roboHarvester, roboIndexer)
-      //new IndexerHarvestMayhem(roboIndexer, roboHarvester, robotShooter)
+        new ShootPowerCell(roboShooter),
+        new moveIndexer(roboIndexer,roboHarvester)
+      //new HarvestMarket(roboHarvester, roboIndexer)
+      //new IndexerHarvestMayhem(roboIndexer, roboHarvester, robotShooter) //idk what this does
     );
   }
 }

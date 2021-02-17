@@ -32,14 +32,14 @@ public class ShootPowerCell extends CommandBase {
   @Override
   public void initialize() {
     //calculatedRPM = roboShooter.getNeededRPM();
-    calculatedRPM = -0.45; // Comment this in to set speed directly
+    calculatedRPM = 8000; // Comment this in to set speed directly
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     //roboShooter.PIDTuner();
-    System.out.println("\n\nSetting shooter speed\n\n");
+    //System.out.println("\n\nSetting shooter speed\n\n");
     roboShooter.SetShooterSpeed(calculatedRPM);
   }
 
@@ -47,12 +47,14 @@ public class ShootPowerCell extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     roboShooter.setReadyToFire(true);
+    roboShooter.SetShooterSpeed(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return roboShooter.AtSpeed(calculatedRPM);
-    //return true;
+    //return roboShooter.SetShooterSpeed(calculatedRPM);
+    //return roboShooter.AtSpeed(calculatedRPM);
+    return false;
   }
 }
