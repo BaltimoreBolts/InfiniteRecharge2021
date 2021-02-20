@@ -24,17 +24,16 @@ import frc.robot.subsystems.Harvester;
 ** STATUS: Never tested
 */ 
 public class FirePowerCell extends SequentialCommandGroup {
-  /**
-   * Creates a new FirePowerCell.
-   */
+
+   // Creates a new FirePowerCell
   public FirePowerCell(Shooter roboShooter, Indexer roboIndexer, Harvester roboHarvester) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(
+    super (
         new ShootPowerCell(roboShooter),
-        new moveIndexer(roboIndexer,roboHarvester)
-      //new HarvestMarket(roboHarvester, roboIndexer)
-      //new IndexerHarvestMayhem(roboIndexer, roboHarvester, robotShooter) //idk what this does
+        new MoveIndexer(roboIndexer,roboHarvester)
+        // new HarvestMarket(roboHarvester, roboIndexer)
+        // new IndexerHarvestMayhem(roboIndexer, roboHarvester, robotShooter) //idk what this does
     );
   }
 }

@@ -7,7 +7,6 @@
 
 package frc.robot.subsystems;
 
-
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
@@ -44,9 +43,10 @@ public class Shooter extends SubsystemBase {
   private double kP = 5e-4; 
   private double kI = 5e-6; 
   private double kD = 0; 
-  private double kFF = 0.00009; //0.000165;
+  private double kFF = 0.00009; // 0.000165;
+  private double[] kFFCircularBuffer = new double[100];
   private CANEncoder ShooterEncoder;
-
+  
   // Network table for chameleon vision
   NetworkTableInstance table = NetworkTableInstance.getDefault();
   NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("PsThreeCam");
@@ -156,17 +156,17 @@ public class Shooter extends SubsystemBase {
     if (valueOrPID) {
       SMotorChip.set(motor1ShooterSpeed);
       //SMotorDale.set(-motor1ShooterSpeed);
-      SmartDashboard.putNumber("Output Chip",SMotorChip.getAppliedOutput());
-      SmartDashboard.putNumber("Output Dale",SMotorDale.getAppliedOutput());
+      SmartDashboard.putNumber("Output Chip", SMotorChip.getAppliedOutput());
+      SmartDashboard.putNumber("Output Dale", SMotorDale.getAppliedOutput());
     } else {
       // Use PID value
       shooterPID.setReference(desiredRPM, ControlType.kVelocity);
-      SmartDashboard.putNumber("Shooter Vel",ShooterEncoder.getVelocity());
-      SmartDashboard.putNumber("Output Chip",SMotorChip.getAppliedOutput());
-      SmartDashboard.putNumber("Output Dale",SMotorDale.getAppliedOutput());
+      SmartDashboard.putNumber("Shooter Vel", ShooterEncoder.getVelocity());
+      SmartDashboard.putNumber("Output Chip", SMotorChip.getAppliedOutput());
+      SmartDashboard.putNumber("Output Dale", SMotorDale.getAppliedOutput());
     }
   }
-  /*Determine RPM of shooter needed to score power cells in power port 
+  /* Determine RPM of shooter needed to score power cells in power port 
   ** xdist - distance from power port in m from vision processing
   ** fudgeFactor - multiplication needed to turn velocity into RPM
   */
@@ -197,6 +197,9 @@ public class Shooter extends SubsystemBase {
     //shooterPID.setReference(speed, ControlType.kVelocity);
     double voltage = 1.02e-3*speed + 0.459;
     SMotorChip.setVoltage(-voltage); //manually set motor speed (voltage), negative shoots
+    
+    double kf = kFcalculator(SMotorChip.getBusVoltage(), SMotorChip.getEncoder().getVelocity());
+    SmartDashboard.putNumber("Shooter kF", kf);
     //double shooterSpeed = ShooterEncoder.getVelocity();
     //boolean isDone = shooterSpeed > speed;
     //return isDone;
@@ -206,6 +209,14 @@ public class Shooter extends SubsystemBase {
     double shooterSpeed = ShooterEncoder.getVelocity();
     boolean isDone = Math.abs(shooterSpeed) > Math.abs(referenceSpeed);
     return isDone;
+  }
+
+  public double kFcalculator(double voltage, double rpm) {
+    if (rpm < 0.1) {
+      return 0;
+    }
+    double kf = (1023.0/12.0) * voltage / ((4096.0/600.0) * rpm);
+    return kf;
   }
 
   public boolean getReadyToFire() {

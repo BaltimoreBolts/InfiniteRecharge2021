@@ -95,7 +95,7 @@ public class Indexer extends SubsystemBase {
     indexerPID.setI(kI);
     indexerPID.setD(kD); 
     //indexerPID.setFF(kFF);
-    indexerPID.setOutputRange(-0.1, 0.1);  
+    indexerPID.setOutputRange(-0.5, 0.5);  
     indexerPID.setIZone(1);
     
     /*
@@ -192,7 +192,7 @@ public class Indexer extends SubsystemBase {
     // resetDistance uses abs encoder to correct for absolute position 
 
     this.commandPos = desiredPosition + 70.0*resetDistance; //70:1 gearbox between rel.enc and output
-    CANError pidError = this.indexerPID.setReference(this.commandPos, ControlType.kVelocity); 
+    CANError pidError = this.indexerPID.setReference(this.commandPos, ControlType.kPosition); 
     SmartDashboard.putString("PID Error", pidError.toString());
     boolean isDone = Math.abs(this.getEncoderValue() - this.commandPos) < 0.1;// | IndexerDonaldMotor.getEncoder().getVelocity() < 0.001;
     return isDone;

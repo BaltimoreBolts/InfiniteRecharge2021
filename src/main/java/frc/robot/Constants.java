@@ -8,20 +8,19 @@
 package frc.robot;
 
 import java.lang.Math;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
  * declared globally (i.e. public static).  Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
+ * 
+ * PURPOSE: Constants file 
  */
-
- /* 
-** PURPOSE: Constants file */
-
 public final class Constants {
-    //General constants
+    // General constants
     public static final class GenConstants {
         public static final int REV_ENCODER_CPR = 8192;
         public static final double DEG2RAD = Math.PI/180.0;
@@ -34,9 +33,9 @@ public final class Constants {
         public static final double TAN_ANGLE = Math.tan(SHOOTER_ANGLE_DEG*DEG2RAD);
     }
 
-     // To import this elsewhere use import import frc.robot.Constants.OIConstants;
+     // To import this elsewhere use import frc.robot.Constants.OIConstants;
      public static final class OIConstants {
-        //These need to be public within the class so they are accessible
+        // These need to be public within the class so they are accessible
         public static final int DRIVER_CONTROLLER = 0;
         public static final int OPERATOR_CONTROLLER = 1;
     }
@@ -46,22 +45,43 @@ public final class Constants {
         public static final int LEFT_DRIVE_MOTOR2 = 2;
         public static final int RIGHT_DRIVE_MOTOR1 = 3;
         public static final int RIGHT_DRIVE_MOTOR2 = 4;
+        public static enum driveModes {
+            kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
+            kCLArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
+            kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
+            kArcade("Arcade"); // single joystick, open loop
+
+            private String name;
+            private driveModes(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+        };
     }
 
     public static final class ShooterConstants {
         public static final int SHOOTER_MOTOR_CHIP = 9;
         public static final int SHOOTER_MOTOR_DALE = 10;
+
+        public static enum shooterControlMethod {
+            spinUp,
+            holdWhenReady,
+            hold
+        }
     }
+
     public static final class HarvesterConstants {
         public static final int HARVESTER_MOTOR_MICKEY = 6;
         public static final int HARVESTER_MOTOR_MINNIE = 5;
         public static final int HARVESTER_LIMIT_SWITCH = 0;
-        public static final int HARVESTER_TOF = 11;
-
         // tof is the time of flight sensor
-    
-
+        public static final int HARVESTER_TOF = 11;
     }
+
     public static final class IndexerConstants {
         public static final int INDEXER_MOTOR_DONALD = 7;
         public static final int INDEXER_LIMIT_SWITCH1 = 1;

@@ -16,7 +16,7 @@ import frc.robot.subsystems.Indexer;
 ** STATUS: Works!
 */
 
-public class reverseIndexer extends CommandBase {
+public class ReverseIndexer extends CommandBase {
   Indexer roboIndexer;
   double speed = 0; 
   double currentPosition = 0;
@@ -29,7 +29,7 @@ public class reverseIndexer extends CommandBase {
   /**
    * Creates a new moveIndexer.
    */
-  public reverseIndexer(Indexer robotIndexer) {
+  public ReverseIndexer(Indexer robotIndexer) {
     roboIndexer = robotIndexer;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(robotIndexer);

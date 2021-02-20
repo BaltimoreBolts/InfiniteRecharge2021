@@ -103,10 +103,10 @@ public class DriveTrain extends SubsystemBase {
     rightDrivePID.setOutputRange(-1, 1);
     rightDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 1);
 
-    rightDrivePID.setSmartMotionMaxAccel(10, 0);
-    rightDrivePID.setSmartMotionAllowedClosedLoopError(1, 0);
-    leftDrivePID.setSmartMotionMaxAccel(10, 1);
-    leftDrivePID.setSmartMotionAllowedClosedLoopError(1, 1);
+    rightDrivePID.setSmartMotionMaxAccel(20, 1);
+    rightDrivePID.setSmartMotionAllowedClosedLoopError(1, 1);
+    leftDrivePID.setSmartMotionMaxAccel(20, 0);
+    leftDrivePID.setSmartMotionAllowedClosedLoopError(1, 0);
   }
 
   @Override

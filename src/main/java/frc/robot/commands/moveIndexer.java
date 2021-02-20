@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import java.sql.Time;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -18,7 +20,7 @@ import frc.robot.subsystems.Harvester;
 ** Also calls inner harvester motor so PC doesn't get stuck in the first slot
 ** STATUS: Works!
 */
-public class moveIndexer extends CommandBase {
+public class MoveIndexer extends CommandBase {
   Indexer roboIndexer;
   Harvester roboHarvester;
   double IndexerSpeed = 0; 
@@ -29,11 +31,13 @@ public class moveIndexer extends CommandBase {
   double degreesToRotate = 120;
   double startingPos = 0;
   double resetDistance = 0;
+  double startTime = 0; 
+  final double maxPIDduration = 1e9; // 1 second in nano seconds
   int n = 0;
   /**
    * Creates a new moveIndexer.
    */
-  public moveIndexer(Indexer robotIndexer, Harvester robotHarvester) {
+  public MoveIndexer(Indexer robotIndexer, Harvester robotHarvester) {
     roboIndexer = robotIndexer;
     roboHarvester = robotHarvester;
     // Use addRequirements() here to declare subsystem dependencies.
@@ -56,7 +60,7 @@ public class moveIndexer extends CommandBase {
     else{
       resetDistance = (-mod_math);
     }
-    
+    startTime = System.nanoTime();
     SmartDashboard.putNumber("Mod Math", mod_math);
     SmartDashboard.putNumber("Reset Distance", resetDistance);
 
@@ -87,7 +91,9 @@ public class moveIndexer extends CommandBase {
     desiredPosition = initialPosition - (70.0/3.0);
     //desiredPosition = 1;
     // ... for PID comment out everything below here, replace with 
-    return roboIndexer.MoveToPosition(desiredPosition, resetDistance); 
+    double duration = System.nanoTime() - startTime;
+
+    return roboIndexer.MoveToPosition(desiredPosition, resetDistance) || duration > maxPIDduration; 
     // 
 
     //return roboIndexer.MoveToPosition(desiredPosition);
