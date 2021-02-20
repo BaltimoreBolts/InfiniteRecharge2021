@@ -66,12 +66,12 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int SHOOTER_MOTOR_CHIP = 9;
         public static final int SHOOTER_MOTOR_DALE = 10;
-
         public static enum shooterControlMethod {
             spinUp,
             holdWhenReady,
             hold
         }
+        public static final int kFFCircularBufferSize = 20;
     }
 
     public static final class HarvesterConstants {
