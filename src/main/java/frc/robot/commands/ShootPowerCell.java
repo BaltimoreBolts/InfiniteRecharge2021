@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import frc.robot.subsystems.Shooter;
 
 /* 
@@ -33,6 +34,7 @@ public class ShootPowerCell extends CommandBase {
   public void initialize() {
     //calculatedRPM = roboShooter.getNeededRPM();
     calculatedRPM = 8000; // Comment this in to set speed directly
+    roboShooter.setShooterState(ShooterControlState.SPINUP); // Robot Shooter is now set to spin up
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,14 +42,15 @@ public class ShootPowerCell extends CommandBase {
   public void execute() {
     //roboShooter.PIDTuner();
     //System.out.println("\n\nSetting shooter speed\n\n");
-    roboShooter.SetShooterSpeed(calculatedRPM);
+    // roboShooter.SetShooterSpeed(calculatedRPM);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     roboShooter.setReadyToFire(true);
-    roboShooter.SetShooterSpeed(0);
+    roboShooter.setShooterState(ShooterControlState.IDLE);
+    // roboShooter.SetShooterSpeed(0);
   }
 
   // Returns true when the command should end.
