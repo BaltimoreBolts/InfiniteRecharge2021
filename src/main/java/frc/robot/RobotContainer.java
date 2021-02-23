@@ -152,7 +152,12 @@ public class RobotContainer {
           )
         );
     }
-  
+       
+    roboShoot.setDefaultCommand(
+      new RunCommand(
+        () -> roboShoot.closedLoopStateMachineManager(), roboShoot
+      )
+    );
     
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);

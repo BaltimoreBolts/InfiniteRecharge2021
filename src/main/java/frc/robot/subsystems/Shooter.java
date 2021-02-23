@@ -132,9 +132,12 @@ public class Shooter extends SubsystemBase {
     
     // PIDTuner(); // Comment this out once we figure out our PID values.
     // getNeededRPM();
+  
+  }
 
+  public void closedLoopStateMachineManager(){
     leftShooterRPM = shooterEncoder.getVelocity();
-    leftShooterVoltage = leftShooterMotor.getBusVoltage();    // State Machine
+    leftShooterVoltage = leftShooterMotor.getBusVoltage();    
 
     // State Machine
     if (shooterControlState == ShooterControlState.IDLE){
@@ -190,7 +193,6 @@ public class Shooter extends SubsystemBase {
     }
 
   }
-
   public void PIDTuner() {
     double pTemp = 0;
     double iTemp = 0;
