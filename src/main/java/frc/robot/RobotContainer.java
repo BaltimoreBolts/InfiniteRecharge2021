@@ -37,6 +37,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
+
+import org.graalvm.compiler.hotspot.stubs.Stub;
+
 import edu.wpi.cscore.UsbCamera;
 
 
@@ -202,7 +205,7 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
     // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
     // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
-    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
+    rightDriverBumper.whenPressed(new SetShooterState(roboShoot));
     leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
     // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
     // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));

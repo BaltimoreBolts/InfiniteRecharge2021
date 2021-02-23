@@ -16,17 +16,16 @@ import frc.robot.subsystems.Shooter;
 ** Needed to get interface with raspi vision processing to work (in shooter subsystem)
 ** Also velocity PID control was never completely worked through/still in testing
 */
-public class ShootPowerCell extends CommandBase {
+public class SetShooterState extends CommandBase {
   Shooter roboShooter;
   double calculatedRPM = 0;
   
   /**
    * Creates a new ShootPowerCell.
    */
-  public ShootPowerCell(Shooter inputShooter) {
+  public SetShooterState(Shooter inputShooter) {
     roboShooter = inputShooter;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(roboShooter);
   }
 
   // Called when the command is initially scheduled.
