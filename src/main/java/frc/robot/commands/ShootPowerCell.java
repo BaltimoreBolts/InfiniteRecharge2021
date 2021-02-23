@@ -49,7 +49,7 @@ public class ShootPowerCell extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     roboShooter.setReadyToFire(true);
-    // roboShooter.setShooterState(ShooterControlState.IDLE);
+    roboShooter.setShooterState(ShooterControlState.IDLE);
     // roboShooter.SetShooterSpeed(0);
   }
 

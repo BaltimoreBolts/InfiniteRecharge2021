@@ -40,12 +40,13 @@ public class Shooter extends SubsystemBase {
   private double motor1ShooterSpeed = 0;
   private double leftShooterRPM = 0.0;
   private double leftShooterVoltage = 0.0;
+  private double leftShooterDutyCycle = 0.0;
 
   private CANPIDController shooterPID;
-  private double kP = 0.5; 
+  private double kP = 0.001; 
   private double kI = 0; 
   private double kD = 0; 
-  private double kFF = 0.000165;
+  private double kFF = 0.000013;
   private int kFFSampleCount = 0;
   private int kFFCircularBufferCounter = 0;
   private double[] kFFCircularBuffer = new double[ShooterConstants.kFFCircularBufferSize];
@@ -83,9 +84,10 @@ public class Shooter extends SubsystemBase {
     
     // Instantiate encoder
     shooterEncoder = leftShooterMotor.getEncoder(EncoderType.kQuadrature, GenConstants.REV_ENCODER_CPR);
-    
+
     // Start PID
     shooterPID = leftShooterMotor.getPIDController();
+    shooterPID.setFeedbackDevice(shooterEncoder);
     shooterPID.setP(kP);
     shooterPID.setI(kI);
     shooterPID.setD(kD);
@@ -132,27 +134,36 @@ public class Shooter extends SubsystemBase {
     
     // PIDTuner(); // Comment this out once we figure out our PID values.
     // getNeededRPM();
-  
+    closedLoopStateMachineManager();
   }
 
   public void closedLoopStateMachineManager(){
     leftShooterRPM = shooterEncoder.getVelocity();
     leftShooterVoltage = leftShooterMotor.getBusVoltage();    
+    leftShooterDutyCycle = leftShooterMotor.getAppliedOutput();
 
     // State Machine
     if (shooterControlState == ShooterControlState.IDLE){
-      SetShooterSpeed(0);
+      kP = 0.01; 
+      kI = 0; 
+      kD = 0.0005; 
+      kFF = 0.000013;
+      shooterPID.setP(kP);
+      shooterPID.setI(kI);
+      shooterPID.setD(kD);
+      shooterPID.setFF(kFF);
+      leftShooterMotor.set(0);
     } else if (shooterControlState == ShooterControlState.SPINUP) {
       // figure out desired speed
       //desiredRPM = getNeededRPM();
-      desiredRPM = 8000;
+      desiredRPM = -8000;
       // pid spin up
       SetShooterSpeed(desiredRPM);
       
       shooterControlState = ShooterControlState.HOLDWHENREADY;
 
     } else if (shooterControlState == ShooterControlState.HOLDWHENREADY) {
-
+      SmartDashboard.putNumber("Shooter kF", kFcalculator(leftShooterDutyCycle, leftShooterRPM));
       absoluteRPMError = Math.abs(desiredRPM - leftShooterRPM);
 
       if (absoluteRPMError < 100 && !onTarget) {
@@ -229,7 +240,7 @@ public class Shooter extends SubsystemBase {
     } else {
       // Use PID value
       shooterPID.setReference(desiredRPM, ControlType.kVelocity);
-      SmartDashboard.putNumber("Shooter Vel", shooterEncoder.getVelocity());
+      //SmartDashboard.putNumber("Shooter Vel", shooterEncoder.getVelocity());
       SmartDashboard.putNumber("Output Chip", leftShooterMotor.getAppliedOutput());
       SmartDashboard.putNumber("Output Dale", rightShooterMotor.getAppliedOutput());
     }
@@ -263,8 +274,8 @@ public class Shooter extends SubsystemBase {
   
   public void SetShooterSpeed(double speed) {
     shooterPID.setReference(speed, ControlType.kVelocity);
-    // double voltage = 1.02e-3*speed + 0.459;
-    // leftShooterMotor.setVoltage(-voltage); //manually set motor speed (voltage), negative shoots
+    //double voltage = 1.02e-3*speed + 0.459;
+    //leftShooterMotor.setVoltage(voltage); //manually set motor speed (voltage), negative shoots
     
     // double shooterSpeed = ShooterEncoder.getVelocity();
     // boolean isDone = shooterSpeed > speed;
@@ -277,11 +288,12 @@ public class Shooter extends SubsystemBase {
     return isDone;
   }
 
-  public double kFcalculator(double voltage, double rpm) {
-    if (rpm < 0.1) {
+  public double kFcalculator(double dutyCycle, double rpm) {
+    if (Math.abs(rpm) < 0.1) {
       return 0;
     }
-    double kf = (1023.0/12.0) * voltage / ((4096.0/600.0) * rpm);
+    //double kf = (1023.0/12.0) * voltage / ((4096.0/600.0) * rpm);
+    double kf = dutyCycle / ((4096.0/600.0) * rpm);
     return kf;
   }
 

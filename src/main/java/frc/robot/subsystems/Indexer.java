@@ -77,8 +77,6 @@ public class Indexer extends SubsystemBase {
     PCArray[2] = false;
     PCArray[3] = false;
 
-    double overShoot = 0;
-
     indexerPID = IndexerDonaldMotor.getPIDController();
   /*
   * By default, the PID controller will use the Hall sensor from a NEO or NEO 550 for

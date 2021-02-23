@@ -38,8 +38,6 @@ import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
 
-import org.graalvm.compiler.hotspot.stubs.Stub;
-
 import edu.wpi.cscore.UsbCamera;
 
 
@@ -156,11 +154,11 @@ public class RobotContainer {
         );
     }
        
-    roboShoot.setDefaultCommand(
-      new RunCommand(
-        () -> roboShoot.closedLoopStateMachineManager(), roboShoot
-      )
-    );
+    // roboShoot.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> roboShoot.closedLoopStateMachineManager(), roboShoot
+    //   )
+    // );
     
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
@@ -205,7 +203,7 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
     // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
     // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
-    rightDriverBumper.whenPressed(new SetShooterState(roboShoot));
+    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
     leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
     // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
     // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
