@@ -66,10 +66,21 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int SHOOTER_MOTOR_CHIP = 9;
         public static final int SHOOTER_MOTOR_DALE = 10;
-        public static enum shooterControlMethod {
-            spinUp,
-            holdWhenReady,
-            hold
+        public static enum ShooterControlState {
+            IDLE("Idle"),
+            SPINUP("Spin Up"),
+            HOLDWHENREADY("Hold When Ready"),
+            HOLD("Hold");
+
+            private String name;
+            private ShooterControlState(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
         }
         public static final int kFFCircularBufferSize = 20;
     }

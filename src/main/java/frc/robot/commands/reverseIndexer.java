@@ -21,7 +21,7 @@ public class ReverseIndexer extends CommandBase {
   double speed = 0; 
   double currentPosition = 0;
   double desiredPosition = 0;
-  double initialPosition= 0;
+  double initialPosition = 0;
   double degreesToRotate = 120;
   double startingPos = 0;
   double resetDistance = 0;

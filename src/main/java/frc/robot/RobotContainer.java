@@ -37,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
+
 import edu.wpi.cscore.UsbCamera;
 
 
@@ -152,7 +153,12 @@ public class RobotContainer {
           )
         );
     }
-  
+       
+    // roboShoot.setDefaultCommand(
+    //   new RunCommand(
+    //     () -> roboShoot.closedLoopStateMachineManager(), roboShoot
+    //   )
+    // );
     
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
