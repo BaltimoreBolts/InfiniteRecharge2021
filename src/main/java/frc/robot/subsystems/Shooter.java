@@ -144,15 +144,17 @@ public class Shooter extends SubsystemBase {
 
     // State Machine
     if (shooterControlState == ShooterControlState.IDLE){
-      kP = 0.01; 
-      kI = 0; 
-      kD = 0.0005; 
+
+      kP = 0.0005; 
+      kI = 0.0000025; 
+      kD = 0; 
       kFF = 0.000013;
       shooterPID.setP(kP);
       shooterPID.setI(kI);
       shooterPID.setD(kD);
       shooterPID.setFF(kFF);
       leftShooterMotor.set(0);
+
     } else if (shooterControlState == ShooterControlState.SPINUP) {
       // figure out desired speed
       //desiredRPM = getNeededRPM();
@@ -198,7 +200,8 @@ public class Shooter extends SubsystemBase {
 
       // replace with calculated kF
       Arrays.sort(kFFCircularBuffer);
-      shooterPID.setFF(kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2]); // get median value
+      double medianKFF = kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2];
+      shooterPID.setFF(medianKFF); // get median value
 
       SetShooterSpeed(desiredRPM);
     }
