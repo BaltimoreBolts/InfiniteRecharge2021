@@ -12,8 +12,11 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
 
 import com.revrobotics.AlternateEncoderType;
+import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
+import com.revrobotics.CANPIDController.AccelStrategy;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,10 +26,16 @@ public class DriveTrain extends SubsystemBase {
   private CANSparkMax leftDriveMotor2;
   private CANSparkMax rightDriveMotor1;
   private CANSparkMax rightDriveMotor2;
-
+  private CANPIDController leftDrivePID;
+  private CANPIDController rightDrivePID;
   private CANEncoder leftEncoder;
   private CANEncoder rightEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
+  private static final double maxRPM = 5676 / 12.05; //REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
+  private double kP = 0.005; // 2e-5 initial test value 
+  private double kI = 0; // 0 initial test value 
+  private double kD = 0; // 0 initial test value 
+  private double kFF = 0; //0.000165; // 0.000165 initial test value
 
   private DifferentialDrive driveTrain;
   
@@ -53,22 +62,51 @@ public class DriveTrain extends SubsystemBase {
     leftDriveMotor2.setSmartCurrentLimit(40);
     rightDriveMotor1.setSmartCurrentLimit(40);
     rightDriveMotor2.setSmartCurrentLimit(40);
-    leftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    leftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    rightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kBrake);
-    rightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    leftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    leftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    rightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
     leftDriveMotor2.follow(leftDriveMotor1);
     rightDriveMotor2.follow(rightDriveMotor1);
+
     leftDriveMotor1.burnFlash();
     leftDriveMotor2.burnFlash();
     rightDriveMotor1.burnFlash();
     rightDriveMotor2.burnFlash();
 
     leftEncoder = leftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    leftEncoder.setInverted(true);
     rightEncoder = rightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    
+    leftDrivePID = leftDriveMotor1.getPIDController();
+    leftDrivePID.setFeedbackDevice(leftEncoder);
 
-    driveTrain = new DifferentialDrive(leftDriveMotor1,rightDriveMotor1);
+    rightDrivePID = rightDriveMotor1.getPIDController();
+    rightDrivePID.setFeedbackDevice(rightEncoder);
+
+    //driveTrain = new DifferentialDrive(leftDriveMotor1,rightDriveMotor1);
+
+    leftDrivePID.setP(kP);
+    leftDrivePID.setI(kI);
+    leftDrivePID.setD(kD);
+    //leftDrivePID.setIZone(kIz);
+    //leftDrivePID.setFF(kFF);
+    leftDrivePID.setOutputRange(-1, 1);
+    leftDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+
+    rightDrivePID.setP(kP);
+    rightDrivePID.setI(kI);
+    rightDrivePID.setD(kD);
+    //rightDrivePID.setIZone(kIz);
+    //rightDrivePID.setFF(kFF);
+    rightDrivePID.setOutputRange(-1, 1);
+    rightDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 1);
+
+    rightDrivePID.setSmartMotionMaxAccel(20, 1);
+    rightDrivePID.setSmartMotionAllowedClosedLoopError(1, 1);
+    leftDrivePID.setSmartMotionMaxAccel(20, 0);
+    leftDrivePID.setSmartMotionAllowedClosedLoopError(1, 0);
   }
 
   @Override
@@ -80,6 +118,22 @@ public class DriveTrain extends SubsystemBase {
   
   public void arcadeDrive(double x, double y) {
 		driveTrain.arcadeDrive(y, x); // Moving the stick forward (+y) moves the robot forward, left/right on the stick makes the robot spin
+  }
+
+  public void closedLoopArcadeDrive(double x, double y){
+    /*if (Math.abs(x) < 0.05){
+      x = 0;
+    }
+    if (Math.abs(y) < 0.05){
+      y = 0;
+    }
+    */
+    x = Math.pow(x,3); 
+    y = Math.pow(y,3);
+
+    leftDrivePID.setReference((y+x)*maxRPM, ControlType.kVelocity);
+    rightDrivePID.setReference(-(y-x)*maxRPM, ControlType.kVelocity);
+
   }
 
   public double getLeftPosition() {

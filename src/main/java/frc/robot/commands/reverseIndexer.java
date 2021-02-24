@@ -16,18 +16,20 @@ import frc.robot.subsystems.Indexer;
 ** STATUS: Works!
 */
 
-public class reverseIndexer extends CommandBase {
+public class ReverseIndexer extends CommandBase {
   Indexer roboIndexer;
   double speed = 0; 
   double currentPosition = 0;
   double desiredPosition = 0;
   double initialPosition= 0;
   double degreesToRotate = 120;
+  double startingPos = 0;
+  double resetDistance = 0;
   int n = 0;
   /**
    * Creates a new moveIndexer.
    */
-  public reverseIndexer(Indexer robotIndexer) {
+  public ReverseIndexer(Indexer robotIndexer) {
     roboIndexer = robotIndexer;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(robotIndexer);
@@ -37,6 +39,9 @@ public class reverseIndexer extends CommandBase {
   public void initialize() {
     speed = roboIndexer.getdesiredSpeed();
     initialPosition = roboIndexer.getEncoderValue();
+    initialPosition = roboIndexer.getEncoderValue();
+    startingPos = roboIndexer.getAbsEncoderValue();
+    //resetDistance = (startingPos % (1.0/3.0)) > 1.0/6.0 ? 1.0/3.0 - startingPos % (1.0/3.0) : -startingPos % (1.0/3.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -61,7 +66,7 @@ public class reverseIndexer extends CommandBase {
     desiredPosition = initialPosition + (70.0/3.0);
     
     // ... for PID comment out everything below here, replace with 
-    return roboIndexer.MoveToPosition(desiredPosition); 
+    return roboIndexer.MoveToPosition(desiredPosition, resetDistance); 
     // 
     /*
     currentPosition = roboIndexer.getEncoderValue();

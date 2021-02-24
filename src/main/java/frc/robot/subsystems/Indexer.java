@@ -34,10 +34,10 @@ import java.lang.Math;
 public class Indexer extends SubsystemBase {
   private CANSparkMax IndexerDonaldMotor;
   private CANPIDController indexerPID;
-  private double kP = 0.5; // 2e-5 initial test value 
-  private double kI = 0.001; // 0 initial test value 
-  private double kD = 0; // 0 initial test value 
-  private double kFF = 0; //0.000165; // 0.000165 initial test value
+  private double kP = 0.07; // 2e-5 initial test value 
+  private double kI = 0.03; // 0 initial test value 
+  private double kD = 0.0; // had success 0.03 but need to check
+  private double kFF = 0; 
   private double commandPos = 0;
 
   //private DigitalInput OpticalSensor;
@@ -54,8 +54,6 @@ public class Indexer extends SubsystemBase {
   boolean shiftIndexer = false; 
   private double indexerSpeed = 0;
   double overShoot;
-
-
 
   /**
    * Creates a new Indexer.
@@ -97,8 +95,16 @@ public class Indexer extends SubsystemBase {
     indexerPID.setI(kI);
     indexerPID.setD(kD); 
     //indexerPID.setFF(kFF);
-    indexerPID.setOutputRange(-1, 1);  
+    indexerPID.setOutputRange(-0.5, 0.5);  
     indexerPID.setIZone(1);
+    
+    /*
+    int smartMotionSlot = 0;
+    indexerPID.setSmartMotionMaxVelocity(7000, smartMotionSlot);
+    indexerPID.setSmartMotionMinOutputVelocity(-7000, smartMotionSlot);
+    indexerPID.setSmartMotionMaxAccel(1400, smartMotionSlot);
+    indexerPID.setSmartMotionAllowedClosedLoopError(0.1, smartMotionSlot);
+    */
 
     ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
@@ -135,20 +141,13 @@ public class Indexer extends SubsystemBase {
     SmartDashboard.putNumber("Indexer Overshoot", overShoot);
     SmartDashboard.putNumber("Command Position", commandPos);
 
-    double p = SmartDashboard.getNumber("P Gain", 0.5);
-    double i = SmartDashboard.getNumber("I Gain", 0.001);
+    double p = SmartDashboard.getNumber("P Gain", 0.07);
+    double i = SmartDashboard.getNumber("I Gain", 0.003);
     double d = SmartDashboard.getNumber("D Gain", 0);
 
     if((p != kP)) { indexerPID.setP(p); kP = p; }
     if((i != kI)) { indexerPID.setI(i); kI = i; }
     if((d != kD)) { indexerPID.setD(d); kD = d; }
-
-    //use to run indexer PID from smartdashboard
-    //double rotations = SmartDashboard.getNumber("Set Rotations", 0);
-    //
-    //indexerPID.setReference(70, ControlType.kPosition);
-
-    //IndexerDonaldMotor.set(indexerSpeed);
   }
 
   public int degreeToCounts(double degrees, int CPR ){
@@ -188,18 +187,25 @@ public class Indexer extends SubsystemBase {
     IndexerDonaldMotor.set(speed);
   } 
 
-  public boolean MoveToPosition(double desiredPosition) {
-    // Pass in the position you want to be in, return true / false if you're there? 
-    this.commandPos = desiredPosition;
-    CANError pidError = this.indexerPID.setReference(desiredPosition, ControlType.kPosition); // well this breaks things but is PID control.......
+  public boolean MoveToPosition(double desiredPosition, double resetDistance) {
+    // Pass in the position you want to be in, return true if you're there
+    // resetDistance uses abs encoder to correct for absolute position 
+
+    this.commandPos = desiredPosition + 70.0*resetDistance; //70:1 gearbox between rel.enc and output
+    CANError pidError = this.indexerPID.setReference(this.commandPos, ControlType.kPosition); 
     SmartDashboard.putString("PID Error", pidError.toString());
-    return Math.abs(this.getEncoderValue() - desiredPosition) < 0.1;
+    boolean isDone = Math.abs(this.getEncoderValue() - this.commandPos) < 0.1;// | IndexerDonaldMotor.getEncoder().getVelocity() < 0.001;
+    return isDone;
   }
 
   public double getEncoderValue(){
     //return alternateEncoder.getPosition();
     // this returns built-in motor controller position
     return IndexerDonaldMotor.getEncoder().getPosition();
+  }
+
+  public double getAbsEncoderValue(){
+    return IndexerDonaldMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition();
   }
 
   //Return value of first position optical sensor

@@ -38,6 +38,8 @@ public class HarvesterIn extends CommandBase {
 
     // A positive back motor (minnie) speed brings power cells in
     // A negative front motor (mickey) speed brings power cells in
+    HarvesterBackSpeed = 0.3;
+    HarvesterFrontSpeed = 0.3;
     roboHarvester.setMinnieSpeed(HarvesterBackSpeed);
     roboHarvester.setMickeySpeed(-HarvesterFrontSpeed);
   }
