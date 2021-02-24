@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.PowerCellConstants;
+import frc.robot.Constants.PowerCellStateMachine;
+import frc.robot.Constants.PowerCellConstants.powerCellStates;
 import frc.robot.Constants;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.AlternateEncoderType;
@@ -30,7 +33,6 @@ import java.lang.Math;
 ** Bang bang controller for indexer rotation works if speed is set low enough. 
 ** PID might work now? I just added the magic line
 */
-
 public class Indexer extends SubsystemBase {
   private CANSparkMax IndexerDonaldMotor;
   private CANPIDController indexerPID;
@@ -40,13 +42,12 @@ public class Indexer extends SubsystemBase {
   private double kFF = 0; 
   private double commandPos = 0;
 
-  //private DigitalInput OpticalSensor;
+  // private DigitalInput OpticalSensor;
   private TimeOfFlight IndexerTOF;
   private CANEncoder alternateEncoder;
   private CANEncoder mainEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
   private boolean PCArray[] = {false,false,false,false};
-
 
   ShuffleboardTab indexerTab;
   NetworkTableEntry desiredRotationNT, currentRotationNT, desiredSpeedNT;
@@ -143,19 +144,51 @@ public class Indexer extends SubsystemBase {
     double i = SmartDashboard.getNumber("I Gain", 0.003);
     double d = SmartDashboard.getNumber("D Gain", 0);
 
-    if((p != kP)) { indexerPID.setP(p); kP = p; }
-    if((i != kI)) { indexerPID.setI(i); kI = i; }
-    if((d != kD)) { indexerPID.setD(d); kD = d; }
+    if ((p != kP)) { indexerPID.setP(p); kP = p; }
+    if ((i != kI)) { indexerPID.setI(i); kI = i; }
+    if ((d != kD)) { indexerPID.setD(d); kD = d; }
+
+    // function to govern the global power cell states
+    powerCellStateMachineManager();
+  }
+
+  public void powerCellStateMachineManager() {
+    switch (PowerCellConstants.powerCellState) {
+      case IDLE:
+        break;
+
+      case HARVESTING:
+        // (check if already full?)
+        // if we have balls already they go down
+        // then take in ball
+          // harvester rotate
+          // tof check
+          // indexer move
+        break;
+
+      case SHOOTING:
+        // (make sure we have a ball?)
+        // move all balls to the top
+        // index up to shoot
+        break;
+
+      case PURGING:
+        break;
+
+      default:
+        System.out.println("[ERROR] This state should never occur.");
+        PowerCellConstants.powerCellState = PowerCellConstants.powerCellStates.IDLE;
+    }
+
   }
 
   public int degreeToCounts(double degrees, int CPR ){
     int Counts = 0;
     Counts = (int)Math.ceil(CPR * degrees/360.0);
     return Counts;
-
   }
   
-  /*Publish values we want to look at to dashboard */
+  /* Publish values we want to look at to dashboard */
   public void UpdateDashboard() {
     //currentRotationNT.setDouble(alternateEncoder.getPosition());
     desiredSpeedNT.getDouble(0);
@@ -180,7 +213,7 @@ public class Indexer extends SubsystemBase {
     PCArray [0] = this.getP0();
   }
 
-  //Move the indexer motor at a certain speed
+  // Move the indexer motor at a certain speed
   public void Movement (double speed){
     IndexerDonaldMotor.set(speed);
   } 
@@ -206,11 +239,11 @@ public class Indexer extends SubsystemBase {
     return IndexerDonaldMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition();
   }
 
-  //Return value of first position optical sensor
+  // Return value of first position optical sensor
   // If indexer TOF sees PC, this returns true. These values likely need to be adjusted
   public boolean getP0(){
     double distance = IndexerTOF.getRange(); // in mm
-    //return OpticalSensor.get();
+    // return OpticalSensor.get();
     // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range 
     
     return distance >= 15 && distance <= 25;
@@ -238,7 +271,7 @@ public class Indexer extends SubsystemBase {
 
   public void ResetEncoder() {
     mainEncoder.setPosition(0);
-    //alternateEncoder.setPosition(0);
+    // alternateEncoder.setPosition(0);
   }
 
   // Functions for compenstating based on indexer overshoot. We never tested these.
@@ -250,10 +283,9 @@ public class Indexer extends SubsystemBase {
     return overShoot;
   }
 
-  //TESTING FUNCTIONS 
-  //For testing, this will be disabled later
+  // TESTING FUNCTIONS 
+  // For testing, this will be disabled later
   public double getdesiredSpeed() {
     return desiredSpeedNT.getDouble(0);
   }
-
 }

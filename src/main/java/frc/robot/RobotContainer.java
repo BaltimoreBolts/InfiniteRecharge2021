@@ -85,16 +85,64 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
     // Configure the button bindings
     configureButtonBindings();
-    //initializeRobot(); //doesnt work, goal was to move the indexer on boot
 
-    // Set default drive command
-    // Negative in the Y direction makes robot go forward 2/6
-    // This seemed like kinda wonky way to get drive to work, but it was the only way
-    // we could figure out in 2019/2020 for command based programming. There may be 
-    // a better way
+    // Configure the control scheme for the drive train
+    configureDriveMode();
     
+    // Configure the camera
+    configureCamera();
+  }
+
+  /**
+   * Use this method to define your button->command mappings.  Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {  
+
+    // INITIALIZE DRIVER CONTROLLER BUTTONS
+    rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
+    leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
+    xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
+    aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
+    bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
+
+    // INITIALIZE OPERATOR CONTROLLER BUTTONS
+    aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
+    bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
+    xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
+    yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
+    rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
+    leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
+    
+    // DRIVER BUTTON ASSIGNMENTS
+    // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
+    // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
+    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
+    leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
+    // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
+    // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
+    // xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
+
+    // Testing Indexer rotation
+    aDriverButton.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
+    bDriverButton.whenPressed(new ReverseIndexer(roboIndexer));
+
+    // OPERATOR BUTTON ASSIGNMENTS
+    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in 
+    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out 
+    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out 
+    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in 
+
+    yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
+    aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
+  }
+  
+  private void configureDriveMode() {
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("Drive Mode", driveMode.toString());
     switch (driveMode) {
@@ -153,13 +201,9 @@ public class RobotContainer {
           )
         );
     }
-       
-    // roboShoot.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> roboShoot.closedLoopStateMachineManager(), roboShoot
-    //   )
-    // );
-    
+  }
+
+  private void configureCamera() {
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
   
@@ -171,65 +215,6 @@ public class RobotContainer {
     // camera.setResolution(RobotMap.IMG_WIDTH, RobotMap.IMG_HEIGHT);
     // camera.setBrightness(50);
     // camera.setExposureManual(50);
-      
-
-  }
-  /**
-   * Use this method to define your button->command mappings.  Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {  
-
-
-    // INITIALIZE DRIVER CONTROLLER BUTTONS
-    rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
-    xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
-    aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
-    bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
-
-
-    // INITIALIZE OPERATOR CONTROLLER BUTTONS
-    aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
-    bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
-    xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
-    yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
-    rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
-    
-
-    // DRIVER BUTTON ASSIGNMENTS
-    // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
-    // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
-    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
-    leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
-    // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
-    // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
-    // xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
-
-    // Testing Indexer rotation
-    aDriverButton.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
-    bDriverButton.whenPressed(new ReverseIndexer(roboIndexer));
-
-
-    // OPERATOR BUTTON ASSIGNMENTS
-    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in 
-    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out 
-    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out 
-    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in 
-
-    yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
-    aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
-  }
-  
-  public void initializeRobot(){
-    double initialPosition = roboIndexer.getEncoderValue();
-    double startingPos = roboIndexer.getAbsEncoderValue();
-    double resetDistance = (startingPos % (1.0/3.0)) > 1/6 ? 1.0/3.0 - (startingPos % (1.0/3.0 )) : -(startingPos % (1.0/3.0)); //determine which +-1/3 is closer
-    SmartDashboard.putNumber("Initialize Distance", initialPosition + 70*resetDistance);
-    roboIndexer.MoveToPosition(initialPosition + 70*resetDistance, 0);
   }
 
   /**

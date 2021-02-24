@@ -143,7 +143,7 @@ public class Shooter extends SubsystemBase {
     leftShooterDutyCycle = leftShooterMotor.getAppliedOutput();
 
     // State Machine
-    if (shooterControlState == ShooterControlState.IDLE){
+    if (shooterControlState == ShooterControlState.IDLE) {
 
       kP = 0.0005; 
       kI = 0.0000025; 
@@ -223,10 +223,10 @@ public class Shooter extends SubsystemBase {
     valueOrPID = SmartDashboard.getBoolean("Value or SetPID:", true);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((pTemp != kP)) { shooterPID.setP(pTemp); kP = pTemp; }
-    if((kI != iTemp)) { shooterPID.setI(iTemp); kI = iTemp; }
-    if((dTemp != kD)) { shooterPID.setD(dTemp); kD = dTemp; }
-    if((ffTemp != kFF)) { shooterPID.setFF(ffTemp); kFF = ffTemp; }
+    if ((pTemp != kP)) { shooterPID.setP(pTemp); kP = pTemp; }
+    if ((kI != iTemp)) { shooterPID.setI(iTemp); kI = iTemp; }
+    if ((dTemp != kD)) { shooterPID.setD(dTemp); kD = dTemp; }
+    if ((ffTemp != kFF)) { shooterPID.setFF(ffTemp); kFF = ffTemp; }
    
 
     if (motor1ShooterSpeed >= 1.0) {

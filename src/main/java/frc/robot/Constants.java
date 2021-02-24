@@ -85,6 +85,27 @@ public final class Constants {
         public static final int kFFCircularBufferSize = 20;
     }
 
+    public static final class PowerCellConstants {
+        public static boolean[] powerCellPositions;
+        public static powerCellStates powerCellState;
+        public static enum powerCellStates {
+            IDLE("Idle"), // robot not doing anything
+            HARVESTING("Harvesting"), // state of intaking balls
+            SHOOTING("Shooting"), // state of shooting balls
+            PURGING("Purging"); // state of removing balls
+
+            private String name;
+            private powerCellStates(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public String toString() {
+                return name;
+            }
+        };
+    }
+
     public static final class HarvesterConstants {
         public static final int HARVESTER_MOTOR_MICKEY = 6;
         public static final int HARVESTER_MOTOR_MINNIE = 5;
