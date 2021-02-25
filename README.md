@@ -47,44 +47,35 @@ Start -> Main.java
         - front and back harvester for instance
 
 ### Easter Egg
-WNOo:;,,,,;:ldOXMMMMMWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-Kl,;;:;:;;:::,,cdONMMWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-c,::;::::;;::;:;,:ldk0XWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-',:;;;:::;;::;:;;;;,,,;:clllodk0NWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN0kolcclokKWMMMM
-.;;;;;:::::::::;;:;,,,,,;;;,,''.,cd0WWMMMMMMMMMMMMMMMMMMMMMMMXkl,..........;dXMM
-.,;::;:::::::::::;:::;::::::::;;,...c0WMMMMMMMMMMMMMMMMMMWWKo;'.',;,,,,,''...,kW
-,.,;:::;::::::::;;:::;:::::::::;;;''.,0MMMMMMMMMMMMMMMMMWKo,',;:::;:::;:;,''...x
-k,.,;;::::::::;;:::;::;;:::::::;::,'..cNMMMMMMMMMMMMMMMXd,.;:;:::::;;;:::;,'...'
-WO,.,;;;:::;::;;:::::::::::::::::;,''.:XMMMMMMMMMWMMNOo;..;::;;:::::::::;:;,''.
-MMKl'.,,;::;::;;::::::::::::::;:;;''..oWMMMMMMWNKOkdc;,'',;::;;:::::::::::;,''.
-MMMWOc'.',,;;;:::::::::::;;:::;;,''..lXMMWN0xolc;,;;;;,,;::::;;:;:::::::;;;,''..
-MMMMMW0o;..',,,,;;;;;;;;;;;;;,'''..,xNNOdo:,,,;:;;;,,;;;;::::;::::;;::::;:;,''..
-MMMMMMMMNOo:,....'',',,,,,''....':xXNOc,,,::;;::;:::::::::::::::::;:::;::;,''..c
-MMMMMMMMMMMWXkoc:;'.......',;cokXWWXo,,::::::;;:::::::::::::::::;;:::;;:;,''..;K
-MMMMMMMMMMMMMMMMWNK0OOkOO0KXWWWMWMWd';:;::;:::;;;::::::::::::::::::;;::;,''..;0M
-MMMMMMMMMMMMMMWKkdllllodkKWMWWWMMMXc':;;;::;;:::;::::::::::::::;::::;;;,''..cKMM
-MMMMMMMMMMMWXd:,,,,;;;,,',co0NWMMMNl';::::::::::::;;;:;;;::;;;:::::;;,''..,xNMMM
-MMMMMMMMWMNd,',;::::::::::;',lONMWW0;'::;;:::::;:;;::;;::;::::;::;,''...'oKWMMMW
-MMMMMMMMMK:.,:;:::cc:c::::;::;,c0WWWOc,;:::::::;::;:::::::::::;;,''...;dKWMMMMMM
-MMMMMMMM0;.,:;::lc:;;:ccc:::::;';kNWNXx:,,';;:::::;:::::::;,;;,'..';lONMMMMMMMMM
-MMMMMMMX:.';::::c::::::cc:::::::,,dXNWWXOxc,'',,,;,,;;;,,'...',coxKWMMMMMMMMMMMM
-MMMMMMMk..,;;;:::;;:::;;:;;;:::;,;,lKWMWWWWXOdlc::;,,;;::clok0XWMMMMMMMMMMMMMMMM
-MMMMMMMd..,;;::::::;;;:;;::;;::;,;c;,oKWMMMMMMMMWWNXXXNWWWMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMo..,;;::;::::;::::::;;;::;',::,,lokXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMx..,;:::;:::::::::::::::;::;,,,,...':dOXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMM0,.',;;:::::::::::::::::;;;:::;,'',,,'',cxKNMMWMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMWo..';::::::::::::::::::;;;::::::::::;:;,.':xXWWWMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMK;.'';::;;:::::::::::::;;;;;:::;:::::;;::;..'oKWMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMWk'.'',::;::::::::::::::::::::::::::::::::;,..'xNWWMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMWk..'',;:::::;;::::::::::::::::::::::::;;:;,'..lNMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMWO,..'',;;::::::::::::::::::::::::::::::;:,''..dWMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMKc..'',,;:;::::;;::::::::::::::;;;;::;::,''. ;XMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMNx,..''',;;:::::;:::::::::::;;:::::::;;,''. ;XMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMXo...''',;;;:::::::::::::::::::::;:;,'.'. lNMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMW0c....''',,;;;:::::::::::::::;;;,'.''. ,0MMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMW0o,...'''',,,;;;;;;;;;;;;;,,'''''...;0WMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMNkc,.....'''''''''''''''''''....,xXMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMNOd:,.....................,ckXMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMMMMMMMMMMWNKkdl:;;,,''''',;;cox0NWWMMMMMMMMMMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMXKXXKXKK0KKXKK0KKK000OOOO0XWWXKKK000KKK00KXWMMMMMMMMMMMMMMMMMM
-MMMMMMMMMMMMMMMMMMX0KX0OO0OOOOOOKK0OO0K0OOO0XWN0kkkOOO0XKO0KXNMMMMMMMMMMMMMMMMMM
+```
+Nkc:;,,;:ldONMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+o,;:;:::::,,lx0XNWMMMMMWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+,;:;;:::::;;;;;:cloodxk0XWMWMMMMMMMMMMMMMMMMMMMWXOxoooxOXWMM
+.;:;;;::::;;:;;;,,,;,,,,;cxXWWWWMMMMMMMMMMMWMNkc,.......,l0W
+',:;::;;:::::::::::::::;;'.;OWWMMMMMMMMMMWWXd:',;;;;;;,'..'k
+l',::;;::::::::::::::::::;'.:KWWWMMMMMMMMXd;';:::::;;:;,''.'
+No'';;;:::::::::::::::::;,'.,0MWWMMMWWN0d:.':::::;::;::;,'..
+MNO:'',;;;::::::::;;;::;,'..dNWWNKOkdol;,,,;::;:::;;::;;,''.
+WWMNkl,'',,;;;;;;:;;;;,,..,xX0xdc:;,;;;;;;:::;;:::;;::;;,'..
+MMMWMWXko:'...''''''...,cxK0l;,,;:::::;::::;;:::::::::;;'..:
+MMMMMMMMMNKkdolccccloxMMMMO:;:;;;;:::;;;;:::::::;;;:::;'..,0
+MMMMMMMMMMWXOxddxk0NMMWMMNo,:;:;;:::::;;;:::::::::::;,'..;0M
+MMMMMMMMNkl;,,,,,,;coMMMMWd,;:::::;;:::;;:::;;:::;;,'..'oXWW
+MWMMMMW0c,;:;:c::;::;;lMMMKc,::::::::::::::::::;;,'..'lKWMMM
+MMMMMWO,';;:c::::c::::,,dXWKd:;,;:::::::::::;;;,..,cdKWMMMMM
+MMMMM0;.;;;:c::::::::::;,lKWWKOdc;'',,,,,'''',:ldOXWMMMMMMMM
+MMMMMd.';:;;:;;::::::::,;:cxNMWMWXOxdooooodxOKNWMMMMMMMMMMMM
+MMMMMo.';:;;:;;::::::::;,;;;cdOKWMMMMMMWMMMMMMMMMMMMMMMMMMMM
+MMMMMx.';::;:;;:::::::::;,,,'..':okXWMMWMMMMMMMMMMMMMMMMMMMM
+MMMMM0,.,;;;:;::::::::::::;;;,,,;'';cdKWMMMMMMMMMMMMMMMMMMMM
+MMMMMWo.',;:::;;::::::::::::::::::::,.'cOWMMMMMMMMMMMMMMMMMM
+MMMMMMXc.',;;;:::::::::::::::::::::;:;,..lXMMMMMMMMMMMMMMMMM
+MMMMMMMK:..';:::::::::::::::::::;:::::;,..:KMMMMMMMMMMMMMMMM
+MMMMMMMMXl..',;:;;::::;;:::;;:::;;::::;,'..oMMWMMMMMMMMMMMMM
+MMMMMMMMWNk;..',;::;;;;:::::;;;::::;::;,'..lWMMMMMMMMMMMMMMM
+MMMMMMMMMMMXd,..',,;;::::::::;;;;:;:;;,''..kWMMMMMMMMMMMMMMM
+MMMMMMMMMMMMWKd,...'',,;;;;;;;;;;;;,,'....dNWMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMNkc,....'',,,,,,,'''''...:ONMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMWNOoc;,...........',:d0WMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMWNNNNNXXXKOkdooolllodkO0XXXXXXXXNWMMMMMMMMMMMMM
+```
