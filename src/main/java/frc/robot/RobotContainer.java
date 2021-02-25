@@ -48,38 +48,37 @@ import edu.wpi.cscore.UsbCamera;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // The robot's subsystems and commands are defined here...
   private final DriveTrain roboDT = new DriveTrain();
   private final Indexer roboIndexer = new Indexer();
   private final Shooter roboShoot = new Shooter();
   private final Harvester roboHarvest = new Harvester(roboIndexer, roboShoot);
   private final Elevator roboElevator = new Elevator();
-  
+
   // Define CameraServer
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
- 
+
   private Command autoCommand = new AutonomousDrive(roboDT, 18);
-  private Command autoShoot = new AutonomousShoot(roboShoot); // Stupid way to do this but a hot fix for testing 
+  private Command autoShoot = new AutonomousShoot(roboShoot); // Stupid way to do this but a hot fix for testing
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
   private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
-  JoystickButton rightDriverBumper; 
-  JoystickButton leftDriverBumper; 
-  JoystickButton xDriverButton;
-  JoystickButton aDriverButton;
-  JoystickButton bDriverButton;
 
-  JoystickButton aOperatorButton;
-  JoystickButton bOperatorButton;
-  JoystickButton xOperatorButton;
-  JoystickButton yOperatorButton;
-  JoystickButton rightOperatorBumper;
-  JoystickButton leftOperatorBumper;
+  // Initialize Driver Buttons
+  JoystickButton yDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
+
+  // Initialize Operator Buttons
+  JoystickButton aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
+  JoystickButton bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
+  JoystickButton xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
+  JoystickButton yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
+  JoystickButton leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
+  JoystickButton rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -91,7 +90,7 @@ public class RobotContainer {
 
     // Configure the control scheme for the drive train
     configureDriveMode();
-    
+
     // Configure the camera
     configureCamera();
   }
@@ -102,67 +101,43 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {  
+  private void configureButtonBindings() {
 
-    // INITIALIZE DRIVER CONTROLLER BUTTONS
-    rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
-    xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
-    aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
-    bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
-
-    // INITIALIZE OPERATOR CONTROLLER BUTTONS
-    aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
-    bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
-    xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
-    yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
-    rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
-    
     // DRIVER BUTTON ASSIGNMENTS
-    // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
-    // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
-    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
-    leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
-    // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
-    // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
-    // xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
-
-    // Testing Indexer rotation
-    aDriverButton.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
-    bDriverButton.whenPressed(new ReverseIndexer(roboIndexer));
 
     // OPERATOR BUTTON ASSIGNMENTS
-    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in 
-    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out 
-    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out 
-    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in 
+    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in
+    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out
+    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out
+    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in
 
     yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
     aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
   }
-  
+
   private void configureDriveMode() {
+
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("Drive Mode", driveMode.toString());
+
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.arcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
-              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
+              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)),
             roboDT
           )
         );
         break;
 
-      case kCLArcade: 
+      case kCLArcade:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
-              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
+              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)),
             roboDT
           )
         );
@@ -172,8 +147,8 @@ public class RobotContainer {
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              joystick.getX(), 
-              -leftJoystick.getY()), 
+              joystick.getX(),
+              -leftJoystick.getY()),
             roboDT
           )
         );
@@ -184,7 +159,7 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.55,
-              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))*0.7), 
+              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))*0.7),
             roboDT
           )
         );
@@ -196,7 +171,7 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
-              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))), 
+              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))),
             roboDT
           )
         );
@@ -206,7 +181,7 @@ public class RobotContainer {
   private void configureCamera() {
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
-  
+
     // Camera code
     // serverOne = CameraServer.getInstance();
     // // serverOne.startAutomaticCapture();
@@ -224,7 +199,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand(boolean value) {
     // An ExampleCommand will run in autonomous
-    // Again really dumb way to do this but the SequentialCommandGroup was breaking our code 
+    // Again really dumb way to do this but the SequentialCommandGroup was breaking our code
     if (value) {
       return autoCommand;
     } else {

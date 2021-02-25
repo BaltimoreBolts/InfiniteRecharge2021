@@ -1,5 +1,7 @@
 # Baltimore Bolts 2021 Robot Code
 - 2021 Infinite Recharge robot code base
+- Robot Name: "Lazar Beam"
+- Code Name: "Beans"
 
 ### Software Architecture
 ```
@@ -43,3 +45,46 @@ Start -> Main.java
     - this essentially means you can only run one command on a particular subsystem at a time
     - if you want to run multiple commands on a subsystem, it must be broken into multiple subsystems
         - front and back harvester for instance
+
+### Easter Egg
+WNOo:;,,,,;:ldOXMMMMMWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+Kl,;;:;:;;:::,,cdONMMWWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+c,::;::::;;::;:;,:ldk0XWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+',:;;;:::;;::;:;;;;,,,;:clllodk0NWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMN0kolcclokKWMMMM
+.;;;;;:::::::::;;:;,,,,,;;;,,''.,cd0WWMMMMMMMMMMMMMMMMMMMMMMMXkl,..........;dXMM
+.,;::;:::::::::::;:::;::::::::;;,...c0WMMMMMMMMMMMMMMMMMMWWKo;'.',;,,,,,''...,kW
+,.,;:::;::::::::;;:::;:::::::::;;;''.,0MMMMMMMMMMMMMMMMMWKo,',;:::;:::;:;,''...x
+k,.,;;::::::::;;:::;::;;:::::::;::,'..cNMMMMMMMMMMMMMMMXd,.;:;:::::;;;:::;,'...'
+WO,.,;;;:::;::;;:::::::::::::::::;,''.:XMMMMMMMMMWMMNOo;..;::;;:::::::::;:;,''.
+MMKl'.,,;::;::;;::::::::::::::;:;;''..oWMMMMMMWNKOkdc;,'',;::;;:::::::::::;,''.
+MMMWOc'.',,;;;:::::::::::;;:::;;,''..lXMMWN0xolc;,;;;;,,;::::;;:;:::::::;;;,''..
+MMMMMW0o;..',,,,;;;;;;;;;;;;;,'''..,xNNOdo:,,,;:;;;,,;;;;::::;::::;;::::;:;,''..
+MMMMMMMMNOo:,....'',',,,,,''....':xXNOc,,,::;;::;:::::::::::::::::;:::;::;,''..c
+MMMMMMMMMMMWXkoc:;'.......',;cokXWWXo,,::::::;;:::::::::::::::::;;:::;;:;,''..;K
+MMMMMMMMMMMMMMMMWNK0OOkOO0KXWWWMWMWd';:;::;:::;;;::::::::::::::::::;;::;,''..;0M
+MMMMMMMMMMMMMMWKkdllllodkKWMWWWMMMXc':;;;::;;:::;::::::::::::::;::::;;;,''..cKMM
+MMMMMMMMMMMWXd:,,,,;;;,,',co0NWMMMNl';::::::::::::;;;:;;;::;;;:::::;;,''..,xNMMM
+MMMMMMMMWMNd,',;::::::::::;',lONMWW0;'::;;:::::;:;;::;;::;::::;::;,''...'oKWMMMW
+MMMMMMMMMK:.,:;:::cc:c::::;::;,c0WWWOc,;:::::::;::;:::::::::::;;,''...;dKWMMMMMM
+MMMMMMMM0;.,:;::lc:;;:ccc:::::;';kNWNXx:,,';;:::::;:::::::;,;;,'..';lONMMMMMMMMM
+MMMMMMMX:.';::::c::::::cc:::::::,,dXNWWXOxc,'',,,;,,;;;,,'...',coxKWMMMMMMMMMMMM
+MMMMMMMk..,;;;:::;;:::;;:;;;:::;,;,lKWMWWWWXOdlc::;,,;;::clok0XWMMMMMMMMMMMMMMMM
+MMMMMMMd..,;;::::::;;;:;;::;;::;,;c;,oKWMMMMMMMMWWNXXXNWWWMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMo..,;;::;::::;::::::;;;::;',::,,lokXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMx..,;:::;:::::::::::::::;::;,,,,...':dOXWMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMM0,.',;;:::::::::::::::::;;;:::;,'',,,'',cxKNMMWMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMWo..';::::::::::::::::::;;;::::::::::;:;,.':xXWWWMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMK;.'';::;;:::::::::::::;;;;;:::;:::::;;::;..'oKWMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMWk'.'',::;::::::::::::::::::::::::::::::::;,..'xNWWMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMWk..'',;:::::;;::::::::::::::::::::::::;;:;,'..lNMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMWO,..'',;;::::::::::::::::::::::::::::::;:,''..dWMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMKc..'',,;:;::::;;::::::::::::::;;;;::;::,''. ;XMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMNx,..''',;;:::::;:::::::::::;;:::::::;;,''. ;XMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMXo...''',;;;:::::::::::::::::::::;:;,'.'. lNMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMW0c....''',,;;;:::::::::::::::;;;,'.''. ,0MMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMW0o,...'''',,,;;;;;;;;;;;;;,,'''''...;0WMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMNkc,.....'''''''''''''''''''....,xXMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMNOd:,.....................,ckXMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMMMMMMMMMMWNKkdl:;;,,''''',;;cox0NWWMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMXKXXKXKK0KKXKK0KKK000OOOO0XWWXKKK000KKK00KXWMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMMMMMMMMMX0KX0OO0OOOOOOKK0OO0K0OOO0XWN0kkkOOO0XKO0KXNMMMMMMMMMMMMMMMMMM
