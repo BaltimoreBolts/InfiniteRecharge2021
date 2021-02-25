@@ -71,6 +71,8 @@ public class RobotContainer {
 
   // Initialize Driver Buttons
   JoystickButton yDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
+  JoystickButton startDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.START);
+  JoystickButton backDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.BACK);
 
   // Initialize Operator Buttons
   JoystickButton aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
@@ -79,6 +81,14 @@ public class RobotContainer {
   JoystickButton yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
   JoystickButton leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
   JoystickButton rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
+  JoystickButton leftOperatorTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.LEFT);
+  JoystickButton rightOperatorTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.RIGHT);
+  JoystickButton leftOperatorDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.LEFT);
+  JoystickButton rightOperatorDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.RIGHT);
+  JoystickButton upOperatorDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.UP);
+  JoystickButton downOperatorDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.DOWN);
+  JoystickButton startOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.START);
+  JoystickButton backOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.BACK);
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -106,13 +116,15 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
 
     // OPERATOR BUTTON ASSIGNMENTS
+    // aOperatorButton.whenPressed(); // run intake state machine
+    // bOperatorButton.whenPressed(); // run shooting state machine
     bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in
     xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out
     rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out
     leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in
 
-    yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
-    aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
+    leftOperatorBumper.whenPressed(new ElevatorGoDown(roboElevator));
+    rightOperatorBumper.whenPressed(new ElevatorGoUp(roboElevator));
   }
 
   private void configureDriveMode() {

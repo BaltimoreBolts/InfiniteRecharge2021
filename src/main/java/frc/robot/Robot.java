@@ -35,7 +35,7 @@ public class Robot extends TimedRobot {
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
-  @Override 
+  @Override
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -78,12 +78,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     autonomousCommand1 = robotContainer.getAutonomousCommand(true);
-    //autonomousCommand2 = robotContainer.getAutonomousCommand(false);
+    // autonomousCommand2 = robotContainer.getAutonomousCommand(false);
     System.out.println("\n\nInside Autonomous Init\n\n");
     // schedule the autonomous command (example)
     if (autonomousCommand1 != null) {
-      //System.out.println("\n\nCalling Autonomous Shoot\n\n");
-      //autonomousCommand2.schedule();
+      // System.out.println("\n\nCalling Autonomous Shoot\n\n");
+      // autonomousCommand2.schedule();
       autonomousCommand1.schedule();
     }
   }
@@ -111,7 +111,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
+
   }
 
   @Override

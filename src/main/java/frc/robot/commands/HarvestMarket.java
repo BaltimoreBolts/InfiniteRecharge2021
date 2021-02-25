@@ -11,24 +11,24 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Harvester;
 import frc.robot.subsystems.Indexer;
 
-/* 
+/*
 ** PURPOSE: Meant to run harvester until a PC is no longer in harvester TOF view
 ** STATUS: Not tested, probably not finished coding (there's no mention of mickey/front harvester motor)
-*/ 
+*/
 
 public class HarvestMarket extends CommandBase {
   Harvester harvestMarket;
   Indexer indexerCaptain;
   boolean isEmpty;
   boolean isFull;
-  
+
   /**
    * Creates a new HarvesterDemon.
    */
   public HarvestMarket(Harvester inputHarvester, Indexer inputIndexer) {
     harvestMarket = inputHarvester;
     indexerCaptain = inputIndexer;
-    
+
   }
 
   // Called when the command is initially scheduled.
@@ -42,16 +42,16 @@ public class HarvestMarket extends CommandBase {
   @Override
   public void execute() {
     if (isEmpty) {
-      harvestMarket.setMinnieSpeed(0.25);
+      harvestMarket.setHarvesterBackSpeed(0.25);
     }
-      
-    
+
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    harvestMarket.setMinnieSpeed(0);
+    harvestMarket.setHarvesterBackSpeed(0);
   }
 
   // Returns true when the command should end.

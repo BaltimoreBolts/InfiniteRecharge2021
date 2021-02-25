@@ -7,7 +7,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Harvester;
 
-/* 
+/*
 ** PURPOSE: This was a testing function to exclusively run the two harvester motors
 ** STATUS: Works!
 */
@@ -40,8 +40,8 @@ public class HarvesterIn extends CommandBase {
     // A negative front motor (mickey) speed brings power cells in
     HarvesterBackSpeed = 0.3;
     HarvesterFrontSpeed = 0.3;
-    roboHarvester.setMinnieSpeed(HarvesterBackSpeed);
-    roboHarvester.setMickeySpeed(-HarvesterFrontSpeed);
+    roboHarvester.setHarvesterBackSpeed(HarvesterBackSpeed);
+    roboHarvester.setHarvesterFrontSpeed(-HarvesterFrontSpeed);
   }
 
   // Called once the command ends or is interrupted.
@@ -49,8 +49,8 @@ public class HarvesterIn extends CommandBase {
   public void end(boolean interrupted) {
 
     // Stop both motors
-    roboHarvester.setMinnieSpeed(0);
-    roboHarvester.setMickeySpeed(0);
+    roboHarvester.setHarvesterBackSpeed(0);
+    roboHarvester.setHarvesterFrontSpeed(0);
   }
 
   // Returns true when the command should end.

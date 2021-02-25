@@ -10,27 +10,27 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-/* 
+/*
 ** PURPOSE: Suck in the power cells!
 ** STATUS: Never tested,a bunch is commented out so not sure if it would work in current configuration
 ** Speed directions are definitely wrong.
 */
 public class PowerCellSucker extends CommandBase {
-  Harvester roboKirby;
-  double harDir; 
-  boolean section; 
+  Harvester harvester;
+  double harvesterDirection;
+  boolean section;
 
   /**
    * Creates a new PowerCellSucker.
-   * Negative direction sucks the power cell in 
-   * true input selection is the top (near indexer) part of the harvester, false is the front part 
+   * Negative direction sucks the power cell in
+   * true input selection is the top (near indexer) part of the harvester, false is the front part
    */
   public PowerCellSucker(Harvester roboHarvest, double direction, boolean inputSection) {
-    roboKirby = roboHarvest;
-    harDir = direction;
+    harvester = roboHarvest;
+    harvesterDirection = direction;
     section = inputSection;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(roboKirby);
+    addRequirements(harvester);
   }
 
   // Called when the command is initially scheduled.
@@ -45,9 +45,9 @@ public class PowerCellSucker extends CommandBase {
     }
     */
     if (section) {
-      roboKirby.setMinnieSpeed(0.35 * harDir);
+      harvester.setHarvesterBackSpeed(0.35 * harvesterDirection);
     } else {
-      roboKirby.setMickeySpeed(0.35 * harDir);
+      harvester.setHarvesterFrontSpeed(0.35 * harvesterDirection);
     }
   }
 
@@ -60,23 +60,23 @@ public class PowerCellSucker extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if (section) {
-      roboKirby.setMinnieSpeed(0.0);
+      harvester.setHarvesterBackSpeed(0.0);
     } else {
-      roboKirby.setMickeySpeed(0.0);
+      harvester.setHarvesterFrontSpeed(0.0);
     }
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    /* 
+    /*
     if (roboKirby.getHarvesterTOF() == true) {
       return true;
     } else {
       return false;
     }
-    */ 
-    return false; 
+    */
+    return false;
   }
 
 }

@@ -16,8 +16,8 @@ import java.lang.Math;
  *
  * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
- * 
- * PURPOSE: Constants file 
+ *
+ * PURPOSE: Constants file
  */
 public final class Constants {
     // General constants
@@ -25,7 +25,7 @@ public final class Constants {
         public static final int REV_ENCODER_CPR = 8192;
         public static final double DEG2RAD = Math.PI/180.0;
         public static final double G_FT_PER_SEC2 = 32.2; //ft per second squared
-        public static final double M_TO_FEET = 3.28084; 
+        public static final double M_TO_FEET = 3.28084;
         public static final double INNER_PORT_HEIGHT_FT = 8.17;
         public static final double SHOOTER_HEIGHT_FT = 1;
         public static final double SHOOTER_ANGLE_DEG = 0;
@@ -107,8 +107,8 @@ public final class Constants {
     }
 
     public static final class HarvesterConstants {
-        public static final int HARVESTER_MOTOR_MICKEY = 6;
-        public static final int HARVESTER_MOTOR_MINNIE = 5;
+        public static final int HARVESTER_FRONT_MOTOR = 6;
+        public static final int HARVESTER_BACK_MOTOR = 5;
         public static final int HARVESTER_LIMIT_SWITCH = 0;
         // tof is the time of flight sensor
         public static final int HARVESTER_TOF = 11;
@@ -122,7 +122,7 @@ public final class Constants {
         public static final int INDEXER_LIMIT_SWITCH4 = 4;
         public static final int INDEXER_LIMIT_SWITCH5 = 5;
         public static final int INDEXER_TOF = 12;
-    } 
+    }
 
     public static final class ElevatorConstants {
         public static final int ELEVATOR_MOTOR_GOOFY = 8;
@@ -137,12 +137,12 @@ public final class Constants {
             public static final int Y = 4;
             public static final int BACK = 7;
             public static final int START = 8;
-            
+
             public static final class BUMPER {
                 public static final int LEFT = 5;
                 public static final int RIGHT = 6;
             }
-            
+
             // handy boolean conversion
             // if (controller.getPOV() == Controller.DPAD.UP) == true
             public static final class DPAD {
@@ -155,18 +155,18 @@ public final class Constants {
                 public static final int LEFT = 270;
                 public static final int UP_LEFT = 315;
             }
-            
+
             public static final class TRIGGER {
                 public static final int LEFT = 2;
                 public static final int RIGHT = 3;
             }
-            
+
             public static final class STICK {
                 public static final class LEFT {
                     public static final int X = 0;
                     public static final int Y = 1;
                 }
-                
+
                 public class RIGHT {
                     public static final int X = 4;
                     public static final int Y = 5;

@@ -15,15 +15,15 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
 
-/* 
-** PURPOSE: This was a testing function to exclusively move the indexer up one. 
+/*
+** PURPOSE: This was a testing function to exclusively move the indexer up one.
 ** Also calls inner harvester motor so PC doesn't get stuck in the first slot
 ** STATUS: Works!
 */
 public class MoveIndexer extends CommandBase {
   Indexer roboIndexer;
   Harvester roboHarvester;
-  double IndexerSpeed = 0; 
+  double IndexerSpeed = 0;
   double HarvesterSpeed = 0;
   double currentPosition = 0;
   double desiredPosition = 0;
@@ -31,7 +31,7 @@ public class MoveIndexer extends CommandBase {
   double degreesToRotate = 120;
   double startingPos = 0;
   double resetDistance = 0;
-  double startTime = 0; 
+  double startTime = 0;
   final double maxPIDduration = 1e9; // 1 second in nano seconds
   int n = 0;
   /**
@@ -80,7 +80,7 @@ public class MoveIndexer extends CommandBase {
   public void end(boolean interrupted) {
   //The speed is being set to 0/
     roboIndexer.Movement(0);
-    roboHarvester.setMinnieSpeed(0);
+    roboHarvester.setHarvesterBackSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -90,11 +90,11 @@ public class MoveIndexer extends CommandBase {
     //desiredPosition = degreesToRotate/360.0+initialPosition;
     desiredPosition = initialPosition - (70.0/3.0);
     //desiredPosition = 1;
-    // ... for PID comment out everything below here, replace with 
+    // ... for PID comment out everything below here, replace with
     double duration = System.nanoTime() - startTime;
 
-    return roboIndexer.MoveToPosition(desiredPosition, resetDistance) || duration > maxPIDduration; 
-    // 
+    return roboIndexer.MoveToPosition(desiredPosition, resetDistance) || duration > maxPIDduration;
+    //
 
     //return roboIndexer.MoveToPosition(desiredPosition);
     /* currentPosition = roboIndexer.getEncoderValue();
@@ -103,6 +103,6 @@ public class MoveIndexer extends CommandBase {
    } else {
      return false;
    }*/
-    
+
   }
 }
