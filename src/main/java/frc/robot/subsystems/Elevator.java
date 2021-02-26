@@ -20,8 +20,8 @@ import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Relay;
 
 
-/* 
-** PURPOSE: Elevator sub-system. 
+/*
+** PURPOSE: Elevator sub-system.
 ** STATUS: Tested pretty well
 */
 
@@ -35,21 +35,21 @@ public class Elevator extends SubsystemBase {
    * Creates a new Elevator.
    */
   public Elevator() {
-    ElevatorGoofyMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_GOOFY,MotorType.kBrushless);
+    ElevatorGoofyMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR,MotorType.kBrushless);
     ElevatorGoofyMotor.restoreFactoryDefaults();
     ElevatorGoofyMotor.setSmartCurrentLimit(40);
     ElevatorGoofyMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    elevatorEncoder = ElevatorGoofyMotor.getAlternateEncoder(kAltEncType, 
+    elevatorEncoder = ElevatorGoofyMotor.getAlternateEncoder(kAltEncType,
                         Constants.GenConstants.REV_ENCODER_CPR); // Changed this, to match indexer, same encoder?
     elevatoRelay = new Relay(2, Relay.Direction.kForward);
     ElevatorGoofyMotor.burnFlash();
   }
-  
+
   public void setSpeed(double speed){
     ElevatorGoofyMotor.set(speed);
   }
 
-  // engage ratched by having the relay off. 
+  // engage ratched by having the relay off.
   // This way when power is cut to the robot, it doesn't drop
   public void engageRatchet () {
     elevatoRelay.set(Value.kOff);

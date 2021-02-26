@@ -15,25 +15,18 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-
-/* 
-** PURPOSE: This is the sequential command to shoot power cells, move indexer up, and then harvest
-** STATUS: Never tested
-*/ 
+/**
+ * PURPOSE: This is the sequential command to shoot power cells, move indexer up, and then harvest
+ * STATUS: Never tested
+ */
 public class FirePowerCell extends SequentialCommandGroup {
 
    // Creates a new FirePowerCell
   public FirePowerCell(Shooter roboShooter, Indexer roboIndexer, Harvester roboHarvester) {
-    // Add your commands in the super() call, e.g.
-    // super(new FooCommand(), new BarCommand());
     super (
         new ShootPowerCell(roboShooter),
         new MoveIndexer(roboIndexer,roboHarvester)
-        // new HarvestMarket(roboHarvester, roboIndexer)
-        // new IndexerHarvestMayhem(roboIndexer, roboHarvester, robotShooter) //idk what this does
     );
   }
+
 }

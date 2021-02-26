@@ -27,7 +27,7 @@ Start -> Main.java
 | ------ | ---------- | ----- |
 | A | Intake | Runs both harvesting and indexing subsystems to create a one button solution for intaking powercells |
 | B | Indexer shooting | Shift all powercells to the top and then shift one up to shoot if shooter is running |
-| X |  |  |
+| X | Purge | Remove balls from robot in case they are stuck |
 | Y |  |  |
 | DPAD Up | Move indexer up one rotation |
 | DPAD Down | Move indexer down one rotation |

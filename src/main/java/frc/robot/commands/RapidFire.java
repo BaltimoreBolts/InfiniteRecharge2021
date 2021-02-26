@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 
-/* 
+/*
 ** PURPOSE: Rapid fire all power cells in the indexer until it's empty
 ** STATUS: Not tested, not sure if current configuration of code works
 */
@@ -37,13 +37,13 @@ public class RapidFire extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.Movement(0.25);
+    indexer.setIndexerSpeed(0.25);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    indexer.Movement(0);
+    indexer.setIndexerSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -53,6 +53,6 @@ public class RapidFire extends CommandBase {
       return true;
     } else {
       return false;
-    } 
+    }
   }
 }

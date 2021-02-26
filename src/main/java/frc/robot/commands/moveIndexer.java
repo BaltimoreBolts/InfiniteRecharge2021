@@ -79,7 +79,7 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void end(boolean interrupted) {
   //The speed is being set to 0/
-    roboIndexer.Movement(0);
+    roboIndexer.setIndexerSpeed(0);
     roboHarvester.setHarvesterBackSpeed(0);
   }
 

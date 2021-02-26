@@ -10,29 +10,38 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Elevator;
 
-/* 
-** PURPOSE: This lifts the elevator mechanism so we can drive up and hook over the switch
-** STATUS: Tested and worked
-*/ 
-//
-public class ElevatorGoUp extends CommandBase {
-  Elevator RoboVader;
+/**
+ * PURPOSE: This raises/lowers the elevator mechanism so we can drive up and hook the switch
+ * STATUS: Tested and worked
+ */
+public class MoveElevator extends CommandBase {
+  private Elevator elevator;
+  private boolean direction; // true for up, false for down
+
   /**
-   * Creates a new ElevatorGoUp.
+   * Creates a new Elevator.
    */
-  public ElevatorGoUp(Elevator roboElevator) {
-    RoboVader = roboElevator;
-    addRequirements(roboElevator);
+  public MoveElevator(Elevator roboElevator, boolean direction) {
+    elevator = roboElevator;
+    this.direction = direction;
+
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(roboElevator);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    RoboVader.disengageRatchet();
-    RoboVader.setSpeed(0.55);
+    if (direction) {
+      // Disengage ratchet and engages motor to move lift up
+      elevator.disengageRatchet();
+      elevator.setSpeed(0.55);
+    } else {
+      // Engage ratchet so the robot doesn't fall down
+      elevator.engageRatchet();
+      elevator.setSpeed(-0.85);
+    }
   }
-  // Disengages ratchet and engages motor to move lift up
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -40,20 +49,24 @@ public class ElevatorGoUp extends CommandBase {
   }
 
   // Called once the command ends or is interrupted.
+  // Engages ratchet again and disables motor to lock lift position
   @Override
   public void end(boolean interrupted) {
-    RoboVader.engageRatchet();
-    RoboVader.setSpeed(0);
+    if (direction) {
+      elevator.engageRatchet();
+      elevator.setSpeed(0);
+    } else {
+      elevator.setSpeed(0);
+    }
   }
-  // Engages ratchet again and disables motor to lock lift position
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (RoboVader.getElevatorEncoder() > 3.65) {
-      return true;
+    if (direction) {
+      return elevator.getElevatorEncoder() > 3.65;
     } else {
-      return false; 
+      return elevator.getElevatorEncoder() < 1;
     }
   }
 }

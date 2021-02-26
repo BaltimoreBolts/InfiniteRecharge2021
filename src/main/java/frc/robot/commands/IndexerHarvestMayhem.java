@@ -14,12 +14,13 @@ import frc.robot.subsystems.*;
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 
-/* 
-** PURPOSE: Meant to run indexerCaptain to shift power cells up and then call HarvestMarket to 
-** intake a PC
-** STATUS: Not tested.
-*/ 
+/*
+ * PURPOSE: Meant to run indexerCaptain to shift power cells up and then call HarvestMarket to
+ * intake a PC
+ * STATUS: Not tested.
+ */
 public class IndexerHarvestMayhem extends SequentialCommandGroup {
+  
   /**
    * Creates a new IndexerHarvestMayhem.
    */
@@ -30,6 +31,6 @@ public class IndexerHarvestMayhem extends SequentialCommandGroup {
       new IndexerCaptain(inputIndexer),
       new HarvestMarket(inputHarvester, inputIndexer)
     );
-    
+
   }
 }

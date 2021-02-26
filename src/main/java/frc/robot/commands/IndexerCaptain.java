@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-/* 
+/*
 ** PURPOSE: Meant to coordinate the moving of the indexer to shift PCs up, correctly adjust
 ** PC locator array so we know where PCs are located in the indexer. Also adjust any overshoot
 ** of the indexer.
 ** STATUS: Not tested. A lot of the functionality is commented out.
-*/ 
+*/
 
 public class IndexerCaptain extends CommandBase {
   Indexer indexerCaptain;
@@ -45,7 +45,7 @@ public class IndexerCaptain extends CommandBase {
     targetPosition = encoderValue + (1.0 / 3.0);
 
     indexerCaptain.MoveToPosition(targetPosition, 0);
-    indexerCaptain.Movement(-0.15);
+    indexerCaptain.setIndexerSpeed(-0.15);
     // indexerCaptain.ResetEncoder();
   }
 
@@ -63,9 +63,9 @@ public class IndexerCaptain extends CommandBase {
   @Override
   public void end(final boolean interrupted) {
     indexerCaptain.ShiftPCArray(true);
-    indexerCaptain.Movement(0);
+    indexerCaptain.setIndexerSpeed(0);
     indexerCaptain.CalculateOvershoot(indexerCaptain.getEncoderValue(), targetPosition);
-    //roboShooter.SetShooterSpeed(0);
+    // roboShooter.SetShooterSpeed(0);
   }
 
   // Returns true when the command should end.
@@ -73,7 +73,7 @@ public class IndexerCaptain extends CommandBase {
   public boolean isFinished() {
     /**
     if (indexerCaptain.getEncoderValue() <= (targetPosition - indexerCaptain.GetOvershoot())) {
-      return false; 
+      return false;
     } else {
       return true;
     }

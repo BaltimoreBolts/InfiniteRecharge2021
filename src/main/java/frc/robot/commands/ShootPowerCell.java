@@ -10,16 +10,16 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import frc.robot.subsystems.Shooter;
 
-/* 
-** PURPOSE: Shoot a power cell. 
-** STATUS: Never tested and probably doesn't work. 
-** Needed to get interface with raspi vision processing to work (in shooter subsystem)
-** Also velocity PID control was never completely worked through/still in testing
-*/
+/*
+ * PURPOSE: Shoot a power cell.
+ * STATUS: Never tested and probably doesn't work.
+ * Needed to get interface with raspi vision processing to work (in shooter subsystem)
+ * Also velocity PID control was never completely worked through/still in testing
+ */
 public class ShootPowerCell extends CommandBase {
   Shooter roboShooter;
   double calculatedRPM = 0;
-  
+
   /**
    * Creates a new ShootPowerCell.
    */
@@ -32,7 +32,7 @@ public class ShootPowerCell extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    //calculatedRPM = roboShooter.getNeededRPM();
+    // calculatedRPM = roboShooter.getNeededRPM();
     calculatedRPM = 8000; // Comment this in to set speed directly
     roboShooter.setShooterState(ShooterControlState.SPINUP); // Robot Shooter is now set to spin up
   }
@@ -40,8 +40,8 @@ public class ShootPowerCell extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //roboShooter.PIDTuner();
-    //System.out.println("\n\nSetting shooter speed\n\n");
+    // roboShooter.PIDTuner();
+    // System.out.println("\n\nSetting shooter speed\n\n");
     // roboShooter.SetShooterSpeed(calculatedRPM);
   }
 
@@ -56,8 +56,8 @@ public class ShootPowerCell extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return roboShooter.SetShooterSpeed(calculatedRPM);
-    //return roboShooter.AtSpeed(calculatedRPM);
+    // return roboShooter.SetShooterSpeed(calculatedRPM);
+    // return roboShooter.AtSpeed(calculatedRPM);
     return false;
   }
 }

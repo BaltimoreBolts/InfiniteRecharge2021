@@ -64,8 +64,8 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int SHOOTER_MOTOR_CHIP = 9;
-        public static final int SHOOTER_MOTOR_DALE = 10;
+        public static final int SHOOTER_MOTOR_LEFT = 9;
+        public static final int SHOOTER_MOTOR_RIGHT = 10;
         public static enum ShooterControlState {
             IDLE("Idle"),
             SPINUP("Spin Up"),
@@ -86,7 +86,7 @@ public final class Constants {
     }
 
     public static final class PowerCellConstants {
-        public static boolean[] powerCellPositions;
+        public static boolean[] powerCellPositions = {false, false, false, false};
         public static powerCellStates powerCellState;
         public static enum powerCellStates {
             IDLE("Idle"), // robot not doing anything
@@ -103,7 +103,7 @@ public final class Constants {
             public String toString() {
                 return name;
             }
-        };
+        }
     }
 
     public static final class HarvesterConstants {
@@ -115,7 +115,7 @@ public final class Constants {
     }
 
     public static final class IndexerConstants {
-        public static final int INDEXER_MOTOR_DONALD = 7;
+        public static final int INDEXER_MOTOR = 7;
         public static final int INDEXER_LIMIT_SWITCH1 = 1;
         public static final int INDEXER_LIMIT_SWITCH2 = 2;
         public static final int INDEXER_LIMIT_SWITCH3 = 3;
@@ -125,7 +125,7 @@ public final class Constants {
     }
 
     public static final class ElevatorConstants {
-        public static final int ELEVATOR_MOTOR_GOOFY = 8;
+        public static final int ELEVATOR_MOTOR = 8;
     }
 
     // Add controller constant
@@ -172,7 +172,6 @@ public final class Constants {
                     public static final int Y = 5;
                 }
             }
-
         }
     }
 }
