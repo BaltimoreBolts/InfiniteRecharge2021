@@ -32,6 +32,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.DPadButton;
 import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -80,12 +81,13 @@ public class RobotContainer {
   JoystickButton operatorRightBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
   JoystickButton operatorLeftTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.LEFT);
   JoystickButton operatorRightTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.RIGHT);
-  JoystickButton operatorLeftDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.LEFT);
-  JoystickButton operatorRightDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.RIGHT);
-  JoystickButton operatorUpDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.UP);
-  JoystickButton operatorDownDpad = new JoystickButton(operator, Constants.Controller.XBOX.DPAD.DOWN);
   JoystickButton operatorStartButton = new JoystickButton(operator, Constants.Controller.XBOX.START);
   JoystickButton operatorBackButton = new JoystickButton(operator, Constants.Controller.XBOX.BACK);
+  DPadButton operatorUpDpad = new DPadButton(operator, DPadButton.Direction.UP);
+  DPadButton operatorDownDpad = new DPadButton(operator, DPadButton.Direction.DOWN);
+  DPadButton operatorLeftDpad = new DPadButton(operator, DPadButton.Direction.LEFT);
+  DPadButton operatorRightDpad = new DPadButton(operator, DPadButton.Direction.RIGHT);
+  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -133,7 +135,7 @@ public class RobotContainer {
     // operatorLeftDpad.whenPressed();
     // operatorRightDpad.whenPressed();
 
-    // operatorStartButton.whenPressed();
+    operatorStartButton.whenPressed(new MoveIndexer(roboIndexer, true));
     // operatorBackButton.whenPressed();
   }
 
@@ -236,5 +238,4 @@ public class RobotContainer {
   public Shooter GetShooter() {
     return this.roboShooter;
   }
-
 }

@@ -108,7 +108,6 @@ public class Indexer extends SubsystemBase {
     PCDash2 = indexerTab.add("PC2", PowerCellConstants.powerCellPositions[0]).getEntry();
     PCDash3 = indexerTab.add("PC3", PowerCellConstants.powerCellPositions[0]).getEntry();
 
-    // indexerSpeed = 0; // Debug stuff
     SmartDashboard.putNumber("Indexer Speed", indexerSpeed);
     SmartDashboard.putNumber("P Gain", kP);
     SmartDashboard.putNumber("I Gain", kI);
@@ -152,9 +151,10 @@ public class Indexer extends SubsystemBase {
     }
 
     // function to govern the global power cell states
-    powerCellStateMachineManager();
+    // powerCellStateMachineManager();
   }
 
+  /*
   public void powerCellStateMachineManager() {
     switch (PowerCellConstants.powerCellState) {
       case IDLE:
@@ -183,6 +183,7 @@ public class Indexer extends SubsystemBase {
         PowerCellConstants.powerCellState = PowerCellConstants.powerCellStates.IDLE;
     }
   }
+  */
 
   public int degreeToCounts(double degrees, int CPR) {
     int Counts = 0;
