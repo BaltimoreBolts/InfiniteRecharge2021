@@ -49,10 +49,10 @@ public class MoveElevator extends CommandBase {
   }
 
   // Called once the command ends or is interrupted.
-  // Engages ratchet again and disables motor to lock lift position
   @Override
   public void end(boolean interrupted) {
     if (direction) {
+      // Engages ratchet again and disables motor to lock lift position
       elevator.engageRatchet();
       elevator.setSpeed(0);
     } else {

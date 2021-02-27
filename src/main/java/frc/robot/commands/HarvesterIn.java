@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Harvester;
 
 /*
-** PURPOSE: This was a testing function to exclusively run the two harvester motors
-** STATUS: Works!
-*/
+ * PURPOSE: This was a testing function to exclusively run the two harvester motors
+ * STATUS: Works!
+ */
 public class HarvesterIn extends CommandBase {
   Harvester roboHarvester;
   double HarvesterFrontSpeed = 0;
@@ -35,9 +35,6 @@ public class HarvesterIn extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
-    // A positive back motor (minnie) speed brings power cells in
-    // A negative front motor (mickey) speed brings power cells in
     HarvesterBackSpeed = 0.3;
     HarvesterFrontSpeed = 0.3;
     roboHarvester.setHarvesterBackSpeed(HarvesterBackSpeed);
