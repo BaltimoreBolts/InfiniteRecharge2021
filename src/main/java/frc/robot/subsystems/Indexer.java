@@ -286,7 +286,7 @@ public class Indexer extends SubsystemBase {
 
   // TESTING FUNCTIONS
   // For testing, this will be disabled later
-  public double getdesiredSpeed() {
+  public double getDesiredSpeed() {
     return desiredSpeedNT.getDouble(0);
   }
 }

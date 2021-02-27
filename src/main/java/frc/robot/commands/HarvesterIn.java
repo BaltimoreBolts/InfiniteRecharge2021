@@ -19,14 +19,14 @@ public class HarvesterIn extends CommandBase {
   /** Creates a new HarvesterIn. */
   public HarvesterIn(Harvester robotHarvester) {
     roboHarvester = robotHarvester;
-    addRequirements(robotHarvester);
+
     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(robotHarvester);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
     HarvesterFrontSpeed = roboHarvester.getFrontDesiredSpeed();
     HarvesterBackSpeed = roboHarvester.getBackDesiredSpeed();
   }

@@ -12,11 +12,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 /*
-** PURPOSE: Meant to coordinate the moving of the indexer to shift PCs up, correctly adjust
-** PC locator array so we know where PCs are located in the indexer. Also adjust any overshoot
-** of the indexer.
-** STATUS: Not tested. A lot of the functionality is commented out.
-*/
+ * PURPOSE: Meant to coordinate the moving of the indexer to shift PCs up, correctly adjust
+ * PC locator array so we know where PCs are located in the indexer. Also adjust any overshoot
+ * of the indexer.
+ * STATUS: Not tested. A lot of the functionality is commented out.
+ */
 
 public class IndexerCaptain extends CommandBase {
   Indexer indexerCaptain;
@@ -53,10 +53,9 @@ public class IndexerCaptain extends CommandBase {
   @Override
   public void execute() {
     // indexerCaptain.Movement(-0.15);
-    /**
-     * if (!isFull || roboShooter.getReadyToFire()) { // Shift the PC's up one level
-     * indexerCaptain.Movement(-0.25); }
-     **/
+
+    //  if (!isFull || roboShooter.getReadyToFire()) { // Shift the PC's up one level
+    //  indexerCaptain.Movement(-0.25); }
   }
 
   // Called once the command ends or is interrupted.
@@ -71,13 +70,12 @@ public class IndexerCaptain extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    /**
-    if (indexerCaptain.getEncoderValue() <= (targetPosition - indexerCaptain.GetOvershoot())) {
-      return false;
-    } else {
-      return true;
-    }
-    **/
+
+    // if (indexerCaptain.getEncoderValue() <= (targetPosition - indexerCaptain.GetOvershoot())) {
+    //   return false;
+    // } else {
+    //   return true;
+    // }
 
     return indexerCaptain.MoveToPosition(targetPosition, 0);
   }

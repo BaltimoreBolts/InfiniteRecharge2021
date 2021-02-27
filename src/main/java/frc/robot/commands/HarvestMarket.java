@@ -12,9 +12,9 @@ import frc.robot.subsystems.Harvester;
 import frc.robot.subsystems.Indexer;
 
 /*
-** PURPOSE: Meant to run harvester until a PC is no longer in harvester TOF view
-** STATUS: Not tested, probably not finished coding (there's no mention of mickey/front harvester motor)
-*/
+ * PURPOSE: Meant to run harvester until a PC is no longer in harvester TOF view
+ * STATUS: Not tested, probably not finished coding (there's no mention of mickey/front harvester motor)
+ */
 
 public class HarvestMarket extends CommandBase {
   Harvester harvestMarket;
@@ -28,7 +28,6 @@ public class HarvestMarket extends CommandBase {
   public HarvestMarket(Harvester inputHarvester, Indexer inputIndexer) {
     harvestMarket = inputHarvester;
     indexerCaptain = inputIndexer;
-
   }
 
   // Called when the command is initially scheduled.

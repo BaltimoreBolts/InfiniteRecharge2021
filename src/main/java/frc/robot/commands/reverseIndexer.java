@@ -7,17 +7,18 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
-/*
-** PURPOSE: This was a testing function to reverse indexer and spit out the power cells
-** STATUS: Works!
-*/
+/**
+ * PURPOSE: This was a testing function to reverse indexer and spit out the power cells
+ * STATUS: Works!
+ */
 public class ReverseIndexer extends CommandBase {
   Indexer roboIndexer;
-  double speed = 0;
+  double indexerSpeed = 0;
   double currentPosition = 0;
   double desiredPosition = 0;
   double initialPosition = 0;
@@ -34,26 +35,25 @@ public class ReverseIndexer extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(robotIndexer);
   }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    speed = roboIndexer.getdesiredSpeed();
-    initialPosition = roboIndexer.getEncoderValue();
+    indexerSpeed = roboIndexer.getdesiredSpeed();
+
     initialPosition = roboIndexer.getEncoderValue();
     startingPos = roboIndexer.getAbsEncoderValue();
-    // resetDistance = (startingPos % (1.0/3.0)) > 1.0/6.0 ? 1.0/3.0 - startingPos % (1.0/3.0) : -startingPos % (1.0/3.0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    roboIndexer.setIndexerSpeed(speed);
+    roboIndexer.setIndexerSpeed(indexerSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // The speed is being set to 0
     roboIndexer.setIndexerSpeed(0);
   }
 
@@ -66,12 +66,5 @@ public class ReverseIndexer extends CommandBase {
 
     // ... for PID comment out everything below here, replace with
     return roboIndexer.MoveToPosition(desiredPosition, resetDistance);
-
-    // currentPosition = roboIndexer.getEncoderValue();
-    // if (currentPosition <= desiredPosition){
-    //     return true;
-    // } else {
-    //   return false;
-    // }
   }
 }
