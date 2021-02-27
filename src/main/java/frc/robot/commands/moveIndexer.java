@@ -32,7 +32,6 @@ public class MoveIndexer extends CommandBase {
   // double startTime = 0;
   // final double maxPIDduration = 1e9; // 1 second in nano seconds
 
-
   /**
    * Creates a new moveIndexer.
    */

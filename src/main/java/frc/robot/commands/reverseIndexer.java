@@ -39,7 +39,7 @@ public class ReverseIndexer extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    indexerSpeed = roboIndexer.getdesiredSpeed();
+    indexerSpeed = roboIndexer.getDesiredSpeed();
 
     initialPosition = roboIndexer.getEncoderValue();
     startingPos = roboIndexer.getAbsEncoderValue();

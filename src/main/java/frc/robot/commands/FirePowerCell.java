@@ -25,7 +25,7 @@ public class FirePowerCell extends SequentialCommandGroup {
   public FirePowerCell(Shooter roboShooter, Indexer roboIndexer, Harvester roboHarvester) {
     super (
         new ShootPowerCell(roboShooter),
-        new MoveIndexer(roboIndexer)
+        new MoveIndexer(roboIndexer, true)
     );
   }
 }

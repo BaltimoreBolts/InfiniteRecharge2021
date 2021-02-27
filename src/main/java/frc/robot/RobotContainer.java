@@ -128,8 +128,8 @@ public class RobotContainer {
     operatorLeftTrigger.whenHeld(new HarvesterIn(roboHarvester)); // for testing, eventually should reverse shooter
     operatorRightTrigger.whenHeld(new ShootPowerCell(roboShooter)); // run shooter when held
 
-    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvester));
-    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvester));
+    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, true));
+    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, false));
     // operatorLeftDpad.whenPressed();
     // operatorRightDpad.whenPressed();
 
