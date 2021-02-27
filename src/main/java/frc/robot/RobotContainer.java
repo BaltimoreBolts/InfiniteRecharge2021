@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FirePowerCell;
 import frc.robot.commands.IndexerCaptain;
 import frc.robot.commands.PowerCellSucker;
-import frc.robot.commands.RapidFire;
 import frc.robot.commands.ShootPowerCell;
 import frc.robot.commands.AutonomousDrive;
 import frc.robot.commands.AutonomousShoot;
@@ -36,7 +35,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
-
 import edu.wpi.cscore.UsbCamera;
 
 
@@ -51,8 +49,8 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final DriveTrain roboDT = new DriveTrain();
   private final Indexer roboIndexer = new Indexer();
-  private final Shooter roboShoot = new Shooter();
-  private final Harvester roboHarvest = new Harvester(roboIndexer, roboShoot);
+  private final Shooter roboShooter = new Shooter();
+  private final Harvester roboHarvester = new Harvester(roboIndexer, roboShooter);
   private final Elevator roboElevator = new Elevator();
 
   // Define CameraServer
@@ -60,7 +58,7 @@ public class RobotContainer {
   public UsbCamera frontRobotCamera;
 
   private Command autoCommand = new AutonomousDrive(roboDT, 18);
-  private Command autoShoot = new AutonomousShoot(roboShoot); // Stupid way to do this but a hot fix for testing
+  private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
   private Joystick joystick = new Joystick(1);
@@ -115,21 +113,23 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
 
     // OPERATOR BUTTON ASSIGNMENTS
-    // aOperatorButton.whenPressed(); // run intake state machine
-    // bOperatorButton.whenPressed(); // run shooting state machine
-    operatorBButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in
-    operatorXButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out
-    operatorLeftBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in
-    operatorRightBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out
+    // operatorAButton.whenPressed(); // run intake state machine
+    // operatorBButton.whenPressed(); // run shooting state machine
+    // operatorXButton.whenPressed(); // purge powercells from robot
+    // operatorYButton.whenPressed(); // possibly rapid fire
+    operatorAButton.whenHeld(new PowerCellSucker(roboHarvester, -1.0, true), true); // top (near indexer) sucks in
+    operatorBButton.whenHeld(new PowerCellSucker(roboHarvester, 1.0, true), true); // top (near indexer) pushes out
+    operatorXButton.whenHeld(new PowerCellSucker(roboHarvester, -1.0, false), true); // front sucks in
+    operatorYButton.whenHeld(new PowerCellSucker(roboHarvester, 1.0, false), true); // front pushes out
 
     operatorLeftBumper.whenPressed(new MoveElevator(roboElevator, false));
     operatorRightBumper.whenPressed(new MoveElevator(roboElevator, true));
 
-    // operatorLeftTrigger.whenPressed();
-    // operatorRightTrigger.whenPressed();
+    operatorLeftTrigger.whenHeld(new HarvesterIn(roboHarvester)); // for testing, eventually should reverse shooter
+    operatorRightTrigger.whenHeld(new ShootPowerCell(roboShooter)); // run shooter when held
 
-    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
-    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
+    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvester));
+    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, roboHarvester));
     // operatorLeftDpad.whenPressed();
     // operatorRightDpad.whenPressed();
 
@@ -234,7 +234,7 @@ public class RobotContainer {
   }
 
   public Shooter GetShooter() {
-    return this.roboShoot;
+    return this.roboShooter;
   }
 
 }

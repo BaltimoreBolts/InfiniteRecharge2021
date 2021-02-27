@@ -34,6 +34,7 @@ public class MoveIndexer extends CommandBase {
   double startTime = 0;
   final double maxPIDduration = 1e9; // 1 second in nano seconds
   int n = 0;
+
   /**
    * Creates a new moveIndexer.
    */
@@ -44,6 +45,7 @@ public class MoveIndexer extends CommandBase {
     addRequirements(robotIndexer);
     addRequirements(robotHarvester);
   }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
@@ -51,34 +53,33 @@ public class MoveIndexer extends CommandBase {
     IndexerSpeed = -roboIndexer.getdesiredSpeed();
     HarvesterSpeed = roboHarvester.getBackDesiredSpeed();
     initialPosition = roboIndexer.getEncoderValue();
-    startingPos = roboIndexer.getAbsEncoderValue() + .12;
-    //resetDistance = (startingPos % (1.0/3.0)) > 1.0/6.0 ? 1.0/3.0 - (startingPos % (1.0/3.0)) : -(startingPos % (1.0/3.0));
+    startingPos = roboIndexer.getAbsEncoderValue() + 0.12;
+
+    // Move indexer slighly up or down to achieve desired starting configuration
     double mod_math = startingPos - Math.floor(startingPos/(1.0/3.0)) * (1.0/3.0);
-    if (mod_math > 0.1666){
+    if (mod_math > 0.1666) {
       resetDistance = (1.0/3.0 - mod_math);
-    }
-    else{
+    } else {
       resetDistance = (-mod_math);
     }
+
     startTime = System.nanoTime();
     SmartDashboard.putNumber("Mod Math", mod_math);
     SmartDashboard.putNumber("Reset Distance", resetDistance);
-
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //roboHarvester.setMinnieSpeed(HarvesterSpeed);
-    //roboIndexer.Movement(IndexerSpeed); // for PID comment this out and add ...
-    //roboIndexer.SetIndexerSpeedPID(); // ???
+    // roboHarvester.setMinnieSpeed(HarvesterSpeed);
+    // roboIndexer.Movement(IndexerSpeed); // for PID comment this out and add ...
+    // roboIndexer.SetIndexerSpeedPID(); // ???
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-  //The speed is being set to 0/
+    // The speed is being set to 0
     roboIndexer.setIndexerSpeed(0);
     roboHarvester.setHarvesterBackSpeed(0);
   }
@@ -86,23 +87,16 @@ public class MoveIndexer extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    /*Upwards is positive encoder, but the speed is negative to go up*/
-    //desiredPosition = degreesToRotate/360.0+initialPosition;
+    /* Upwards is positive encoder, but the speed is negative to go up */
+    // desiredPosition = degreesToRotate/360.0+initialPosition;
     desiredPosition = initialPosition - (70.0/3.0);
-    //desiredPosition = 1;
+    // desiredPosition = 1;
     // ... for PID comment out everything below here, replace with
     double duration = System.nanoTime() - startTime;
 
     return roboIndexer.MoveToPosition(desiredPosition, resetDistance) || duration > maxPIDduration;
-    //
-
-    //return roboIndexer.MoveToPosition(desiredPosition);
-    /* currentPosition = roboIndexer.getEncoderValue();
-     if (currentPosition >= desiredPosition){
-       return true;
-   } else {
-     return false;
-   }*/
-
+    // return roboIndexer.MoveToPosition(desiredPosition);
+    // currentPosition = roboIndexer.getEncoderValue();
+    // return currentPosition >= desiredPosition;
   }
 }
