@@ -11,30 +11,16 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.FirePowerCell;
-import frc.robot.commands.IndexerCaptain;
-import frc.robot.commands.MoveShooter;
-import frc.robot.commands.AutonomousDrive;
-import frc.robot.commands.AutonomousShoot;
-import frc.robot.commands.MoveElevator;
-import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.MoveHarvester;
-import frc.robot.commands.Autonomous;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Harvester;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Indexer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.DPadButton;
 import frc.robot.TriggerButton;
-import frc.robot.Constants.Controller;
-import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.cscore.UsbCamera;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
 
 
 /**
@@ -117,7 +103,7 @@ public class RobotContainer {
     // OPERATOR BUTTON ASSIGNMENTS
     // operatorAButton.whenPressed(); // run intake state machine
     // operatorBButton.whenPressed(); // run shooting state machine
-    // operatorXButton.whenPressed(); // purge powercells from robot
+    operatorXButton.whenPressed(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
     // operatorYButton.whenPressed(); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
