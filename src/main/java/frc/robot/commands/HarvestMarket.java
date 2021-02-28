@@ -33,8 +33,8 @@ public class HarvestMarket extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    isEmpty = indexerCaptain.getP0();
-    isFull = indexerCaptain.isIndexerFull();
+    isEmpty = indexerCaptain.checkBottomTOF();
+    // isFull = indexerCaptain.isIndexerFull();
   }
 
   // Called every time the scheduler runs while the command is scheduled.

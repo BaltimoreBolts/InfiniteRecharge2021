@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.AutonomousShoot;
-import frc.robot.commands.ShootPowerCell;
+import frc.robot.commands.MoveShooter;
 import edu.wpi.first.wpilibj.Relay;
 
 

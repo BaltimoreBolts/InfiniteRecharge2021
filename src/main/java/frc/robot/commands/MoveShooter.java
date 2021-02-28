@@ -16,41 +16,46 @@ import frc.robot.subsystems.Shooter;
  * Needed to get interface with raspi vision processing to work (in shooter subsystem)
  * Also velocity PID control was never completely worked through/still in testing
  */
-public class ShootPowerCell extends CommandBase {
+public class MoveShooter extends CommandBase {
   Shooter roboShooter;
-  double calculatedRPM = 0;
+  double calculatedRPM = 8000;
+  boolean direction = true; // default to shooting
 
   /**
    * Creates a new ShootPowerCell.
    */
-  public ShootPowerCell(Shooter inputShooter) {
-    roboShooter = inputShooter;
+  public MoveShooter(Shooter shooter, boolean direction) {
+    roboShooter = shooter;
+    this.direction = direction;
+
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(roboShooter);
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // calculatedRPM = roboShooter.getNeededRPM();
-    calculatedRPM = 8000; // Comment this in to set speed directly
+    // calculatedRPM = roboShooter.getNeededRPM(); // getRPM calculation from camera values
     roboShooter.setShooterState(ShooterControlState.SPINUP); // Robot Shooter is now set to spin up
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // roboShooter.PIDTuner();
-    // System.out.println("\n\nSetting shooter speed\n\n");
-    // roboShooter.SetShooterSpeed(calculatedRPM);
+    // roboShooter.PIDTuner(); // for testing (pid tuning)
+    roboShooter.setReadyToFire(true);
+    if (direction) {
+      roboShooter.setDesiredRPM(-calculatedRPM);
+    } else {
+      roboShooter.setDesiredRPM(calculatedRPM);
+    }
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    roboShooter.setReadyToFire(true);
     roboShooter.setShooterState(ShooterControlState.IDLE);
-    // roboShooter.SetShooterSpeed(0);
   }
 
   // Returns true when the command should end.

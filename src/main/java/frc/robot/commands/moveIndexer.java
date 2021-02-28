@@ -9,45 +9,42 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
 import frc.robot.subsystems.Indexer;
 
 /**
  * PURPOSE: This was a testing function to exclusively move the indexer up one.
- * Also calls inner harvester motor so PC doesn't get stuck in the first slot
  * STATUS: Works!
  */
 public class MoveIndexer extends CommandBase {
   Indexer roboIndexer;
-  // Harvester roboHarvester;
   double indexerSpeed = 0;
   boolean direction = true; // default to moving up
-  // double HarvesterSpeed = 0;
+  boolean atDesiredPosition = false;
   double currentPosition = 0;
   double desiredPosition = 0;
   double initialPosition = 0;
   double degreesToRotate = 120;
   double startingPos = 0;
   double resetDistance = 0;
-  // double startTime = 0;
-  // final double maxPIDduration = 1e9; // 1 second in nano seconds
+  double startTime = 0;
+  final double maxPIDduration = 1e9; // 1 second in nano seconds
 
   /**
    * Creates a new moveIndexer.
    */
-  public MoveIndexer(Indexer robotIndexer, boolean direction) { // , Harvester robotHarvester) {
-    roboIndexer = robotIndexer;
+  public MoveIndexer(Indexer roboIndexer, boolean direction) {
+    this.roboIndexer = roboIndexer;
     this.direction = direction;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(robotIndexer);
+    addRequirements(roboIndexer);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if (direction) {
-      indexerSpeed = -roboIndexer.getDesiredSpeed();
+      indexerSpeed = -roboIndexer.getDesiredSpeed(); // negative to move updward
     } else {
       indexerSpeed = roboIndexer.getDesiredSpeed();
     }
@@ -55,7 +52,7 @@ public class MoveIndexer extends CommandBase {
     initialPosition = roboIndexer.getEncoderValue();
     startingPos = roboIndexer.getAbsEncoderValue() + 0.12;
 
-    // Move indexer slighly up or down to achieve desired starting configuration
+    // Calculate reset distance, slighly up or down to achieve desired starting configuration
     double mod_math = startingPos - Math.floor(startingPos/(1.0/3.0)) * (1.0/3.0);
     if (mod_math > 0.1666) {
       resetDistance = (1.0/3.0 - mod_math);
@@ -63,15 +60,18 @@ public class MoveIndexer extends CommandBase {
       resetDistance = (-mod_math);
     }
 
-    // startTime = System.nanoTime();
-    SmartDashboard.putNumber("Mod Math", mod_math);
-    SmartDashboard.putNumber("Reset Distance", resetDistance);
+    SmartDashboard.putNumber("[Indexer] Mod Math", mod_math);
+    SmartDashboard.putNumber("[Indexer] Reset Distance", resetDistance);
+
+    // start a timer to check later if we exceed 1 second for a rotation
+    startTime = System.nanoTime();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-
+    roboIndexer.setIndexerSpeed(indexerSpeed);
+    atDesiredPosition = roboIndexer.moveToPosition(desiredPosition, resetDistance);
   }
 
   // Called once the command ends or is interrupted.
@@ -90,9 +90,8 @@ public class MoveIndexer extends CommandBase {
       desiredPosition = initialPosition + (70/3.0);
     }
 
-    // ... for PID comment out everything below here, replace with
-    // double duration = System.nanoTime() - startTime;
-
-    return roboIndexer.MoveToPosition(desiredPosition, resetDistance); // || duration > maxPIDduration;
+     // return if at the right value or too long of a duration
+    double duration = System.nanoTime() - startTime;
+    return atDesiredPosition || duration > maxPIDduration;
   }
 }

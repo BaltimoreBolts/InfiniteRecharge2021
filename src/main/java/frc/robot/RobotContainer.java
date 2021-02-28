@@ -10,18 +10,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FirePowerCell;
 import frc.robot.commands.IndexerCaptain;
-import frc.robot.commands.PowerCellSucker;
-import frc.robot.commands.ShootPowerCell;
+import frc.robot.commands.MoveShooter;
 import frc.robot.commands.AutonomousDrive;
 import frc.robot.commands.AutonomousShoot;
 import frc.robot.commands.MoveElevator;
 import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.ReverseIndexer;
-import frc.robot.commands.HarvesterIn;
+import frc.robot.commands.MoveHarvester;
 import frc.robot.commands.Autonomous;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Harvester;
@@ -33,6 +30,7 @@ import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.DPadButton;
+import frc.robot.TriggerButton;
 import frc.robot.Constants.Controller;
 import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
@@ -79,10 +77,10 @@ public class RobotContainer {
   JoystickButton operatorYButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
   JoystickButton operatorLeftBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
   JoystickButton operatorRightBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
-  JoystickButton operatorLeftTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.LEFT);
-  JoystickButton operatorRightTrigger = new JoystickButton(operator, Constants.Controller.XBOX.TRIGGER.RIGHT);
   JoystickButton operatorStartButton = new JoystickButton(operator, Constants.Controller.XBOX.START);
   JoystickButton operatorBackButton = new JoystickButton(operator, Constants.Controller.XBOX.BACK);
+  TriggerButton operatorLeftTrigger = new TriggerButton(operator, TriggerButton.TriggerSelection.LEFT);
+  TriggerButton operatorRightTrigger = new TriggerButton(operator, TriggerButton.TriggerSelection.RIGHT);
   DPadButton operatorUpDpad = new DPadButton(operator, DPadButton.Direction.UP);
   DPadButton operatorDownDpad = new DPadButton(operator, DPadButton.Direction.DOWN);
   DPadButton operatorLeftDpad = new DPadButton(operator, DPadButton.Direction.LEFT);
@@ -113,30 +111,27 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // DRIVER BUTTON ASSIGNMENTS
+    // operatorStartButton.whenPressed(); // pause robot
+    // operatorBackButton.whenPressed(); // emergency stop robot
 
     // OPERATOR BUTTON ASSIGNMENTS
     // operatorAButton.whenPressed(); // run intake state machine
     // operatorBButton.whenPressed(); // run shooting state machine
     // operatorXButton.whenPressed(); // purge powercells from robot
     // operatorYButton.whenPressed(); // possibly rapid fire
-    operatorAButton.whenHeld(new PowerCellSucker(roboHarvester, -1.0, true), true); // top (near indexer) sucks in
-    operatorBButton.whenHeld(new PowerCellSucker(roboHarvester, 1.0, true), true); // top (near indexer) pushes out
-    operatorXButton.whenHeld(new PowerCellSucker(roboHarvester, -1.0, false), true); // front sucks in
-    operatorYButton.whenHeld(new PowerCellSucker(roboHarvester, 1.0, false), true); // front pushes out
+    // operatorStartButton.whenPressed(); // pause robot
+    // operatorBackButton.whenPressed(); // emergency stop robot
 
-    operatorLeftBumper.whenPressed(new MoveElevator(roboElevator, false));
-    operatorRightBumper.whenPressed(new MoveElevator(roboElevator, true));
+    // operatorLeftBumper.whenPressed(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
+    // operatorRightBumper.whenPressed(new MoveElevator(roboElevator, true));
 
-    operatorLeftTrigger.whenHeld(new HarvesterIn(roboHarvester)); // for testing, eventually should reverse shooter
-    operatorRightTrigger.whenHeld(new ShootPowerCell(roboShooter)); // run shooter when held
+    operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
+    operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
 
     operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, true));
     operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, false));
-    // operatorLeftDpad.whenPressed();
-    // operatorRightDpad.whenPressed();
-
-    operatorStartButton.whenPressed(new MoveIndexer(roboIndexer, true));
-    // operatorBackButton.whenPressed();
+    operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
+    operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
   }
 
   private void configureDriveMode() {

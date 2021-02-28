@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
-import frc.robot.Constants.PowerCellConstants;
 import frc.robot.Constants;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.AlternateEncoderType;
@@ -42,12 +41,9 @@ public class Indexer extends SubsystemBase {
   private TimeOfFlight IndexerTOF;
   private CANEncoder alternateEncoder;
   private CANEncoder mainEncoder;
-  private boolean PCArray[] = { false, false, false, false };
 
   ShuffleboardTab indexerTab;
   NetworkTableEntry desiredRotationNT, currentRotationNT, desiredSpeedNT;
-  NetworkTableEntry PCDash0, PCDash1, PCDash2, PCDash3;
-  boolean shiftIndexer = false;
   private double indexerSpeed = 0;
   double overShoot;
 
@@ -64,7 +60,6 @@ public class Indexer extends SubsystemBase {
     indexerMotor.burnFlash();
 
     // initialize sensors
-    // OpticalSensor = new DigitalInput(IndexerConstants.INDEXER_LIMIT_SWITCH1);
     IndexerTOF = new TimeOfFlight(IndexerConstants.INDEXER_TOF);
 
     // initialize encoders
@@ -82,7 +77,7 @@ public class Indexer extends SubsystemBase {
 
     CANError pid_error = indexerPID.setFeedbackDevice(mainEncoder);
     if (pid_error != CANError.kOk) {
-      SmartDashboard.putString("PID", pid_error.toString());
+      SmartDashboard.putString("[Indexer] PID Error", pid_error.toString());
     }
 
     indexerPID.setP(kP);
@@ -102,40 +97,34 @@ public class Indexer extends SubsystemBase {
     desiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
     currentRotationNT = indexerTab.add("Current Rotation = ", 0).getEntry();
     desiredSpeedNT = indexerTab.add("Desired Speed = ", 0).getEntry();
-    // PCIndicator = indexerTab.add("Power Cell Array",0).getEntry();
-    PCDash0 = indexerTab.add("PC0", PowerCellConstants.powerCellPositions[0]).getEntry();
-    PCDash1 = indexerTab.add("PC1", PowerCellConstants.powerCellPositions[0]).getEntry();
-    PCDash2 = indexerTab.add("PC2", PowerCellConstants.powerCellPositions[0]).getEntry();
-    PCDash3 = indexerTab.add("PC3", PowerCellConstants.powerCellPositions[0]).getEntry();
 
-    SmartDashboard.putNumber("Indexer Speed", indexerSpeed);
-    SmartDashboard.putNumber("P Gain", kP);
-    SmartDashboard.putNumber("I Gain", kI);
-    SmartDashboard.putNumber("D Gain", kD);
+    SmartDashboard.putNumber("[Indexer] Speed", indexerSpeed);
+    SmartDashboard.putNumber("[Indexer] P Gain", kP);
+    SmartDashboard.putNumber("[Indexer] I Gain", kI);
+    SmartDashboard.putNumber("[Indexer] D Gain", kD);
     // SmartDashboard.putNumber("Set Rotations", 0); // for PID from smartdashboard
 
-    this.ResetEncoder();
+    this.resetEncoder(); // TODO if encoder gives absolute values do we need this?
   }
 
+  // This method will be called once per scheduler run
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    UpdateDashboard();
+    
+    // print statements
+    SmartDashboard.putBoolean("[Indexer] TOF", this.checkBottomTOF());
+    SmartDashboard.putNumber("[Indexer] TOF Val", IndexerTOF.getRange());
+    SmartDashboard.putNumber("[Indexer] Encoder", this.getEncoderValue());
+    SmartDashboard.putNumber("[Indexer] Motor Encoder", indexerMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("[Indexer] Motor Alternate Encoder",
+      indexerMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition());
+    SmartDashboard.putNumber("[Indexer] Overshoot", overShoot);
+    SmartDashboard.putNumber("[Indexer] Command Position", commandPos);
 
-    SmartDashboard.putBoolean("Indexer TOF", this.getP0());
-    SmartDashboard.putNumber("Indexer TOF Val", IndexerTOF.getRange());
-    SmartDashboard.putNumber("Indexer Encoder", this.getEncoderValue());
-    SmartDashboard.putNumber("Motor Encoder", indexerMotor.getEncoder().getPosition());
-    SmartDashboard.putNumber("Motor Alternate Encoder",
-        indexerMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition());
-    SmartDashboard.putBooleanArray("Indexer Array", PCArray);
-    indexerSpeed = SmartDashboard.getNumber("Indexer Speed", 0);
-    SmartDashboard.putNumber("Indexer Overshoot", overShoot);
-    SmartDashboard.putNumber("Command Position", commandPos);
-
-    double p = SmartDashboard.getNumber("P Gain", 0.07);
-    double i = SmartDashboard.getNumber("I Gain", 0.003);
-    double d = SmartDashboard.getNumber("D Gain", 0);
+    indexerSpeed = SmartDashboard.getNumber("[Indexer] Speed", 0);
+    double p = SmartDashboard.getNumber("[Indexer] P Gain", 0.07);
+    double i = SmartDashboard.getNumber("[Indexer] I Gain", 0.003);
+    double d = SmartDashboard.getNumber("[Indexer] D Gain", 0);
 
     if (p != kP) {
       indexerPID.setP(p);
@@ -149,9 +138,6 @@ public class Indexer extends SubsystemBase {
       indexerPID.setD(d);
       kD = d;
     }
-
-    // function to govern the global power cell states
-    // powerCellStateMachineManager();
   }
 
   /*
@@ -186,34 +172,7 @@ public class Indexer extends SubsystemBase {
   */
 
   public int degreeToCounts(double degrees, int CPR) {
-    int Counts = 0;
-    Counts = (int) Math.ceil(CPR * degrees / 360.0);
-    return Counts;
-  }
-
-  // Publish values we want to look at to dashboard
-  public void UpdateDashboard() {
-    // currentRotationNT.setDouble(alternateEncoder.getPosition());
-    desiredSpeedNT.getDouble(0);
-    desiredRotationNT.getDouble(0);
-  }
-
-  // Shift array locations up
-  public void ShiftPCArray(boolean PC0) {
-    PCArray[3] = PCArray[2];
-    PCArray[2] = PCArray[1];
-    PCArray[1] = PCArray[0];
-    PCArray[0] = PC0;
-  }
-
-  // Initialize PC array.
-  public void SetPCArray(boolean[] inputArray) {
-    PCArray[0] = inputArray[0];
-    PCArray[1] = inputArray[1];
-    PCArray[2] = inputArray[2];
-    PCArray[3] = inputArray[3];
-    // PCArray[0] = OpticalSensor.get();
-    PCArray[0] = this.getP0();
+    return (int) Math.ceil(CPR * degrees / 360.0);
   }
 
   // Move the indexer motor at a certain speed
@@ -221,16 +180,14 @@ public class Indexer extends SubsystemBase {
     indexerMotor.set(speed);
   }
 
-  public boolean MoveToPosition(double desiredPosition, double resetDistance) {
-    // Pass in the position you want to be in, return true if you're there
+  public boolean moveToPosition(double desiredPosition, double resetDistance) {
+    // Pass in the position you want to be in, returns true if you're there
+    // Supposed to use resetDistance to put on exact 1/3 turn locations everytime :) WIP
     // resetDistance uses abs encoder to correct for absolute position
-
     this.commandPos = desiredPosition + 70.0 * resetDistance; // 70:1 gearbox between rel.enc and output
     CANError pidError = this.indexerPID.setReference(this.commandPos, ControlType.kPosition);
-    SmartDashboard.putString("PID Error", pidError.toString());
-    boolean isDone = Math.abs(this.getEncoderValue() - this.commandPos) < 0.1;
-    // isDone = IndexerMotor.getEncoder().getVelocity() < 0.001;
-    return isDone;
+    SmartDashboard.putString("[Indexer] Move Position PID Error", pidError.toString());
+    return Math.abs(this.getEncoderValue() - this.commandPos) < 0.1;
   }
 
   public double getEncoderValue() {
@@ -244,44 +201,25 @@ public class Indexer extends SubsystemBase {
   }
 
   // Return value of first position optical sensor
-  // If indexer TOF sees PC, this returns true. These values likely need to be
-  // adjusted
-  public boolean getP0() {
+  // If indexer TOF sees PC, this returns true. These values likely need to be adjusted
+  public boolean checkBottomTOF() {
     double distance = IndexerTOF.getRange(); // in mm
-    // return OpticalSensor.get();
     // Because the ball is curved we want to stop when the center of the ball is in
     // front of the sensor hence the range
-
     return distance >= 15 && distance <= 25;
   }
 
-  public boolean isIndexerFull() {
-    return PCArray[3] == true;
-  }
-
-  public void moveIndexer(boolean newValue) {
-    shiftIndexer = newValue;
-  }
-
-  public boolean IndexerDone() {
-    return shiftIndexer;
-  }
-
-  public boolean[] getPCArray() {
-    return PCArray;
-  }
-
-  public void ResetEncoder() {
+  public void resetEncoder() {
     mainEncoder.setPosition(0);
     // alternateEncoder.setPosition(0);
   }
 
   // Functions for compenstating based on indexer overshoot. We never tested these
-  public void CalculateOvershoot(double encoderVal, double desiredPosition) {
+  public void calculateOvershoot(double encoderVal, double desiredPosition) {
     overShoot = encoderVal - desiredPosition;
   }
 
-  public double GetOvershoot() {
+  public double getOvershoot() {
     return overShoot;
   }
 

@@ -89,15 +89,4 @@ public class Harvester extends SubsystemBase {
     // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range
     return harvesterTOF.getRange() >= 15 && harvesterTOF.getRange() <= 25;
   }
-
-  // TESTING FUNCTIONS
-  // For testing, this will be disabled later
-  public double getFrontDesiredSpeed() {
-    return desiredFrontSpeedNT.getDouble(0);
-  }
-
-  // For testing, this will be disabled later
-  public double getBackDesiredSpeed() {
-    return desiredBackSpeedNT.getDouble(0);
-  }
 }

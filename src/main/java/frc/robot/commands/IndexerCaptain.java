@@ -39,12 +39,12 @@ public class IndexerCaptain extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    isEmpty = indexerCaptain.getP0();
-    isFull = indexerCaptain.isIndexerFull();
+    isEmpty = indexerCaptain.checkBottomTOF();
+    // isFull = indexerCaptain.isIndexerFull();
     encoderValue = indexerCaptain.getEncoderValue();
     targetPosition = encoderValue + (1.0 / 3.0);
 
-    indexerCaptain.MoveToPosition(targetPosition, 0);
+    indexerCaptain.moveToPosition(targetPosition, 0);
     indexerCaptain.setIndexerSpeed(-0.15);
     // indexerCaptain.ResetEncoder();
   }
@@ -61,9 +61,9 @@ public class IndexerCaptain extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(final boolean interrupted) {
-    indexerCaptain.ShiftPCArray(true);
+    // indexerCaptain.ShiftPCArray(true);
     indexerCaptain.setIndexerSpeed(0);
-    indexerCaptain.CalculateOvershoot(indexerCaptain.getEncoderValue(), targetPosition);
+    indexerCaptain.calculateOvershoot(indexerCaptain.getEncoderValue(), targetPosition);
     // roboShooter.SetShooterSpeed(0);
   }
 
@@ -77,6 +77,6 @@ public class IndexerCaptain extends CommandBase {
     //   return true;
     // }
 
-    return indexerCaptain.MoveToPosition(targetPosition, 0);
+    return indexerCaptain.moveToPosition(targetPosition, 0);
   }
 }

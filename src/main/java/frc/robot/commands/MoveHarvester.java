@@ -11,14 +11,16 @@ import frc.robot.subsystems.Harvester;
  * PURPOSE: This was a testing function to exclusively run the two harvester motors
  * STATUS: Works!
  */
-public class HarvesterIn extends CommandBase {
+public class MoveHarvester extends CommandBase {
   Harvester roboHarvester;
-  double HarvesterFrontSpeed = 0;
-  double HarvesterBackSpeed = 0;
+  double HarvesterFrontSpeed = 0.6; // these are both positive values, back should be a bit faster or equal 
+  double HarvesterBackSpeed = 0.8;
+  boolean direction = true; // true for intake
 
   /** Creates a new HarvesterIn. */
-  public HarvesterIn(Harvester robotHarvester) {
-    roboHarvester = robotHarvester;
+  public MoveHarvester(Harvester robotHarvester, boolean direction) {
+    this.roboHarvester = robotHarvester;
+    this.direction = direction;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(robotHarvester);
@@ -27,24 +29,24 @@ public class HarvesterIn extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    HarvesterFrontSpeed = roboHarvester.getFrontDesiredSpeed();
-    HarvesterBackSpeed = roboHarvester.getBackDesiredSpeed();
+    
   }
-
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    HarvesterBackSpeed = 0.3;
-    HarvesterFrontSpeed = 0.3;
-    roboHarvester.setHarvesterBackSpeed(HarvesterBackSpeed);
-    roboHarvester.setHarvesterFrontSpeed(-HarvesterFrontSpeed);
+    if (direction) {
+      roboHarvester.setHarvesterFrontSpeed(-HarvesterFrontSpeed);
+      roboHarvester.setHarvesterBackSpeed(HarvesterBackSpeed);
+    } else {
+      roboHarvester.setHarvesterFrontSpeed(HarvesterFrontSpeed);
+      roboHarvester.setHarvesterBackSpeed(-HarvesterBackSpeed);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
     // Stop both motors
     roboHarvester.setHarvesterBackSpeed(0);
     roboHarvester.setHarvesterFrontSpeed(0);
