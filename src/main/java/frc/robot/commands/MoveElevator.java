@@ -21,12 +21,12 @@ public class MoveElevator extends CommandBase {
   /**
    * Creates a new Elevator.
    */
-  public MoveElevator(Elevator roboElevator, boolean direction) {
-    elevator = roboElevator;
+  public MoveElevator(Elevator elevator, boolean direction) {
+    this.elevator = elevator;
     this.direction = direction;
 
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(roboElevator);
+    addRequirements(elevator);
   }
 
   // Called when the command is initially scheduled.
@@ -46,6 +46,7 @@ public class MoveElevator extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    
   }
 
   // Called once the command ends or is interrupted.

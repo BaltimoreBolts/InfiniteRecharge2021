@@ -25,7 +25,7 @@ public class MoveShooter extends CommandBase {
    * Creates a new ShootPowerCell.
    */
   public MoveShooter(Shooter shooter, boolean direction) {
-    roboShooter = shooter;
+    this.roboShooter = shooter;
     this.direction = direction;
 
     // Use addRequirements() here to declare subsystem dependencies.
@@ -49,7 +49,6 @@ public class MoveShooter extends CommandBase {
     } else {
       roboShooter.setDesiredRPM(calculatedRPM);
     }
-    
   }
 
   // Called once the command ends or is interrupted.
