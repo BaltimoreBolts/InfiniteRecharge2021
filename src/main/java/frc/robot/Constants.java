@@ -83,6 +83,7 @@ public final class Constants {
             }
         }
         public static final int kFFCircularBufferSize = 20;
+        public static final double SHOOTER_FLYWHEEL_DIAMETER = 5; //TODO set this correctly with appropriate units
     }
 
     public static final class PowerCellConstants {

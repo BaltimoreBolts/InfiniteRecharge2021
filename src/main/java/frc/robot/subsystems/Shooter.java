@@ -257,13 +257,13 @@ public class Shooter extends SubsystemBase {
     // Convert xdist to feet
     double xDist_ft = x * GenConstants.M_TO_FEET;
 
-    // Ya know math
+    // TODO confirm math
     vel = (xDist_ft/Constants.GenConstants.COS_ANGLE)
       * Math.pow(-Constants.GenConstants.G_FT_PER_SEC2
       / (Constants.GenConstants.INNER_PORT_HEIGHT_FT - Constants.GenConstants.TAN_ANGLE * xDist_ft
       - Constants.GenConstants.SHOOTER_HEIGHT_FT), 0.5);
 
-    RPM = fudgeFactor * vel;
+    RPM = fudgeFactor * 2 * vel / (Math.PI * Constants.ShooterConstants.SHOOTER_FLYWHEEL_DIAMETER); // COM PC velocity is half surface velocity 
 
     SmartDashboard.putNumber("[Shooter] Calculated velocity", vel);
     SmartDashboard.putNumber("[Shooter] Calculated RPM", RPM);
@@ -321,4 +321,5 @@ public class Shooter extends SubsystemBase {
     kFFSampleCount = 0;
     onTarget = false;
   }
+
 }
