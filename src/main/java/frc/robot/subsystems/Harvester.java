@@ -13,12 +13,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HarvesterConstants;
-import frc.robot.commands.*;
 
 /*
  * PURPOSE: Harvester subsystem
@@ -31,9 +29,6 @@ public class Harvester extends SubsystemBase {
   private CANSparkMax harvesterFrontMotor;
   private CANSparkMax harvesterBackMotor; // Closer to the indexer
   // private DigitalInput LimitSwitch0;
-  private Indexer roboIndexer;
-  private Relay harvesterRelease;
-  private Shooter roboShooter;
   private TimeOfFlight harvesterTOF;
   NetworkTableEntry desiredFrontSpeedNT, desiredBackSpeedNT;
 
@@ -42,8 +37,6 @@ public class Harvester extends SubsystemBase {
    */
   public Harvester(Indexer robotIndexer, Shooter robotShooter) {
 
-    roboIndexer = robotIndexer;
-    roboShooter = robotShooter;
     harvesterFrontMotor = new CANSparkMax(HarvesterConstants.HARVESTER_FRONT_MOTOR, MotorType.kBrushless);
     harvesterBackMotor = new CANSparkMax(HarvesterConstants.HARVESTER_BACK_MOTOR, MotorType.kBrushless);
     harvesterFrontMotor.restoreFactoryDefaults();
@@ -57,8 +50,6 @@ public class Harvester extends SubsystemBase {
 
     // LimitSwitch0 = new DigitalInput(HarvesterConstants.HARVESTER_LIMIT_SWITCH);
     harvesterTOF = new TimeOfFlight(HarvesterConstants.HARVESTER_TOF);
-    harvesterRelease = new Relay(0);
-    harvesterRelease.set(Relay.Value.kOn);
 
     ShuffleboardTab harvesterTab = Shuffleboard.getTab("Harvester");
     desiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();

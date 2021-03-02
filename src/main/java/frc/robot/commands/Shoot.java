@@ -6,9 +6,6 @@
 /*----------------------------------------------------------------------------*/
 
 package frc.robot.commands;
-
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
@@ -23,11 +20,9 @@ public class Shoot extends SequentialCommandGroup {
    // Creates a new FirePowerCell
   public Shoot(Indexer roboIndexer, Shooter roboShooter) {
     super (
-        new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // should finish when at RPM
-        new ParallelDeadlineGroup(
-            new MoveIndexer(roboIndexer, true, roboIndexer.getHighestPCPos()),
-            new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM())
-        )
+        new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // spin up shooter
+        new MoveIndexer(roboIndexer, true, roboIndexer.getHighestPCPos()), // move indexer up to shoot
+        new MoveShooter(roboShooter, true, 0) // set shooter to idle after shot
     );
   }
 }

@@ -36,7 +36,7 @@ public class MoveIndexer extends CommandBase {
   public MoveIndexer(Indexer roboIndexer, boolean direction, int num_pos) {
     this.roboIndexer = roboIndexer;
     this.direction = direction;
-    this.numPos = num_pos;
+    this.numPos = (num_pos == -1) ? 0 : num_pos; // if we are told that there are no PCs, dont move
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(roboIndexer);
   }

@@ -9,6 +9,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import frc.robot.subsystems.Shooter;
+import java.lang.Math;
 
 /*
  * PURPOSE: Shoot a power cell.
@@ -40,8 +41,12 @@ public class MoveShooter extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // calculatedRPM = roboShooter.getNeededRPM(); // getRPM calculation from camera values
-    roboShooter.setShooterState(ShooterControlState.SPINUP); // Robot Shooter is now set to spin up
+    if (Math.abs(this.calculatedRPM) < 10) { // if the rpm is ~ 0 (double comparison issue), dont spin up
+      roboShooter.setShooterState(ShooterControlState.IDLE);
+    } else {
+      roboShooter.setShooterState(ShooterControlState.SPINUP); // Robot Shooter is now set to spin up
+    }
+    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -59,14 +64,13 @@ public class MoveShooter extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    roboShooter.setShooterState(ShooterControlState.IDLE);
+    //roboShooter.setShooterState(ShooterControlState.IDLE);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // return roboShooter.SetShooterSpeed(calculatedRPM);
-    // return roboShooter.AtSpeed(calculatedRPM);
-    return false;
+    // stop shooter is we're at desired speed or have been told to idle
+    return roboShooter.atSpeed(calculatedRPM) || Math.abs(this.calculatedRPM) < 10;
   }
 }
