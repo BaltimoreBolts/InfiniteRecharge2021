@@ -27,17 +27,29 @@ public class MoveIndexer extends CommandBase {
   double startingPos = 0;
   double resetDistance = 0;
   double startTime = 0;
+  int numPos = 0;
   final double maxPIDduration = 1e9; // 1 second in nano seconds
 
   /**
    * Creates a new moveIndexer.
    */
-  public MoveIndexer(Indexer roboIndexer, boolean direction) {
+  public MoveIndexer(Indexer roboIndexer, boolean direction, int num_pos) {
     this.roboIndexer = roboIndexer;
     this.direction = direction;
-
+    this.numPos = num_pos;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(roboIndexer);
+  }
+
+  /**
+   * Overloading for defualts: if no params passed, move up one. if no number passed, move one
+   */
+  public MoveIndexer(Indexer roboIndexer) {
+    this(roboIndexer, true, 1);
+  }
+
+  public MoveIndexer(Indexer roboIndexer, boolean direction) {
+    this(roboIndexer, direction, 1);
   }
 
   // Called when the command is initially scheduled.
@@ -71,7 +83,7 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void execute() {
     roboIndexer.setIndexerSpeed(indexerSpeed);
-    atDesiredPosition = roboIndexer.moveToPosition(desiredPosition, resetDistance);
+    atDesiredPosition = roboIndexer.moveToPosition(numPos * desiredPosition, resetDistance);
   }
 
   // Called once the command ends or is interrupted.
@@ -84,6 +96,7 @@ public class MoveIndexer extends CommandBase {
   @Override
   public boolean isFinished() {
     // Upwards is positive encoder, but the speed is negative to go up
+    // is  this being used?
     if (direction) {
       desiredPosition = initialPosition - (70.0/3.0);
     } else {

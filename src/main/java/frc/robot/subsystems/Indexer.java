@@ -242,5 +242,18 @@ public class Indexer extends SubsystemBase {
     }
     return PCPos;
   }
+
+    // returns highest ball position, or -1 if no balls loaded
+    public int getHighestPCPos(){
+      int PCPos = -1;
+      int arr_size = Globals.PCArray.length;
+      for (int i = 0; i <= arr_size; i++){ 
+        if (Globals.PCArray[arr_size - i]){
+          PCPos = i;
+          break;
+        }
+      }
+      return PCPos;
+    }
 }
 

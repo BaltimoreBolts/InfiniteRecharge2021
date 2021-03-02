@@ -22,14 +22,19 @@ public class MoveShooter extends CommandBase {
   boolean direction = true; // default to shooting
 
   /**
-   * Creates a new ShootPowerCell.
+   * Creates a new ShootPowerCell. Direction True = Fire 
    */
-  public MoveShooter(Shooter shooter, boolean direction) {
+  public MoveShooter(Shooter shooter, boolean direction, double calculatedRPM) {
     this.roboShooter = shooter;
     this.direction = direction;
+    this.calculatedRPM = calculatedRPM;
 
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
+  }
+
+  public MoveShooter(Shooter shooter, boolean direction){
+    this(shooter, direction, 8000); // without rpm param, run at 8k rpm
   }
 
   // Called when the command is initially scheduled.

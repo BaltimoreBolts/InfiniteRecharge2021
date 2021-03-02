@@ -7,12 +7,11 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Harvester;
+import frc.robot.subsystems.Shooter;
 
 
 /**
@@ -20,17 +19,15 @@ import frc.robot.subsystems.Harvester;
  * and moves the indexer up, updating the PCArray
  * STATUS: Never tested
  */
-public class Intake extends SequentialCommandGroup {
+public class Shoot extends SequentialCommandGroup {
    // Creates a new FirePowerCell
-  public Intake(Indexer roboIndexer, Harvester roboHarvester) {
+  public Shoot(Indexer roboIndexer, Shooter roboShooter) {
     super (
-        new MoveIndexer(roboIndexer, false, roboIndexer.getLowestPCPos()), // pre-move down to lowest position
-        new MoveHarvester(roboHarvester, true), // then run the harvester
-        new ParallelDeadlineGroup( // once a ball is detected, move the indexer up one
-        // deadline group will end when moveIndexer is done
-            new MoveIndexer(roboIndexer, true, 1), 
-            new MoveHarvester(roboHarvester, true)
-        ) 
+        new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // should finish when at RPM
+        new ParallelDeadlineGroup(
+            new MoveIndexer(roboIndexer, true, roboIndexer.getHighestPCPos()),
+            new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM())
+        )
     );
   }
 }
