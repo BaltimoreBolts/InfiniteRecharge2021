@@ -45,7 +45,7 @@ public class AutonomousShoot extends CommandBase {
     //for (int i = 0; i <3; i++) {
       //new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
     //}
-    new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
+    // new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
     //robotShooter.SetShooterSpeed(0);
   }
 

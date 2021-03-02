@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants;
+import frc.robot.Globals;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.AlternateEncoderType;
 import java.lang.Math;
@@ -228,4 +229,18 @@ public class Indexer extends SubsystemBase {
   public double getDesiredSpeed() {
     return desiredSpeedNT.getDouble(0);
   }
+
+  // returns lowest ball position, or -1 if no balls loaded
+  public int getLowestPCPos(){
+    int PCPos = -1;
+    int arr_size = Globals.PCArray.length;
+    for (int i = 0; i <= arr_size; i++){ 
+      if (Globals.PCArray[i]){
+        PCPos = i;
+        break;
+      }
+    }
+    return PCPos;
+  }
 }
+

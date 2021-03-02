@@ -108,8 +108,8 @@ public class RobotContainer {
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
 
-    // operatorLeftBumper.whenPressed(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
-    // operatorRightBumper.whenPressed(new MoveElevator(roboElevator, true));
+    operatorLeftBumper.whenHeld(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
+    operatorRightBumper.whenHeld(new MoveElevator(roboElevator, true));
 
     operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
     operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held

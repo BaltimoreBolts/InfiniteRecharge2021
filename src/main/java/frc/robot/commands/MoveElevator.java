@@ -35,11 +35,11 @@ public class MoveElevator extends CommandBase {
     if (direction) {
       // Disengage ratchet and engages motor to move lift up
       elevator.disengageRatchet();
-      elevator.setSpeed(0.55);
+      elevator.setSpeed(0.5);
     } else {
       // Engage ratchet so the robot doesn't fall down
       elevator.engageRatchet();
-      elevator.setSpeed(-0.85);
+      elevator.setSpeed(-0.5);
     }
   }
 
@@ -65,7 +65,7 @@ public class MoveElevator extends CommandBase {
   @Override
   public boolean isFinished() {
     if (direction) {
-      return elevator.getElevatorEncoder() > 3.65;
+      return elevator.getElevatorEncoder() < -1.3; // these values need to be checked
     } else {
       return elevator.getElevatorEncoder() < 1;
     }

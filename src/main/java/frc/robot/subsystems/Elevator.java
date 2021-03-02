@@ -18,6 +18,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Servo;
 
 
 /*
@@ -27,7 +28,7 @@ import edu.wpi.first.wpilibj.Relay;
 
 public class Elevator extends SubsystemBase {
   private CANSparkMax ElevatorGoofyMotor;
-  private Relay elevatoRelay;
+  private Servo elevatorRatchet;
   CANEncoder elevatorEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
@@ -41,7 +42,7 @@ public class Elevator extends SubsystemBase {
     ElevatorGoofyMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     elevatorEncoder = ElevatorGoofyMotor.getAlternateEncoder(kAltEncType,
                         Constants.GenConstants.REV_ENCODER_CPR); // Changed this, to match indexer, same encoder?
-    elevatoRelay = new Relay(2, Relay.Direction.kForward);
+    elevatorRatchet = new Servo(8);
     ElevatorGoofyMotor.burnFlash();
   }
 
@@ -49,15 +50,20 @@ public class Elevator extends SubsystemBase {
     ElevatorGoofyMotor.set(speed);
   }
 
-  // engage ratched by having the relay off.
-  // This way when power is cut to the robot, it doesn't drop
+  // engage ratched by turning servo to the right.
   public void engageRatchet () {
-    elevatoRelay.set(Value.kOff);
+    elevatorRatchet.set(1);
+    long start_time = System.nanoTime();
+    while ((System.nanoTime() - start_time) < 1e9) {
+    };
   }
 
-  // Must turn relay on to disengage ratchet and allow elevator movement
+  // Move servo to the left to engage disengage the ratchet
   public void disengageRatchet() {
-    elevatoRelay.set(Value.kOn);
+    elevatorRatchet.set(0);
+    long start_time = System.nanoTime();
+    while ((System.nanoTime() - start_time) < 1e9) {
+    };
   }
 
   // Encoder was reading negative (I think), which is why we return the negative value
