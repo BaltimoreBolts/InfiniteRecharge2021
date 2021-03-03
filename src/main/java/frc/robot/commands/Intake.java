@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
+import frc.robot.Globals.PCArray;
 
 
 /**
@@ -22,7 +23,7 @@ public class Intake extends SequentialCommandGroup {
    // Creates a new FirePowerCell
   public Intake(Indexer roboIndexer, Harvester roboHarvester) {
     super (
-        new MoveIndexer(roboIndexer, false, roboIndexer.getLowestPCPos()), // pre-move down to lowest position
+        new MoveIndexer(roboIndexer, false, PCArray.getLowestPCPos()), // pre-move down to lowest position
         new MoveHarvester(roboHarvester, true), // then run the harvester
         new ParallelDeadlineGroup( // once a ball is detected, move the indexer up one
         // deadline group will end when moveIndexer is done
@@ -30,5 +31,6 @@ public class Intake extends SequentialCommandGroup {
             new MoveHarvester(roboHarvester, true)
         ) 
     );
+    PCArray.intakePC(); // set lowest index to true
   }
 }

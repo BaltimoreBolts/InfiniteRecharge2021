@@ -45,6 +45,12 @@ public final class Constants {
         public static final int LEFT_DRIVE_MOTOR2 = 2;
         public static final int RIGHT_DRIVE_MOTOR1 = 3;
         public static final int RIGHT_DRIVE_MOTOR2 = 4;
+
+        public static final double kP = 0.005; // 2e-5 initial test value 
+        public static final double kI = 0; // 0 initial test value 
+        public static final double kD = 0; // 0 initial test value 
+        public static final double kFF = 0; //0.000165; // 0.000165 initial test value
+
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
             kCLArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
@@ -105,6 +111,12 @@ public final class Constants {
         public static final int INDEXER_LIMIT_SWITCH4 = 4;
         public static final int INDEXER_LIMIT_SWITCH5 = 5;
         public static final int INDEXER_TOF = 12;
+
+        public static final double kP = 0.07; // 2e-5 initial test value
+        public static final double kI = 0.03; // 0 initial test value
+        public static final double kD = 0.0; // had success 0.03 but need to check
+        public static final double kFF = 0;
+
     }
 
     public static final class ElevatorConstants {

@@ -22,20 +22,16 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends SubsystemBase {
-  private CANSparkMax leftDriveMotor1;
-  private CANSparkMax leftDriveMotor2;
-  private CANSparkMax rightDriveMotor1;
-  private CANSparkMax rightDriveMotor2;
-  private CANPIDController leftDrivePID;
-  private CANPIDController rightDrivePID;
-  private CANEncoder leftEncoder;
-  private CANEncoder rightEncoder;
+  private CANSparkMax mLeftDriveMotor1;
+  private CANSparkMax mLeftDriveMotor2;
+  private CANSparkMax mRightDriveMotor1;
+  private CANSparkMax mRightDriveMotor2;
+  private CANPIDController mLeftDrivePID;
+  private CANPIDController mRightDrivePID;
+  private CANEncoder mLeftEncoder;
+  private CANEncoder mRightEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
-  private static final double maxRPM = 5676 / 12.05; //REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
-  private double kP = 0.005; // 2e-5 initial test value 
-  private double kI = 0; // 0 initial test value 
-  private double kD = 0; // 0 initial test value 
-  private double kFF = 0; //0.000165; // 0.000165 initial test value
+  private static final double mMaxRPM = 5676 / 12.05; //REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
 
   private DifferentialDrive driveTrain;
   
@@ -50,70 +46,69 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
 
     // Initialize all of the drive motors and set to correct settings. Burn to flash.
-    leftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
-    leftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
-    rightDriveMotor1 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR1, MotorType.kBrushless);
-    rightDriveMotor2 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR2, MotorType.kBrushless);
-    leftDriveMotor1.restoreFactoryDefaults();
-    leftDriveMotor2.restoreFactoryDefaults();
-    rightDriveMotor1.restoreFactoryDefaults();
-    rightDriveMotor2.restoreFactoryDefaults();
-    leftDriveMotor1.setSmartCurrentLimit(40);
-    leftDriveMotor2.setSmartCurrentLimit(40);
-    rightDriveMotor1.setSmartCurrentLimit(40);
-    rightDriveMotor2.setSmartCurrentLimit(40);
-    leftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    leftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mLeftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
+    mLeftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
+    mRightDriveMotor1 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR1, MotorType.kBrushless);
+    mRightDriveMotor2 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR2, MotorType.kBrushless);
+    mLeftDriveMotor1.restoreFactoryDefaults();
+    mLeftDriveMotor2.restoreFactoryDefaults();
+    mRightDriveMotor1.restoreFactoryDefaults();
+    mRightDriveMotor2.restoreFactoryDefaults();
+    mLeftDriveMotor1.setSmartCurrentLimit(40);
+    mLeftDriveMotor2.setSmartCurrentLimit(40);
+    mRightDriveMotor1.setSmartCurrentLimit(40);
+    mRightDriveMotor2.setSmartCurrentLimit(40);
+    mLeftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mLeftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mRightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mRightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    leftDriveMotor2.follow(leftDriveMotor1);
-    rightDriveMotor2.follow(rightDriveMotor1);
+    mLeftDriveMotor2.follow(mLeftDriveMotor1);
+    mRightDriveMotor2.follow(mRightDriveMotor1);
 
-    leftDriveMotor1.burnFlash();
-    leftDriveMotor2.burnFlash();
-    rightDriveMotor1.burnFlash();
-    rightDriveMotor2.burnFlash();
+    mLeftDriveMotor1.burnFlash();
+    mLeftDriveMotor2.burnFlash();
+    mRightDriveMotor1.burnFlash();
+    mRightDriveMotor2.burnFlash();
 
-    leftEncoder = leftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    leftEncoder.setInverted(true);
-    rightEncoder = rightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mLeftEncoder.setInverted(true);
+    mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
     
-    leftDrivePID = leftDriveMotor1.getPIDController();
-    leftDrivePID.setFeedbackDevice(leftEncoder);
+    mLeftDrivePID = mLeftDriveMotor1.getPIDController();
+    mLeftDrivePID.setFeedbackDevice(mLeftEncoder);
 
-    rightDrivePID = rightDriveMotor1.getPIDController();
-    rightDrivePID.setFeedbackDevice(rightEncoder);
+    mRightDrivePID = mRightDriveMotor1.getPIDController();
+    mRightDrivePID.setFeedbackDevice(mRightEncoder);
 
     //driveTrain = new DifferentialDrive(leftDriveMotor1,rightDriveMotor1);
 
-    leftDrivePID.setP(kP);
-    leftDrivePID.setI(kI);
-    leftDrivePID.setD(kD);
+    mLeftDrivePID.setP(DriveConstants.kP);
+    mLeftDrivePID.setI(DriveConstants.kI);
+    mLeftDrivePID.setD(DriveConstants.kD);
     //leftDrivePID.setIZone(kIz);
     //leftDrivePID.setFF(kFF);
-    leftDrivePID.setOutputRange(-1, 1);
-    leftDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
+    mLeftDrivePID.setOutputRange(-1, 1);
+    mLeftDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 0);
 
-    rightDrivePID.setP(kP);
-    rightDrivePID.setI(kI);
-    rightDrivePID.setD(kD);
+    mRightDrivePID.setP(DriveConstants.kP);
+    mRightDrivePID.setI(DriveConstants.kI);
+    mRightDrivePID.setD(DriveConstants.kD);
     //rightDrivePID.setIZone(kIz);
     //rightDrivePID.setFF(kFF);
-    rightDrivePID.setOutputRange(-1, 1);
-    rightDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 1);
+    mRightDrivePID.setOutputRange(-1, 1);
+    mRightDrivePID.setSmartMotionAccelStrategy(AccelStrategy.kTrapezoidal, 1);
 
-    rightDrivePID.setSmartMotionMaxAccel(20, 1);
-    rightDrivePID.setSmartMotionAllowedClosedLoopError(1, 1);
-    leftDrivePID.setSmartMotionMaxAccel(20, 0);
-    leftDrivePID.setSmartMotionAllowedClosedLoopError(1, 0);
+    mRightDrivePID.setSmartMotionMaxAccel(20, 1);
+    mRightDrivePID.setSmartMotionAllowedClosedLoopError(1, 1);
+    mLeftDrivePID.setSmartMotionMaxAccel(20, 0);
+    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(1, 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Left Encoder Position", leftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder Position", rightEncoder.getPosition());
+    updateSmartdashboard();
   }
   
   public void arcadeDrive(double x, double y) {
@@ -131,17 +126,17 @@ public class DriveTrain extends SubsystemBase {
     x = Math.pow(x,3); 
     y = Math.pow(y,3);
 
-    leftDrivePID.setReference((y+x)*maxRPM, ControlType.kVelocity);
-    rightDrivePID.setReference(-(y-x)*maxRPM, ControlType.kVelocity);
+    mLeftDrivePID.setReference((y+x)*mMaxRPM, ControlType.kVelocity);
+    mRightDrivePID.setReference(-(y-x)*mMaxRPM, ControlType.kVelocity);
 
   }
 
   public double getLeftPosition() {
-    return leftEncoder.getPosition();
+    return mLeftEncoder.getPosition();
   }
 
   public double getRightPosition() {
-    return rightEncoder.getPosition();
+    return mRightEncoder.getPosition();
   }
   public double inchesToCounts(double inches, int CPR ){
     double Counts = 0;
@@ -153,9 +148,13 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void resetEncoders() {
-    rightEncoder.setPosition(0);
-    leftEncoder.setPosition(0);
+    mRightEncoder.setPosition(0);
+    mLeftEncoder.setPosition(0);
   }
 
+  public void updateSmartdashboard(){
+    SmartDashboard.putNumber("Left Encoder Position", mLeftEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder Position", mRightEncoder.getPosition());
+  }
 }
 

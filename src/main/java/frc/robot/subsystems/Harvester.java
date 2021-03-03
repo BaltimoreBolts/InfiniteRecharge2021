@@ -26,58 +26,62 @@ import frc.robot.Constants.HarvesterConstants;
  */
 
 public class Harvester extends SubsystemBase {
-  private CANSparkMax harvesterFrontMotor;
-  private CANSparkMax harvesterBackMotor; // Closer to the indexer
+  private CANSparkMax mHarvesterFrontMotor;
+  private CANSparkMax mHarvesterBackMotor; // Closer to the indexer
   // private DigitalInput LimitSwitch0;
-  private TimeOfFlight harvesterTOF;
-  NetworkTableEntry desiredFrontSpeedNT, desiredBackSpeedNT;
+  private TimeOfFlight mHarvesterTOF;
+  NetworkTableEntry mDesiredFrontSpeedNT, mDesiredBackSpeedNT;
 
   /**
    * Creates a new Harvester.
    */
   public Harvester(Indexer robotIndexer, Shooter robotShooter) {
 
-    harvesterFrontMotor = new CANSparkMax(HarvesterConstants.HARVESTER_FRONT_MOTOR, MotorType.kBrushless);
-    harvesterBackMotor = new CANSparkMax(HarvesterConstants.HARVESTER_BACK_MOTOR, MotorType.kBrushless);
-    harvesterFrontMotor.restoreFactoryDefaults();
-    harvesterBackMotor.restoreFactoryDefaults();
-    harvesterFrontMotor.setSmartCurrentLimit(30);
-    harvesterBackMotor.setSmartCurrentLimit(30);
-    harvesterFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    harvesterBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    harvesterFrontMotor.burnFlash();
-    harvesterBackMotor.burnFlash();
+    mHarvesterFrontMotor = new CANSparkMax(HarvesterConstants.HARVESTER_FRONT_MOTOR, MotorType.kBrushless);
+    mHarvesterBackMotor = new CANSparkMax(HarvesterConstants.HARVESTER_BACK_MOTOR, MotorType.kBrushless);
+    mHarvesterFrontMotor.restoreFactoryDefaults();
+    mHarvesterBackMotor.restoreFactoryDefaults();
+    mHarvesterFrontMotor.setSmartCurrentLimit(30);
+    mHarvesterBackMotor.setSmartCurrentLimit(30);
+    mHarvesterFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mHarvesterBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mHarvesterFrontMotor.burnFlash();
+    mHarvesterBackMotor.burnFlash();
 
     // LimitSwitch0 = new DigitalInput(HarvesterConstants.HARVESTER_LIMIT_SWITCH);
-    harvesterTOF = new TimeOfFlight(HarvesterConstants.HARVESTER_TOF);
+    mHarvesterTOF = new TimeOfFlight(HarvesterConstants.HARVESTER_TOF);
 
     ShuffleboardTab harvesterTab = Shuffleboard.getTab("Harvester");
-    desiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();
-    desiredBackSpeedNT = harvesterTab.add("Desired Back Speed = ", 0).getEntry();
+    mDesiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();
+    mDesiredBackSpeedNT = harvesterTab.add("Desired Back Speed = ", 0).getEntry();
   }
 
   @Override
   public void periodic() {
 
-    SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
-    SmartDashboard.putNumber("Harvester TOF Val", harvesterTOF.getRange());
+    mDesiredFrontSpeedNT.getDouble(0);
+    mDesiredBackSpeedNT.getDouble(0);
+    updateSmartdashboard();
 
-    desiredFrontSpeedNT.getDouble(0);
-    desiredBackSpeedNT.getDouble(0);
   }
 
   public void setHarvesterFrontSpeed(double speed){
-    harvesterFrontMotor.set(speed);
+    mHarvesterFrontMotor.set(speed);
   }
 
   public void setHarvesterBackSpeed(double speed){
-    harvesterBackMotor.set(speed);
+    mHarvesterBackMotor.set(speed);
   }
 
   // Return value of first position optical sensor
   public boolean getHarvesterTOF(){
     // return LimitSwitch0.get();
     // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range
-    return harvesterTOF.getRange() >= 15 && harvesterTOF.getRange() <= 25;
+    return mHarvesterTOF.getRange() >= 15 && mHarvesterTOF.getRange() <= 25;
+  }
+
+  public void updateSmartdashboard() {
+    SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
+    SmartDashboard.putNumber("Harvester TOF Val", mHarvesterTOF.getRange());
   }
 }

@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Globals;
 import frc.robot.subsystems.Indexer;
 
 /**
@@ -90,6 +91,13 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     roboIndexer.setIndexerSpeed(0);
+    
+    if (direction) {
+      Globals.PCArray.moveUp();
+    } else {
+      Globals.PCArray.moveDown();
+    }
+    
   }
 
   // Returns true when the command should end.

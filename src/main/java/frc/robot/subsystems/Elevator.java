@@ -25,32 +25,37 @@ import edu.wpi.first.wpilibj.Servo;
 */
 
 public class Elevator extends SubsystemBase {
-  private CANSparkMax ElevatorGoofyMotor;
-  private Servo elevatorRatchet;
-  CANEncoder elevatorEncoder;
+  private CANSparkMax mElevatorMotor;
+  private Servo mElevatorRatchet;
+  CANEncoder mElevatorEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   /**
    * Creates a new Elevator.
    */
   public Elevator() {
-    ElevatorGoofyMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR,MotorType.kBrushless);
-    ElevatorGoofyMotor.restoreFactoryDefaults();
-    ElevatorGoofyMotor.setSmartCurrentLimit(40);
-    ElevatorGoofyMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    elevatorEncoder = ElevatorGoofyMotor.getAlternateEncoder(kAltEncType,
+    mElevatorMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR,MotorType.kBrushless);
+    mElevatorMotor.restoreFactoryDefaults();
+    mElevatorMotor.setSmartCurrentLimit(40);
+    mElevatorMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mElevatorEncoder = mElevatorMotor.getAlternateEncoder(kAltEncType,
                         Constants.GenConstants.REV_ENCODER_CPR); // Changed this, to match indexer, same encoder?
-    elevatorRatchet = new Servo(8);
-    ElevatorGoofyMotor.burnFlash();
+    mElevatorRatchet = new Servo(8);
+    mElevatorMotor.burnFlash();
+  }
+
+  @Override
+  public void periodic() {
+    updateSmartdashboard();
   }
 
   public void setSpeed(double speed){
-    ElevatorGoofyMotor.set(speed);
+    mElevatorMotor.set(speed);
   }
 
   // engage ratched by turning servo to the right.
   public void engageRatchet () {
-    elevatorRatchet.set(1);
+    mElevatorRatchet.set(1);
     long start_time = System.nanoTime();
     while ((System.nanoTime() - start_time) < 1e9) {
     };
@@ -58,7 +63,7 @@ public class Elevator extends SubsystemBase {
 
   // Move servo to the left to engage disengage the ratchet
   public void disengageRatchet() {
-    elevatorRatchet.set(0);
+    mElevatorRatchet.set(0);
     long start_time = System.nanoTime();
     while ((System.nanoTime() - start_time) < 1e9) {
     };
@@ -66,11 +71,10 @@ public class Elevator extends SubsystemBase {
 
   // Encoder was reading negative (I think), which is why we return the negative value
   public double getElevatorEncoder() {
-    return -elevatorEncoder.getPosition();
+    return -mElevatorEncoder.getPosition();
   }
 
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Elevator pos", -elevatorEncoder.getPosition());
+  public void updateSmartdashboard(){
+    SmartDashboard.putNumber("Elevator pos", -mElevatorEncoder.getPosition());
   }
 }

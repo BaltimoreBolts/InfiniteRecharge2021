@@ -9,6 +9,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Shooter;
+import frc.robot.Globals.PCArray;
 
 
 /**
@@ -20,8 +21,9 @@ public class Shoot extends SequentialCommandGroup {
    // Creates a new FirePowerCell
   public Shoot(Indexer roboIndexer, Shooter roboShooter) {
     super (
-        new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // spin up shooter
-        new MoveIndexer(roboIndexer, true, roboIndexer.getHighestPCPos()), // move indexer up to shoot
+        // new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // spin up shooter
+        new MoveShooter(roboShooter, true, 8000), // spin up shooter
+        new MoveIndexer(roboIndexer, true, 3 - PCArray.getHighestPCPos()), // move indexer up to shoot
         new MoveShooter(roboShooter, true, 0) // set shooter to idle after shot
     );
   }
