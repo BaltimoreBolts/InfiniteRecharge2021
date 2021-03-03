@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants;
-import frc.robot.Globals;
+import frc.robot.Globals.PCArray;
 import com.playingwithfusion.TimeOfFlight;
 import com.revrobotics.AlternateEncoderType;
 import java.lang.Math;
@@ -90,12 +90,14 @@ public class Indexer extends SubsystemBase {
     // indexerPID.setSmartMotionMaxAccel(1400, smartMotionSlot);
     // indexerPID.setSmartMotionAllowedClosedLoopError(0.1, smartMotionSlot);
 
-    ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
-    mDesiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
-    mCurrentRotationNT = indexerTab.add("Current Rotation = ", 0).getEntry();
-    mDesiredSpeedNT = indexerTab.add("Desired Speed = ", 0).getEntry();
+    // ShuffleboardTab indexerTab = Shuffleboard.getTab("Indexer");
+    // mDesiredRotationNT = indexerTab.add("Desired Rotation = ", 0).getEntry();
+    // mCurrentRotationNT = indexerTab.add("Current Rotation = ", 0).getEntry();
+    // mDesiredSpeedNT = indexerTab.add("Desired Speed = ", 0).getEntry();
 
     this.resetEncoder(); // TODO if encoder gives absolute values do we need this?
+    SmartDashboard.putBooleanArray("[Indexer] PC Array", PCArray.getPCArray());
+
   }
 
   // This method will be called once per scheduler run
@@ -200,7 +202,7 @@ public class Indexer extends SubsystemBase {
   // TESTING FUNCTIONS
   // For testing, this will be disabled later
   public double getDesiredSpeed() {
-    return mDesiredSpeedNT.getDouble(0);
+    return mIndexerSpeed;
   }
   
   private void updateSmartdashboard(){
@@ -217,6 +219,12 @@ public class Indexer extends SubsystemBase {
       mIndexerMotor.getAlternateEncoder(AlternateEncoderType.kQuadrature, 8192).getPosition());
     SmartDashboard.putNumber("[Indexer] Overshoot", mOverShoot);
     SmartDashboard.putNumber("[Indexer] Command Position", mCommandPos);
+    SmartDashboard.putBooleanArray("[Indexer] PC Array", PCArray.getPCArray());
+    boolean[] tempPCArray = PCArray.getPCArray();
+    String tempPCString = String.format("[ 0: %b | 1: %b | 2: %b ]", tempPCArray[0], tempPCArray[1], tempPCArray[2]);
+    SmartDashboard.putString("[Indexer] PC Array", tempPCString);
+    //SmartDashboard.putString("[Indexer] PC Positions", PCArray.toString())
+    // PCArray.putPCArray(SmartDashboard.getBooleanArray("[Indexer] PC Array", new boolean[3]));
 
     mIndexerSpeed = SmartDashboard.getNumber("[Indexer] Speed", 0);
     // double p = SmartDashboard.getNumber("[Indexer] P Gain", 0.07);

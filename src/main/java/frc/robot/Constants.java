@@ -72,6 +72,7 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int SHOOTER_MOTOR_LEFT = 9;
         public static final int SHOOTER_MOTOR_RIGHT = 10;
+        public static final int PV_RING_LIGHT = 0;
         public static enum ShooterControlState {
             IDLE("Idle"),
             SPINUP("Spin Up"),

@@ -25,6 +25,7 @@ import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Relay;
 
 /*
 ** PURPOSE: Shooter subsystem
@@ -41,6 +42,7 @@ public class Shooter extends SubsystemBase {
   private double mLeftShooterRPM = 0.0;
   private double mLeftShooterVoltage = 0.0;
   private double mLeftShooterDutyCycle = 0.0;
+  private Relay mPVRingLight;
 
   private CANPIDController shooterPID;
   private double kP = 0.001;
@@ -73,6 +75,7 @@ public class Shooter extends SubsystemBase {
     // Set up motors
     mLeftShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_LEFT, MotorType.kBrushed);
     mRightShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_RIGHT, MotorType.kBrushed);
+    mPVRingLight = new Relay(ShooterConstants.PV_RING_LIGHT);
     mLeftShooterMotor.restoreFactoryDefaults();
     mRightShooterMotor.restoreFactoryDefaults();
     mLeftShooterMotor.setSmartCurrentLimit(30);
@@ -96,6 +99,9 @@ public class Shooter extends SubsystemBase {
     shooterPID.setFF(kFF);
     shooterPID.setOutputRange(-1,1);
     shooterPID.setIZone(1000);
+
+    // Turn on Ring Light
+    mPVRingLight.set(Relay.Value.kOn);
 
   }
 
