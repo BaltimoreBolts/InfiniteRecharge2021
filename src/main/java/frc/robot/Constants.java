@@ -37,7 +37,7 @@ public final class Constants {
      public static final class OIConstants {
         // These need to be public within the class so they are accessible
         public static final int DRIVER_CONTROLLER = 0;
-        public static final int OPERATOR_CONTROLLER = 1;
+        public static final int OPERATOR_CONTROLLER = 3;
     }
 
     public static final class DriveConstants {
@@ -53,8 +53,9 @@ public final class Constants {
 
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
-            kCLArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
+            kCLXboxArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
+            // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
             kArcade("Arcade"); // single joystick, open loop
 
             private String name;

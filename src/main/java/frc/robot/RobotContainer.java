@@ -49,7 +49,7 @@ public class RobotContainer {
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
-  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
+  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLSplitArcade; // CHANGE ROBOT DRIVE TYPE HERE
 
   // Initialize Driver Buttons
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
@@ -137,7 +137,7 @@ public class RobotContainer {
         );
         break;
 
-      case kCLArcade:
+      case kCLXboxArcade:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
@@ -169,6 +169,17 @@ public class RobotContainer {
           )
         );
         break;
+
+      // case kCLFlightArcade:
+      //   roboDT.setDefaultCommand(
+      //     new RunCommand(
+      //       () -> roboDT.closedLoopArcadeDrive(
+      //         leftJoystick.getZ(),
+      //         -leftJoystick.getY()),
+      //       roboDT
+      //     )
+      //   );
+      //   break;
 
       default:
         System.out.println("Drive Mode is not a valid implemented option. Defaulting to GTA...");
