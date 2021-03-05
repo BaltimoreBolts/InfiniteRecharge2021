@@ -2,7 +2,7 @@ package frc.robot;
 
 public final class Globals {
     public static class PCArray {
-        private static boolean[] PCArray = { false, true, false };
+        private static boolean[] PCArray = { false, true, false }; // bottom, middle, top
 
         public static void moveUp() {
             PCArray[2] = PCArray[1];

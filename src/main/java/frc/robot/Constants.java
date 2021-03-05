@@ -118,6 +118,8 @@ public final class Constants {
         public static final double kD = 0.0; // had success 0.03 but need to check
         public static final double kFF = 0;
 
+        public static final double kMaxPIDduration = 1e9; // 1 second in nano seconds
+
     }
 
     public static final class ElevatorConstants {

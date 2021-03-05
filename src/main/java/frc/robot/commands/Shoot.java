@@ -26,7 +26,7 @@ public class Shoot extends SequentialCommandGroup {
         // new MoveShooter(roboShooter, true, roboShooter.getDesiredRPM()), // spin up shooter
         new MoveShooter(roboShooter, true, 8000), // spin up shooter
         new MoveIndexer(roboIndexer, true, 3 - PCArray.getHighestPCPos()), // move indexer up to shoot
-        new WaitCommand(5), // let the shooter spin for a second
+        new WaitCommand(3), // let the shooter spin while the ball goes through the flywheel
         new MoveShooter(roboShooter, true, 0) // set shooter to idle after shot
     );
   }

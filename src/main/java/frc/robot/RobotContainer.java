@@ -101,10 +101,10 @@ public class RobotContainer {
     // operatorBackButton.whenPressed(); // emergency stop robot
 
     // OPERATOR BUTTON ASSIGNMENTS
-    // operatorAButton.whenPressed(); // run intake state machine
+    operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
     operatorBButton.whenPressed(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
     operatorXButton.whenPressed(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
-    // operatorYButton.whenPressed(); // possibly rapid fire
+    operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
 

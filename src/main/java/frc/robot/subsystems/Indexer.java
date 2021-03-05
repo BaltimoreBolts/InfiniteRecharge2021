@@ -81,8 +81,8 @@ public class Indexer extends SubsystemBase {
     mIndexerPID.setI(IndexerConstants.kI);
     mIndexerPID.setD(IndexerConstants.kD);
     // indexerPID.setFF(IndexerConstants.kFF);
-    mIndexerPID.setOutputRange(-0.5, 0.5);
-    mIndexerPID.setIZone(1);
+    mIndexerPID.setOutputRange(-0.2, 0.2); // output range for motor power
+    mIndexerPID.setIZone(1); // only use integral constant within 1 degree error
 
     // int smartMotionSlot = 0;
     // indexerPID.setSmartMotionMaxVelocity(7000, smartMotionSlot);
@@ -96,7 +96,7 @@ public class Indexer extends SubsystemBase {
     // mDesiredSpeedNT = indexerTab.add("Desired Speed = ", 0).getEntry();
 
     this.resetEncoder(); // TODO if encoder gives absolute values do we need this?
-    SmartDashboard.putBooleanArray("[Indexer] PC Array", PCArray.getPCArray());
+    SmartDashboard.setDefaultBooleanArray("[Indexer] PC Array", PCArray.getPCArray());
 
   }
 

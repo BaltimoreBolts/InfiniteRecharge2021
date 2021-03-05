@@ -56,6 +56,8 @@ public class Shooter extends SubsystemBase {
   private CANEncoder shooterEncoder;
   private double mPVVel = 0;
   private double mPVRPM = 0;
+  private double mMedianKFF = 0;
+  private boolean mSetKFF = true;
 
   // Network table for chameleon vision
   NetworkTableInstance table = NetworkTableInstance.getDefault();
@@ -134,11 +136,15 @@ public class Shooter extends SubsystemBase {
       kI = 0.0000025;
       kD = 0;
       kFF = 0.000013;
+
       shooterPID.setP(kP);
       shooterPID.setI(kI);
       shooterPID.setD(kD);
       shooterPID.setFF(kFF);
+
+      // System.out.println("Setting Default kF");
       mLeftShooterMotor.set(0);
+      mSetKFF = true;
 
     } else if (shooterControlState == ShooterControlState.SPINUP) {
       // figure out desired speed
@@ -177,15 +183,20 @@ public class Shooter extends SubsystemBase {
 
     if (shooterControlState == ShooterControlState.HOLD) {
       // set shooter pid values to 0
-      shooterPID.setP(0);
-      shooterPID.setI(0);
-      shooterPID.setD(0);
 
-      // replace with calculated kF
-      Arrays.sort(kFFCircularBuffer);
-      double medianKFF = kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2];
-      shooterPID.setFF(medianKFF); // get median value
-
+      if (mSetKFF){
+        shooterPID.setP(0);
+        shooterPID.setI(0);
+        shooterPID.setD(0);
+  
+        // replace with calculated kF
+        Arrays.sort(kFFCircularBuffer);
+        mMedianKFF = kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2];
+        shooterPID.setFF(mMedianKFF); // get median value
+        System.out.print("Setting Calculated kF");
+        System.out.println(mMedianKFF);
+        mSetKFF = false;
+      }
       setShooterSpeed(mDesiredRPM);
     }
   }
@@ -328,5 +339,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("[Shooter] Camera Y Dist", y);
     SmartDashboard.putNumber("[Shooter] Camera Angle Dist", angle);
     SmartDashboard.putString("[Shooter] State", shooterControlState.toString());
+    String median_kff = String.format("%e", kFF);
+    SmartDashboard.putString("[Shooter] Calculated kFF", median_kff);
   }
 }

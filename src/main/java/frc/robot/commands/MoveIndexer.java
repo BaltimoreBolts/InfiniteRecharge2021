@@ -9,8 +9,9 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Globals;
+import frc.robot.Globals.PCArray;
 import frc.robot.subsystems.Indexer;
+import frc.robot.Constants.IndexerConstants;
 
 /**
  * PURPOSE: This was a testing function to exclusively move the indexer up one.
@@ -20,17 +21,15 @@ public class MoveIndexer extends CommandBase {
   Indexer roboIndexer;
   double indexerSpeed = 0;
   boolean direction = true; // default to moving up
-  boolean atDesiredPosition = false;
+  boolean mAtDesiredPosition = false;
   double currentPosition = 0;
-  double desiredPosition = 0;
-  double initialPosition = 0;
+  double mDesiredPosition = 0;
+  double mInitialPosition = 0;
   double degreesToRotate = 120;
-  double startingPos = 0;
-  double resetDistance = 0;
+  double mStartingPos = 0;
+  double mResetDistance = 0;
   double startTime = 0;
   int numPos = 0;
-  final double maxPIDduration = 1e9; // 1 second in nano seconds
-
   /**
    * Creates a new moveIndexer.
    */
@@ -61,21 +60,7 @@ public class MoveIndexer extends CommandBase {
     } else {
       indexerSpeed = roboIndexer.getDesiredSpeed();
     }
-
-    initialPosition = roboIndexer.getEncoderValue();
-    startingPos = roboIndexer.getAbsEncoderValue() + 0.12;
-
-    // Calculate reset distance, slighly up or down to achieve desired starting configuration
-    double mod_math = startingPos - Math.floor(startingPos/(1.0/3.0)) * (1.0/3.0);
-    if (mod_math > 0.1666) {
-      resetDistance = (1.0/3.0 - mod_math);
-    } else {
-      resetDistance = (-mod_math);
-    }
-
-    SmartDashboard.putNumber("[Indexer] Mod Math", mod_math);
-    SmartDashboard.putNumber("[Indexer] Reset Distance", resetDistance);
-
+    findHomingOffset();
     // start a timer to check later if we exceed 1 second for a rotation
     startTime = System.nanoTime();
   }
@@ -84,7 +69,7 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void execute() {
     roboIndexer.setIndexerSpeed(indexerSpeed);
-    atDesiredPosition = roboIndexer.moveToPosition(numPos * desiredPosition, resetDistance);
+    mAtDesiredPosition = roboIndexer.moveToPosition(numPos * mDesiredPosition, 0);
   }
 
   // Called once the command ends or is interrupted.
@@ -93,9 +78,9 @@ public class MoveIndexer extends CommandBase {
     roboIndexer.setIndexerSpeed(0);
     
     if (direction) {
-      Globals.PCArray.moveUp();
+      PCArray.moveUp();
     } else {
-      Globals.PCArray.moveDown();
+      PCArray.moveDown();
     }
     
   }
@@ -106,13 +91,29 @@ public class MoveIndexer extends CommandBase {
     // Upwards is positive encoder, but the speed is negative to go up
     // is  this being used?
     if (direction) {
-      desiredPosition = initialPosition - (70.0/3.0);
+      mDesiredPosition = mInitialPosition - (70.0/3.0);
     } else {
-      desiredPosition = initialPosition + (70/3.0);
+      mDesiredPosition = mInitialPosition + (70/3.0);
     }
 
      // return if at the right value or too long of a duration
     double duration = System.nanoTime() - startTime;
-    return atDesiredPosition || duration > maxPIDduration;
+    return mAtDesiredPosition || duration > IndexerConstants.kMaxPIDduration;
+  }
+
+  private void findHomingOffset(){
+    mInitialPosition = roboIndexer.getEncoderValue();
+    mStartingPos = roboIndexer.getAbsEncoderValue();
+
+    // Calculate reset distance, slighly up or down to achieve desired starting configuration
+    double mod_math = mStartingPos - Math.floor(mStartingPos/(1.0/3.0)) * (1.0/3.0);
+    if (mod_math > 0.1666) {
+      mResetDistance = (1.0/3.0 - mod_math);
+    } else {
+      mResetDistance = (-mod_math);
+    }
+
+    SmartDashboard.putNumber("[Indexer] Mod Math", mod_math);
+    SmartDashboard.putNumber("[Indexer] Reset Distance", mResetDistance);
   }
 }
