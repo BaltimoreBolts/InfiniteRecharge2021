@@ -30,9 +30,9 @@ public class AutonomousDrive extends CommandBase {
   int mInitialRightPosition = 0;
   int mInitialLeftPosition= 0;
   double mDistToTravel_in = 0;
- 
-   
+
   DriveTrain roboDT;
+
   public AutonomousDrive(DriveTrain robotDT, double inchesToTravel) {
     // Use addRequirements() here to declare subsystem dependencies.
     roboDT = robotDT;
@@ -44,7 +44,7 @@ public class AutonomousDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    // roboDT.resetEncoders();
+    roboDT.resetEncoders();
     
     // // Reset the variables so our desired change in position is the same 
     // // everytime and not (desiredPosition) * numberOfCycles
@@ -66,7 +66,7 @@ public class AutonomousDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    roboDT.arcadeDrive(0, 0);
+    roboDT.stopDT();
   }
 
   // Returns true when the command should end.
@@ -96,6 +96,5 @@ public class AutonomousDrive extends CommandBase {
     //   return false;
     // }
     return roboDT.driveDistance(mDistToTravel_in);
-     
   }
 }

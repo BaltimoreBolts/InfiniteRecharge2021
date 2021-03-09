@@ -79,7 +79,6 @@ public class DriveTrain extends SubsystemBase {
     mRightDrivePID = mRightDriveMotor1.getPIDController();
     mRightDrivePID.setFeedbackDevice(mRightEncoder);
 
-
     // there are two different PID slots per side, one for moving forward (0) and one for autonomous turning (1)
     mLeftDrivePID.setP(DriveConstants.kP, 0);
     mLeftDrivePID.setI(DriveConstants.kI, 0);
@@ -95,11 +94,11 @@ public class DriveTrain extends SubsystemBase {
     mRightDrivePID.setP(DriveConstants.kP, 0);
     mRightDrivePID.setI(DriveConstants.kI, 0);
     mRightDrivePID.setD(DriveConstants.kD, 0);
+    //rightDrivePID.setIZone(kIz);
+    //rightDrivePID.setFF(kFF);
     mRightDrivePID.setP(DriveConstants.kP, 1);
     mRightDrivePID.setI(DriveConstants.kI, 1);
     mRightDrivePID.setD(DriveConstants.kD, 1);
-    //rightDrivePID.setIZone(kIz);
-    //rightDrivePID.setFF(kFF);
     mRightDrivePID.setOutputRange(-1, 1, 0);
     mRightDrivePID.setOutputRange(-1, 1, 1);
 
@@ -118,7 +117,6 @@ public class DriveTrain extends SubsystemBase {
     mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
     mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
 
-
     mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
     mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
@@ -130,6 +128,10 @@ public class DriveTrain extends SubsystemBase {
     updateSmartdashboard();
   }
   
+  public void stopDT(){
+    mLeftDriveMotor1.set(0);
+    mRightDriveMotor1.set(0);
+  }
   public void arcadeDrive(double x, double y) {
 		driveTrain.arcadeDrive(y, x); // Moving the stick forward (+y) moves the robot forward, left/right on the stick makes the robot spin
   }
@@ -145,9 +147,8 @@ public class DriveTrain extends SubsystemBase {
     x = Math.pow(x,3); 
     y = Math.pow(y,3);
 
-    mLeftDrivePID.setReference((y+x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
-    mRightDrivePID.setReference(-(y-x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
-
+    mLeftDrivePID.setReference((y+x)*DriveConstants.MAX_RPM, ControlType.kVelocity, 0);
+    mRightDrivePID.setReference(-(y-x)*DriveConstants.MAX_RPM, ControlType.kVelocity, 0);
   }
 
   public double getLeftPosition() {
@@ -168,8 +169,9 @@ public class DriveTrain extends SubsystemBase {
 
   public boolean driveDistance(double inches){
     double rotations = inches / DriveConstants.WHEEL_CIRCUMFERENCE;
-    mLeftDrivePID.setReference(rotations, ControlType.kSmartMotion, 0);
-    mRightDrivePID.setReference(rotations, ControlType.kSmartMotion, 0);
+
+    mLeftDrivePID.setReference(rotations, ControlType.kPosition, 0);
+    mRightDrivePID.setReference(rotations, ControlType.kPosition, 0);
     double distanceTraveled = DriveConstants.WHEEL_CIRCUMFERENCE * (mLeftEncoder.getPosition() + mRightEncoder.getPosition()) / 2.0;
     return (distanceTraveled >= inches);
   }

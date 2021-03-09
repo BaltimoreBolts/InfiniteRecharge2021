@@ -42,14 +42,14 @@ public class RobotContainer {
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
 
-  private Command autoCommand = new AutonomousDrive(roboDT, 18);
+  private Command autoCommand = new AutonomousDrive(roboDT, 60);
   private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
-  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLSplitArcade; // CHANGE ROBOT DRIVE TYPE HERE
+  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
 
   // Initialize Driver Buttons
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
@@ -121,8 +121,6 @@ public class RobotContainer {
     operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
     operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
 
-    driverAButton.whenPressed(new AutonomousDrive(roboDT, 60));
-    driverBButton.whenPressed(new AutonomousTurn(roboDT, 0, 90, true));
   }
 
   private void configureDriveMode() {
@@ -169,7 +167,7 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.55,
-              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))*0.7),
+              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))*0.7),
             roboDT
           )
         );

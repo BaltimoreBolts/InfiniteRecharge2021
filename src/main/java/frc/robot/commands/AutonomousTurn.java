@@ -42,6 +42,7 @@ public class AutonomousTurn extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    roboDT.resetEncoders();
 
   }
 
@@ -53,7 +54,7 @@ public class AutonomousTurn extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    roboDT.arcadeDrive(0, 0);
+    roboDT.stopDT();
   }
 
   // Returns true when the command should end.

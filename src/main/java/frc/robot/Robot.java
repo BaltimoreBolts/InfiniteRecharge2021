@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.AutonomousShoot;
 import frc.robot.commands.MoveShooter;
+import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj.Relay;
 
 
@@ -66,6 +67,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    // TODO: we may need to engage the servo ratchet for extra safety here
   }
 
   @Override
