@@ -48,7 +48,7 @@ public final class Constants {
 
         public static final double WHEEL_CIRCUMFERENCE = 6 * Math.PI;
         public static final double GEARBOX_RATIO = 12.05; 
-        public static final double MAX_RPM = 5676 / GEARBOX_RATIO; //REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
+        public static final double MAX_RPM = 5676; // REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
         public static final double TRACK = 24; // width from center of left wheel to right wheel in inches
 
         public static final double kP = 0.005;  
@@ -59,7 +59,7 @@ public final class Constants {
         public static final double MAX_VEL =  MAX_RPM/1.5;    // rpm
         public static final double MIN_VEL =  0;      // rpm
         public static final double MAX_ACC =  100;    // rpm/s
-        public static final double ALLOWED_ERROR = 1000; // rpm? 
+        public static final double ALLOWED_ERROR = 0.1; // rpm? 
 
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop

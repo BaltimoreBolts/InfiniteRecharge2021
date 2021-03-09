@@ -17,6 +17,9 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import org.opencv.ml.Ml;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -28,7 +31,9 @@ public class DriveTrain extends SubsystemBase {
   private CANPIDController mLeftDrivePID;
   private CANPIDController mRightDrivePID;
   private CANEncoder mLeftEncoder;
+  private CANEncoder mLeftBuiltInEncoder;
   private CANEncoder mRightEncoder;
+  private CANEncoder mRightBuiltInEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   private DifferentialDrive driveTrain;
@@ -61,8 +66,8 @@ public class DriveTrain extends SubsystemBase {
     mRightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
     mRightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    mLeftDriveMotor2.follow(mLeftDriveMotor1);
-    mRightDriveMotor2.follow(mRightDriveMotor1);
+    mLeftDriveMotor1.follow(mLeftDriveMotor2);
+    mRightDriveMotor1.follow(mRightDriveMotor2);
 
     mLeftDriveMotor1.burnFlash();
     mLeftDriveMotor2.burnFlash();
@@ -70,14 +75,16 @@ public class DriveTrain extends SubsystemBase {
     mRightDriveMotor2.burnFlash();
 
     mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mLeftBuiltInEncoder = mLeftDriveMotor2.getEncoder();
     mLeftEncoder.setInverted(true);
     mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    
-    mLeftDrivePID = mLeftDriveMotor1.getPIDController();
-    mLeftDrivePID.setFeedbackDevice(mLeftEncoder);
+    mRightBuiltInEncoder = mRightDriveMotor2.getEncoder();
 
-    mRightDrivePID = mRightDriveMotor1.getPIDController();
-    mRightDrivePID.setFeedbackDevice(mRightEncoder);
+    mLeftDrivePID = mLeftDriveMotor2.getPIDController();
+    mLeftDrivePID.setFeedbackDevice(mLeftBuiltInEncoder);
+
+    mRightDrivePID = mRightDriveMotor2.getPIDController();
+    mRightDrivePID.setFeedbackDevice(mRightBuiltInEncoder);
 
     // there are two different PID slots per side, one for moving forward (0) and one for autonomous turning (1)
     mLeftDrivePID.setP(DriveConstants.kP);
@@ -94,23 +101,23 @@ public class DriveTrain extends SubsystemBase {
     //rightDrivePID.setFF(kFF);
     mRightDrivePID.setOutputRange(-1, 1);
 
-    // mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
-    // mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
 
-    // mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
-    // mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
+    mLeftDrivePID.setP(DriveConstants.kP,1);
+    mLeftDrivePID.setI(DriveConstants.kI,1);
+    mLeftDrivePID.setD(DriveConstants.kD,1);
+    mRightDrivePID.setP(DriveConstants.kP,1);
+    mRightDrivePID.setI(DriveConstants.kI,1);
+    mRightDrivePID.setD(DriveConstants.kD,1);
+    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
+    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/5, 1);
+    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
 
-    // mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
-    // mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
-    // mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
-    // mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
-
-    // mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
-    // mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
-
-    // mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
-    // mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
+    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/5, 1);
+    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
+    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
   }
 
@@ -159,13 +166,12 @@ public class DriveTrain extends SubsystemBase {
 
   }
 
-  public boolean driveDistance(double inches){
-    double rotations = inches / DriveConstants.WHEEL_CIRCUMFERENCE;
-
-    mLeftDrivePID.setReference(rotations, ControlType.kPosition, 0);
-    mRightDrivePID.setReference(rotations, ControlType.kPosition, 0);
-    double distanceTraveled = DriveConstants.WHEEL_CIRCUMFERENCE * (mLeftEncoder.getPosition() + mRightEncoder.getPosition()) / 2.0;
-    return (distanceTraveled >= inches);
+  public void driveDistance(double inches){
+    double rotations = DriveConstants.GEARBOX_RATIO * inches / DriveConstants.WHEEL_CIRCUMFERENCE;
+    mLeftDrivePID.setReference(rotations, ControlType.kSmartMotion, 1);
+    mRightDrivePID.setReference(-rotations, ControlType.kSmartMotion, 1);
+    // double distanceTraveled = DriveConstants.WHEEL_CIRCUMFERENCE * (mLeftEncoder.getPosition() + mRightEncoder.getPosition()) / 2.0;
+    // return (distanceTraveled >= inches);
   }
 
   public boolean autonTurn(double inches, double degrees, boolean clockwise){
@@ -196,8 +202,8 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void updateSmartdashboard(){
-    SmartDashboard.putNumber("Left Encoder Position", mLeftEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder Position", mRightEncoder.getPosition());
+    SmartDashboard.putNumber("Left Encoder Position", mLeftBuiltInEncoder.getPosition());
+    SmartDashboard.putNumber("Right Encoder Position", mRightBuiltInEncoder.getPosition());
   }
 }
 

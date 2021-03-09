@@ -55,7 +55,7 @@ public class MoveHarvester extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
-    //return roboHarvester.getHarvesterTOF(); //need to have an override
+    // return false;
+    return roboHarvester.getHarvesterTOF(); //need to have an override
   }
 }

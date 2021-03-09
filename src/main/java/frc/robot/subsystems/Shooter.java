@@ -26,7 +26,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Relay;
-
 /*
 ** PURPOSE: Shooter subsystem
 ** STATUS: Motor functions are good. PID is not.
@@ -42,7 +41,7 @@ public class Shooter extends SubsystemBase {
   private double mLeftShooterRPM = 0.0;
   private double mLeftShooterVoltage = 0.0;
   private double mLeftShooterDutyCycle = 0.0;
-  private Relay mPVRingLight;
+  private Relay  mPVRingLight;
 
   private CANPIDController shooterPID;
   private double kP = 0.001;
@@ -102,9 +101,6 @@ public class Shooter extends SubsystemBase {
     shooterPID.setOutputRange(-1,1);
     shooterPID.setIZone(1000);
 
-    // Turn on Ring Light
-    mPVRingLight.set(Relay.Value.kOn);
-
   }
 
   @Override
@@ -145,12 +141,16 @@ public class Shooter extends SubsystemBase {
       // System.out.println("Setting Default kF");
       mLeftShooterMotor.set(0);
       mSetKFF = true;
+      mPVRingLight.set(Relay.Value.kOff);
+
 
     } else if (shooterControlState == ShooterControlState.SPINUP) {
       // figure out desired speed
       // desiredRPM = getNeededRPM(); // for when we have camera control
       // pid spin up
       setShooterSpeed(mDesiredRPM);
+      mPVRingLight.set(Relay.Value.kOn);
+
 
       shooterControlState = ShooterControlState.HOLDWHENREADY;
 

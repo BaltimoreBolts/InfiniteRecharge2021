@@ -78,6 +78,7 @@ public class Harvester extends SubsystemBase {
     // return LimitSwitch0.get();
     // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range
     return mHarvesterTOF.getRange() >= 15 && mHarvesterTOF.getRange() <= 25;
+    // we want to replace with with the indexer tof? range around <= 100 i think
   }
 
   public void updateSmartdashboard() {
