@@ -80,45 +80,37 @@ public class DriveTrain extends SubsystemBase {
     mRightDrivePID.setFeedbackDevice(mRightEncoder);
 
     // there are two different PID slots per side, one for moving forward (0) and one for autonomous turning (1)
-    mLeftDrivePID.setP(DriveConstants.kP, 0);
-    mLeftDrivePID.setI(DriveConstants.kI, 0);
-    mLeftDrivePID.setD(DriveConstants.kD, 0);
+    mLeftDrivePID.setP(DriveConstants.kP);
+    mLeftDrivePID.setI(DriveConstants.kI);
+    mLeftDrivePID.setD(DriveConstants.kD);
     //leftDrivePID.setIZone(kIz);
     //leftDrivePID.setFF(kFF);
-    mLeftDrivePID.setP(DriveConstants.kP, 1);
-    mLeftDrivePID.setI(DriveConstants.kI, 1);
-    mLeftDrivePID.setD(DriveConstants.kD, 1);
-    mLeftDrivePID.setOutputRange(-1, 1, 0);
-    mLeftDrivePID.setOutputRange(-1, 1, 1);
+    mLeftDrivePID.setOutputRange(-1, 1);
 
-    mRightDrivePID.setP(DriveConstants.kP, 0);
-    mRightDrivePID.setI(DriveConstants.kI, 0);
-    mRightDrivePID.setD(DriveConstants.kD, 0);
+    mRightDrivePID.setP(DriveConstants.kP);
+    mRightDrivePID.setI(DriveConstants.kI);
+    mRightDrivePID.setD(DriveConstants.kD);
     //rightDrivePID.setIZone(kIz);
     //rightDrivePID.setFF(kFF);
-    mRightDrivePID.setP(DriveConstants.kP, 1);
-    mRightDrivePID.setI(DriveConstants.kI, 1);
-    mRightDrivePID.setD(DriveConstants.kD, 1);
-    mRightDrivePID.setOutputRange(-1, 1, 0);
-    mRightDrivePID.setOutputRange(-1, 1, 1);
+    mRightDrivePID.setOutputRange(-1, 1);
 
-    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
-    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
+    // mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
+    // mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
 
-    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
-    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
+    // mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
+    // mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
 
-    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
-    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+    // mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
+    // mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
-    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
-    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
+    // mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 0);
+    // mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 0);
 
-    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
-    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
+    // mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/2, 1);
+    // mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/2, 1);
 
-    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
-    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+    // mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 0);
+    // mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
   }
 
@@ -147,8 +139,8 @@ public class DriveTrain extends SubsystemBase {
     x = Math.pow(x,3); 
     y = Math.pow(y,3);
 
-    mLeftDrivePID.setReference((y+x)*DriveConstants.MAX_RPM, ControlType.kVelocity, 0);
-    mRightDrivePID.setReference(-(y-x)*DriveConstants.MAX_RPM, ControlType.kVelocity, 0);
+    mLeftDrivePID.setReference((y+x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
+    mRightDrivePID.setReference(-(y-x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
   }
 
   public double getLeftPosition() {
