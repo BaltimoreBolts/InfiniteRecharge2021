@@ -55,6 +55,8 @@ public class RobotContainer {
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
   JoystickButton driverStartButton = new JoystickButton(driver, Constants.Controller.XBOX.START);
   JoystickButton driverBackButton = new JoystickButton(driver, Constants.Controller.XBOX.BACK);
+  JoystickButton driverAButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
+  JoystickButton driverBButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
 
   // Initialize Operator Buttons
   JoystickButton operatorAButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
@@ -118,6 +120,9 @@ public class RobotContainer {
     operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, false));
     operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
     operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
+
+    driverAButton.whenPressed(new AutonomousDrive(roboDT, 60));
+    driverBButton.whenPressed(new AutonomousTurn(roboDT, 0, 90, true));
   }
 
   private void configureDriveMode() {

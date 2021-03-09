@@ -22,21 +22,21 @@ public class AutonomousDrive extends CommandBase {
   /**
    * Creates a new Autonomous.
    */
-  double speed = 0; 
-  double desiredLeftPosition = 0;
-  double desiredRightPosition = 0;
-  int currentLeftPosition = 0;
-  int currentRightPosition = 0;
-  int initialRightPosition = 0;
-  int initialLeftPosition= 0;
-  double distToTravel_in = 0;
+  double mSpeed = 0; 
+  double mDesiredLeftPosition = 0;
+  double mDesiredRightPosition = 0;
+  int mCurrentLeftPosition = 0;
+  int mCurrentRightPosition = 0;
+  int mInitialRightPosition = 0;
+  int mInitialLeftPosition= 0;
+  double mDistToTravel_in = 0;
  
    
   DriveTrain roboDT;
   public AutonomousDrive(DriveTrain robotDT, double inchesToTravel) {
     // Use addRequirements() here to declare subsystem dependencies.
     roboDT = robotDT;
-    distToTravel_in = inchesToTravel;
+    mDistToTravel_in = inchesToTravel;
      // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(roboDT);
   }
@@ -44,23 +44,23 @@ public class AutonomousDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    roboDT.resetEncoders();
+    // roboDT.resetEncoders();
     
-    // Reset the variables so our desired change in position is the same 
-    // everytime and not (desiredPosition) * numberOfCycles
-    initialLeftPosition = (int)roboDT.getLeftPosition();
-    initialRightPosition = (int)roboDT.getRightPosition();
-    desiredLeftPosition = 0;
-    desiredRightPosition = 0;
-    initialLeftPosition = 0;
-    initialRightPosition = 0;
+    // // Reset the variables so our desired change in position is the same 
+    // // everytime and not (desiredPosition) * numberOfCycles
+    // mInitialLeftPosition = (int)roboDT.getLeftPosition();
+    // mInitialRightPosition = (int)roboDT.getRightPosition();
+    // mDesiredLeftPosition = 0;
+    // mDesiredRightPosition = 0;
+    // mInitialLeftPosition = 0;
+    // mInitialRightPosition = 0;
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    roboDT.arcadeDrive(0, -0.3);
+    // roboDT.arcadeDrive(0, -0.3);
   }
 
   // Called once the command ends or is interrupted.
@@ -73,28 +73,29 @@ public class AutonomousDrive extends CommandBase {
   @Override
   public boolean isFinished() {
     // Left encoder counts down so that's why we're doing subtraction 
-    desiredLeftPosition = initialLeftPosition - roboDT.inchesToCounts(distToTravel_in, 
-    Constants.GenConstants.REV_ENCODER_CPR);
-    currentLeftPosition = (int)roboDT.getLeftPosition();
+    // mDesiredLeftPosition = mInitialLeftPosition - roboDT.inchesToCounts(mDistToTravel_in, 
+    // Constants.GenConstants.REV_ENCODER_CPR);
+    // mCurrentLeftPosition = (int)roboDT.getLeftPosition();
    
-    // Right counts up so you do the addition 
-    desiredRightPosition = roboDT.inchesToCounts(distToTravel_in, 
-    Constants.GenConstants.REV_ENCODER_CPR) + initialRightPosition;
-    currentRightPosition = (int)roboDT.getRightPosition();
+    // // Right counts up so you do the addition 
+    // mDesiredRightPosition = roboDT.inchesToCounts(mDistToTravel_in, 
+    // Constants.GenConstants.REV_ENCODER_CPR) + mInitialRightPosition;
+    // mCurrentRightPosition = (int)roboDT.getRightPosition();
     
-    SmartDashboard.putNumber("Desired Left", desiredLeftPosition);
-    SmartDashboard.putNumber("Desired Right", desiredRightPosition);
-    SmartDashboard.putNumber("Current Left", currentLeftPosition);
-    SmartDashboard.putNumber("Current Right", currentRightPosition);
-    SmartDashboard.putNumber("Initial Left", initialLeftPosition);
-    SmartDashboard.putNumber("Initial Right", initialRightPosition);
+    // SmartDashboard.putNumber("Desired Left", mDesiredLeftPosition);
+    // SmartDashboard.putNumber("Desired Right", mDesiredRightPosition);
+    // SmartDashboard.putNumber("Current Left", mCurrentLeftPosition);
+    // SmartDashboard.putNumber("Current Right", mCurrentRightPosition);
+    // SmartDashboard.putNumber("Initial Left", mInitialLeftPosition);
+    // SmartDashboard.putNumber("Initial Right", mInitialRightPosition);
 
-    // We drive forward until the right and left encoders reach at or past the desired position
-    if ((currentRightPosition >= desiredRightPosition) && (currentLeftPosition<=desiredLeftPosition)){
-      return true;
-  } else {
-    return false;
-  }
-   
+    // // We drive forward until the right and left encoders reach at or past the desired position
+    // if ((mCurrentRightPosition >= mDesiredRightPosition) && (mCurrentLeftPosition<=mDesiredLeftPosition)){
+    //   return true;
+    // } else {
+    //   return false;
+    // }
+    return roboDT.driveDistance(mDistToTravel_in);
+     
   }
 }
