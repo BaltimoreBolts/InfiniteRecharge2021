@@ -10,13 +10,25 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.DPadButton;
 import frc.robot.TriggerButton;
 import edu.wpi.first.cameraserver.CameraServer;
+
+import java.util.List;
+import java.util.function.BiConsumer;
+
 import edu.wpi.cscore.UsbCamera;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
@@ -42,8 +54,8 @@ public class RobotContainer {
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
 
-  // private Command autoCommand = new AutonomousDrive(roboDT, 60);
-  private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
+  private Command autoCommand = new AutonomousDrive(roboDT, 60);
+  // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
@@ -220,11 +232,47 @@ public class RobotContainer {
   public Command getAutonomousCommand(boolean value) {
     // An ExampleCommand will run in autonomous
     // Again really dumb way to do this but the SequentialCommandGroup was breaking our code
-    if (value) {
-      return autoCommand;
-    } else {
-      return autoShoot;
-    }
+    TrajectoryConfig config = 
+      new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
+      .setKinematics(AutoConstants.DRIVE_KINEMATICS);
+
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
+        List.of( // pass interior way points, making 's' curve
+            new Translation2d(1, 1),
+            new Translation2d(2, -1)
+        ),
+        new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
+        config
+    );
+
+    // BiConsumer<Double, Double> setWheelSpeeds = (x,y) -> roboDT.setWheelSpeeds(x,y);
+    BiConsumer<Double, Double> setWheelSpeeds = 
+        (x,y) -> {
+              roboDT.setWheelSpeeds(x,y);
+              SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
+              SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
+          };
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        exampleTrajectory,
+        roboDT::getPose, 
+        new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
+        AutoConstants.DRIVE_KINEMATICS,
+        setWheelSpeeds,
+        roboDT
+    );
+
+    return ramseteCommand.andThen(() -> roboDT.stopDT());
+
+
+    // if (value) {
+    //   return autoCommand;
+    // } else {
+    //   return autoShoot;
+    // }
+
+
   }
 
   public XboxController GetDriverController() {

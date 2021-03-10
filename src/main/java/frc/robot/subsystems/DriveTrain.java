@@ -11,8 +11,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
 
-import java.util.function.BiConsumer;
-
+import com.analog.adis16470.frc.ADIS16470_IMU;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder;
@@ -20,14 +19,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import org.opencv.ml.Ml;
-
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends SubsystemBase {
@@ -43,17 +38,10 @@ public class DriveTrain extends SubsystemBase {
   private CANEncoder mRightBuiltInEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
-  private double mTrajLeftSpeed = 0;
-  private double mTrajRightSpeed = 0;
-
   private DifferentialDrive driveTrain;
-  private final Gyro mGyro = new ADXRS450_Gyro(); // TODO add gyro, im not sure what type we have
+  private final Gyro mGyro = new ADIS16470_IMU(); 
   private final DifferentialDriveOdometry mOdometry;
       
-  public BiConsumer<Double, Double> wheelSpeeds = (x,y) -> {
-    mTrajLeftSpeed = x;
-    mTrajRightSpeed = y;
-  };
   
   /**
    * Creates a new DriveTrain.
@@ -180,8 +168,10 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void setWheelSpeeds(Double left, Double right){
-    mTrajRightSpeed = right;
-    mTrajLeftSpeed = left;
+    right = 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * right / GenConstants.IN_TO_M; // convert m/s to rpm
+    left = 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * left / GenConstants.IN_TO_M; // convert m/s to rpm
+    mRightDrivePID.setReference(right,ControlType.kVelocity, 2);
+    mLeftDrivePID.setReference(left, ControlType.kVelocity, 2);
   }
 
   public void resetOdometry(Pose2d pose){
@@ -203,7 +193,7 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Zeroes the heading of the robot.
-   */
+  */
   public void zeroHeading(){
     mGyro.reset();
   }
@@ -212,7 +202,7 @@ public class DriveTrain extends SubsystemBase {
    * Returns the heading of the robot.
    *
    * @return the robot's heading in degrees, from -180 to 180
-   */
+  */
   public double getHeading(){
     return mGyro.getRotation2d().getDegrees();
   }
@@ -221,7 +211,7 @@ public class DriveTrain extends SubsystemBase {
    * Returns the turn rate of the robot.
    *
    * @return The turn rate of the robot, in degrees per second
-   */
+  */
   public double getTurnRate(){
     return -mGyro.getRate();
   }
@@ -236,13 +226,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void closedLoopArcadeDrive(double x, double y){
-    /*if (Math.abs(x) < 0.05){
-      x = 0;
-    }
-    if (Math.abs(y) < 0.05){
-      y = 0;
-    }
-    */
+
     x = Math.pow(x,3); 
     y = Math.pow(y,3);
 
@@ -301,7 +285,7 @@ public class DriveTrain extends SubsystemBase {
 
     return ((leftDistTraveled >= leftWheelTurns) && (rightDistTraveled >= rightWheelTurns));
   }
-
+  
   public void resetEncoders() {
     mRightBuiltInEncoder.setPosition(0);
     mLeftBuiltInEncoder.setPosition(0);
