@@ -25,6 +25,7 @@ import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import java.lang.Math;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /* 
 ** PURPOSE: This is the autonmous drive commmand. Drives robot 
@@ -58,12 +59,14 @@ public class AutonomousFollowTrajectory extends CommandBase {
         config
     );
 
+    BiConsumer<Double, Double> setWheelSpeeds = (x,y) -> roboDT.setWheelSpeeds(x,y);
+
     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
         roboDT::getPose, 
         new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
         AutoConstants.DRIVE_KINEMATICS,
-        roboDT::setWheelSpeed,
+        setWheelSpeeds,
         roboDT
     );
    

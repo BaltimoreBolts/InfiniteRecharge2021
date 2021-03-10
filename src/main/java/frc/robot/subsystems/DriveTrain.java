@@ -179,8 +179,9 @@ public class DriveTrain extends SubsystemBase {
     return mOdometry.getPoseMeters();
   }
 
-  public BiConsumer<Double, Double> setWheelSpeeds(){
-    return wheelSpeeds;
+  public void setWheelSpeeds(Double left, Double right){
+    mTrajRightSpeed = right;
+    mTrajLeftSpeed = left;
   }
 
   public void resetOdometry(Pose2d pose){
