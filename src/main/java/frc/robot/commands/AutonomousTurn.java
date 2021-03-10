@@ -12,11 +12,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 
-/* 
-** PURPOSE: This is the autonmous drive commmand. Drives robot 
-** forward/backward until certain distance has been travelled
-** STATUS: Tested and works (signs of encoders, motor speeds should all be correct)
-*/ 
  
 public class AutonomousTurn extends CommandBase {
   /**

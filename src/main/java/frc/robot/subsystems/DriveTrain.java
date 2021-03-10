@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
 
+import java.util.function.BiConsumer;
+
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder;
@@ -20,7 +22,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.opencv.ml.Ml;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends SubsystemBase {
@@ -36,7 +43,17 @@ public class DriveTrain extends SubsystemBase {
   private CANEncoder mRightBuiltInEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
+  private double mTrajLeftSpeed = 0;
+  private double mTrajRightSpeed = 0;
+
   private DifferentialDrive driveTrain;
+  private final Gyro mGyro = new ADXRS450_Gyro(); // TODO add gyro, im not sure what type we have
+  private final DifferentialDriveOdometry mOdometry;
+      
+  public BiConsumer<Double, Double> wheelSpeeds = (x,y) -> {
+    mTrajLeftSpeed = x;
+    mTrajRightSpeed = y;
+  };
   
   /**
    * Creates a new DriveTrain.
@@ -144,18 +161,75 @@ public class DriveTrain extends SubsystemBase {
     mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
     mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
 
+    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d());
+
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    mOdometry.update(
+      mGyro.getRotation2d(), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M, 
+      mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M
+    );
     updateSmartdashboard();
   }
-  
+
+  public Pose2d getPose(){
+    return mOdometry.getPoseMeters();
+  }
+
+  public BiConsumer<Double, Double> setWheelSpeeds(){
+    return wheelSpeeds;
+  }
+
+  public void resetOdometry(Pose2d pose){
+    resetEncoders();
+    mOdometry.resetPosition(pose, mGyro.getRotation2d());
+  }
+
+  /**
+   * Gets the average distance of the two encoders.
+   *
+   * @return the average of the two encoder readings
+   */
+  public double getAverageEncoderDistance() {
+    double left_distance = mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M;
+    double right_distance = mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M;
+
+    return (left_distance + right_distance) / 2.0;
+  }
+
+  /**
+   * Zeroes the heading of the robot.
+   */
+  public void zeroHeading(){
+    mGyro.reset();
+  }
+
+  /**
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from -180 to 180
+   */
+  public double getHeading(){
+    return mGyro.getRotation2d().getDegrees();
+  }
+
+  /**
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
+  public double getTurnRate(){
+    return -mGyro.getRate();
+  }
+
   public void stopDT(){
     mLeftDriveMotor1.set(0);
     mRightDriveMotor1.set(0);
   }
+
   public void arcadeDrive(double x, double y) {
 		driveTrain.arcadeDrive(y, x); // Moving the stick forward (+y) moves the robot forward, left/right on the stick makes the robot spin
   }
@@ -230,6 +304,8 @@ public class DriveTrain extends SubsystemBase {
   public void resetEncoders() {
     mRightBuiltInEncoder.setPosition(0);
     mLeftBuiltInEncoder.setPosition(0);
+    mRightEncoder.setPosition(0);
+    mLeftEncoder.setPosition(0);
   }
 
   public void updateSmartdashboard(){

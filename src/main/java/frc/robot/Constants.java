@@ -9,6 +9,8 @@ package frc.robot;
 
 import java.lang.Math;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -31,6 +33,7 @@ public final class Constants {
         public static final double SHOOTER_ANGLE_DEG = 0;
         public static final double COS_ANGLE = Math.cos(SHOOTER_ANGLE_DEG*DEG2RAD);
         public static final double TAN_ANGLE = Math.tan(SHOOTER_ANGLE_DEG*DEG2RAD);
+        public static final double IN_TO_M = 39.3701;
     }
 
      // To import this elsewhere use import frc.robot.Constants.OIConstants;
@@ -182,5 +185,13 @@ public final class Constants {
                 }
             }
         }
+    }
+
+    public static final class AutoConstants {
+        public static final double MAX_SPEED_MPS = 3; // meters per second
+        public static final double MAX_ACC_MPS = 6; // meters per second^2
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(DriveConstants.TRACK * GenConstants.IN_TO_M); // convert to meters
+        public static final double RAMSETE_B = 2;
+        public static final double RAMSETE_ZETA = 0.7;
     }
 }
