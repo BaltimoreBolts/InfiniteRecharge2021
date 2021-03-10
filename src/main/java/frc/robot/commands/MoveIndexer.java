@@ -33,7 +33,8 @@ public class MoveIndexer extends CommandBase {
   /**
    * Creates a new moveIndexer.
    */
-  public MoveIndexer(Indexer roboIndexer, boolean direction, int num_pos) {
+  public 
+  MoveIndexer(Indexer roboIndexer, boolean direction, int num_pos) {
     this.roboIndexer = roboIndexer;
     this.direction = direction;
     this.numPos = (num_pos == -1) ? 0 : num_pos; // if we are told that there are no PCs, dont move

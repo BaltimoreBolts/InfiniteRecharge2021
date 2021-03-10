@@ -51,15 +51,15 @@ public final class Constants {
         public static final double MAX_RPM = 5676; // REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
         public static final double TRACK = 24; // width from center of left wheel to right wheel in inches
 
-        public static final double kP = 0.005;  
+        public static final double kP = 0.0001;  
         public static final double kI = 0;
         public static final double kD = 0; 
-        public static final double kFF = 0; 
+        public static final double kFF = 1.0 / MAX_RPM; 
 
-        public static final double MAX_VEL =  MAX_RPM/1.5;    // rpm
-        public static final double MIN_VEL =  0;      // rpm
-        public static final double MAX_ACC =  100;    // rpm/s
-        public static final double ALLOWED_ERROR = 0.1; // rpm? 
+        public static final double MAX_VEL = MAX_RPM;    // rpm
+        public static final double MIN_VEL = 0;      // rpm
+        public static final double MAX_ACC = 5000;    // rpm/s
+        public static final double ALLOWED_ERROR = 0; // rpm? 
 
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
@@ -101,7 +101,7 @@ public final class Constants {
             }
         }
         public static final int kFFCircularBufferSize = 20;
-        public static final double SHOOTER_FLYWHEEL_DIAMETER = 5; //TODO set this correctly with appropriate units
+        public static final double SHOOTER_FLYWHEEL_DIAMETER = 5; // TODO set this correctly with appropriate units
     }
 
     public static final class PowerCellConstants {

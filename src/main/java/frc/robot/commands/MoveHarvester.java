@@ -13,7 +13,7 @@ import frc.robot.subsystems.Harvester;
  */
 public class MoveHarvester extends CommandBase {
   Harvester roboHarvester;
-  double HarvesterFrontSpeed = 0.6; // these are both positive values, back should be a bit faster or equal 
+  double HarvesterFrontSpeed = 1; // these are both positive values, back should be a bit faster or equal 
   double HarvesterBackSpeed = 0.8;
   boolean direction = true; // true for intake
 

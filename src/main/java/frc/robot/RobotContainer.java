@@ -42,7 +42,8 @@ public class RobotContainer {
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
 
-  private Command autoCommand = new AutonomousDrive(roboDT, 60);
+  // private Command autoCommand = new AutonomousDrive(roboDT, 60);
+  private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
@@ -167,7 +168,7 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.55,
-              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))*0.7),
+              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
             roboDT
           )
         );

@@ -91,33 +91,58 @@ public class DriveTrain extends SubsystemBase {
     mLeftDrivePID.setI(DriveConstants.kI);
     mLeftDrivePID.setD(DriveConstants.kD);
     //leftDrivePID.setIZone(kIz);
-    //leftDrivePID.setFF(kFF);
+    mLeftDrivePID.setFF(DriveConstants.kFF);
     mLeftDrivePID.setOutputRange(-1, 1);
 
     mRightDrivePID.setP(DriveConstants.kP);
     mRightDrivePID.setI(DriveConstants.kI);
     mRightDrivePID.setD(DriveConstants.kD);
     //rightDrivePID.setIZone(kIz);
-    //rightDrivePID.setFF(kFF);
+    mRightDrivePID.setFF(DriveConstants.kFF);
     mRightDrivePID.setOutputRange(-1, 1);
 
 
     mLeftDrivePID.setP(DriveConstants.kP,1);
     mLeftDrivePID.setI(DriveConstants.kI,1);
     mLeftDrivePID.setD(DriveConstants.kD,1);
+    mLeftDrivePID.setFF(DriveConstants.kFF,1);
+
     mRightDrivePID.setP(DriveConstants.kP,1);
     mRightDrivePID.setI(DriveConstants.kI,1);
     mRightDrivePID.setD(DriveConstants.kD,1);
-    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
-    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/5, 1);
-    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
+    mRightDrivePID.setFF(DriveConstants.kFF,1);
 
+    
+    mLeftDrivePID.setP(DriveConstants.kP,2);
+    mLeftDrivePID.setI(DriveConstants.kI,2);
+    mLeftDrivePID.setD(DriveConstants.kD,2);
+    mLeftDrivePID.setFF(DriveConstants.kFF,2);
+
+    mRightDrivePID.setP(DriveConstants.kP,2);
+    mRightDrivePID.setI(DriveConstants.kI,2);
+    mRightDrivePID.setD(DriveConstants.kD,2);
+    mRightDrivePID.setFF(DriveConstants.kFF,2);
+
+
+    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
+    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
+    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
     mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
 
+    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
+    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
+    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
+    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
+
     mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
-    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/5, 1);
+    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
     mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
     mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+
+    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
+    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
+    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
+    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
 
   }
 
@@ -146,16 +171,22 @@ public class DriveTrain extends SubsystemBase {
     x = Math.pow(x,3); 
     y = Math.pow(y,3);
 
-    mLeftDrivePID.setReference((y+x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
-    mRightDrivePID.setReference(-(y-x)*DriveConstants.MAX_RPM, ControlType.kVelocity);
+    double left_set_point = (y+x)*DriveConstants.MAX_RPM;
+    double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
+
+    SmartDashboard.putNumber("[Drivetrain] left set point", left_set_point);
+
+    mLeftDrivePID.setReference(left_set_point, ControlType.kSmartVelocity,1);
+    mRightDrivePID.setReference(right_set_point, ControlType.kSmartVelocity,1);
+
   }
 
   public double getLeftPosition() {
-    return mLeftEncoder.getPosition();
+    return mLeftBuiltInEncoder.getPosition();
   }
 
   public double getRightPosition() {
-    return mRightEncoder.getPosition();
+    return mRightBuiltInEncoder.getPosition();
   }
   public double inchesToCounts(double inches, int CPR ){
     double Counts = 0;
@@ -168,8 +199,8 @@ public class DriveTrain extends SubsystemBase {
 
   public void driveDistance(double inches){
     double rotations = DriveConstants.GEARBOX_RATIO * inches / DriveConstants.WHEEL_CIRCUMFERENCE;
-    mLeftDrivePID.setReference(rotations, ControlType.kSmartMotion, 1);
-    mRightDrivePID.setReference(-rotations, ControlType.kSmartMotion, 1);
+    mLeftDrivePID.setReference(rotations, ControlType.kSmartMotion, 2);
+    mRightDrivePID.setReference(-rotations, ControlType.kSmartMotion, 2);
     // double distanceTraveled = DriveConstants.WHEEL_CIRCUMFERENCE * (mLeftEncoder.getPosition() + mRightEncoder.getPosition()) / 2.0;
     // return (distanceTraveled >= inches);
   }
@@ -180,30 +211,33 @@ public class DriveTrain extends SubsystemBase {
     double rightWheelTurns = 0;
 
     if (clockwise) { // calculate inner and outer turning circumference
-      leftWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI) * degrees/360.0;
-      rightWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI) * degrees/360.0;
+      leftWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
+      rightWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
     } else {
-      leftWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI) * degrees/360.0;
-      rightWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI) * degrees/360.0;
+      leftWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
+      rightWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
     }
     
-    mLeftDrivePID.setReference(leftWheelTurns, ControlType.kSmartMotion, 1);
-    mRightDrivePID.setReference(rightWheelTurns, ControlType.kSmartMotion, 1);
+    mLeftDrivePID.setReference(leftWheelTurns, ControlType.kSmartMotion, 2);
+    mRightDrivePID.setReference(-rightWheelTurns, ControlType.kSmartMotion, 2);
 
-    double leftDistTraveled =  mLeftEncoder.getPosition();
+    double leftDistTraveled  =  mLeftEncoder.getPosition();
     double rightDistTraveled =  mRightEncoder.getPosition();
 
     return ((leftDistTraveled >= leftWheelTurns) && (rightDistTraveled >= rightWheelTurns));
   }
 
   public void resetEncoders() {
-    mRightEncoder.setPosition(0);
-    mLeftEncoder.setPosition(0);
+    mRightBuiltInEncoder.setPosition(0);
+    mLeftBuiltInEncoder.setPosition(0);
   }
 
   public void updateSmartdashboard(){
-    SmartDashboard.putNumber("Left Encoder Position", mLeftBuiltInEncoder.getPosition());
-    SmartDashboard.putNumber("Right Encoder Position", mRightBuiltInEncoder.getPosition());
+    SmartDashboard.putNumber("[Drivetrain] Left Encoder Position", mLeftBuiltInEncoder.getPosition());
+    SmartDashboard.putNumber("[Drivetrain] Right Encoder Position", mRightBuiltInEncoder.getPosition());
+    SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftBuiltInEncoder.getVelocity());
+    SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mLeftBuiltInEncoder.getVelocity());
+    
   }
 }
 
