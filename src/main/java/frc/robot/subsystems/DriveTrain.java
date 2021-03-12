@@ -12,6 +12,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
 
 import com.analog.adis16470.frc.ADIS16470_IMU;
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANEncoder;
@@ -21,6 +22,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,7 +41,7 @@ public class DriveTrain extends SubsystemBase {
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   private DifferentialDrive driveTrain;
-  private final Gyro mGyro = new ADIS16470_IMU(); 
+  private final AHRS mNavx = new AHRS();
   private final DifferentialDriveOdometry mOdometry;
       
   
@@ -52,7 +54,6 @@ public class DriveTrain extends SubsystemBase {
 ** STATUS: Tested pretty well
 */
   public DriveTrain() {
-
     // Initialize all of the drive motors and set to correct settings. Burn to flash.
     mLeftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
     mLeftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
@@ -149,7 +150,7 @@ public class DriveTrain extends SubsystemBase {
     mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
     mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
 
-    mOdometry = new DifferentialDriveOdometry(mGyro.getRotation2d());
+    mOdometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(mNavx.getAngle()));
 
   }
 
@@ -157,7 +158,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mOdometry.update(
-      mGyro.getRotation2d(), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M, 
+      Rotation2d.fromDegrees(mNavx.getAngle()), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M, 
       mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M
     );
     updateSmartdashboard();
@@ -176,7 +177,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose){
     resetEncoders();
-    mOdometry.resetPosition(pose, mGyro.getRotation2d());
+    mOdometry.resetPosition(pose, Rotation2d.fromDegrees(mNavx.getAngle()));
   }
 
   /**
@@ -195,7 +196,7 @@ public class DriveTrain extends SubsystemBase {
    * Zeroes the heading of the robot.
   */
   public void zeroHeading(){
-    mGyro.reset();
+    mNavx.reset();
   }
 
   /**
@@ -204,7 +205,7 @@ public class DriveTrain extends SubsystemBase {
    * @return the robot's heading in degrees, from -180 to 180
   */
   public double getHeading(){
-    return mGyro.getRotation2d().getDegrees();
+    return mNavx.getAngle(); 
   }
 
   /**
@@ -213,7 +214,7 @@ public class DriveTrain extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
   */
   public double getTurnRate(){
-    return -mGyro.getRate();
+    return -mNavx.getRate(); // TODO check signs
   }
 
   public void stopDT(){
