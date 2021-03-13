@@ -66,6 +66,7 @@ public class DriveTrain extends SubsystemBase {
     }
     mNavx.calibrate();
     mNavx.reset();
+    mNavx.zeroYaw();
     resetEncoders();
     mOdometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(mNavx.getAngle()));
 
@@ -75,7 +76,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mOdometry.update(
-      Rotation2d.fromDegrees(mNavx.getAngle()), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M, 
+      Rotation2d.fromDegrees(mNavx.getAngle()), -mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M, 
       mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M
     );
     updateSmartdashboard();
@@ -86,10 +87,10 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void setWheelSpeeds(Double left, Double right){
-    right = 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * right / GenConstants.IN_TO_M; // convert m/s to rpm
-    left = 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * left / GenConstants.IN_TO_M; // convert m/s to rpm
-    mRightDrivePID.setReference(right,ControlType.kVelocity, 2);
-    mLeftDrivePID.setReference(left, ControlType.kVelocity, 2);
+    right = DriveConstants.GEARBOX_RATIO * 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * right * GenConstants.IN_TO_M; // convert m/s to rpm
+    left = DriveConstants.GEARBOX_RATIO * 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * left * GenConstants.IN_TO_M; // convert m/s to rpm
+    mRightDrivePID.setReference(-right,ControlType.kVelocity, 1);
+    mLeftDrivePID.setReference(left, ControlType.kVelocity, 1);
   }
 
   public void resetOdometry(Pose2d pose){
@@ -314,11 +315,15 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftEncoder.getVelocity());
     SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mLeftEncoder.getVelocity());
     SmartDashboard.putNumber("[Drivetrain] Heading", mOdometry.getPoseMeters().getRotation().getDegrees());
-    SmartDashboard.putNumber("[Drivetrain] NavX Angle", mNavx.getFusedHeading());
+    SmartDashboard.putNumber("[Drivetrain] NavX Angle", mNavx.getAngle());
     SmartDashboard.putBoolean("[Drivetrain] NavX Calibration", mNavx.isCalibrating());
     SmartDashboard.putBoolean("[Drivetrain] NavX Connected", mNavx.isConnected());
     SmartDashboard.putNumber("[Drivetrain] Odometry X Position", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("[Drivetrain] Odometry Y Position", mOdometry.getPoseMeters().getY());
+  }
+
+  public AHRS getNavx(){
+    return mNavx;
   }
 }
 

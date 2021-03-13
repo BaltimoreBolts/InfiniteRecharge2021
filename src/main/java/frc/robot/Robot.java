@@ -20,6 +20,9 @@ import frc.robot.commands.MoveShooter;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
+
+import com.kauailabs.navx.frc.AHRS;
+
 import edu.wpi.first.wpilibj.Relay;
 
 
@@ -44,6 +47,7 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
+    robotContainer.getNavx().zeroYaw();
     SmartDashboard.putNumber("Autonomous Mode", AutonomousMode);
     LED = new Relay(1);
     LED.set(Relay.Value.kOn);
@@ -86,6 +90,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    robotContainer.getNavx().zeroYaw();
     autonomousCommand1 = robotContainer.getAutonomousCommand();
     // autonomousCommand2 = robotContainer.getAutonomousCommand(false);
     System.out.println("\n\nInside Autonomous Init\n\n");

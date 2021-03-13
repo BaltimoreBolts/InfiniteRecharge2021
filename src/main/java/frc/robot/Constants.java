@@ -190,9 +190,9 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double MAX_SPEED_MPS = 3; // meters per second
-        public static final double MAX_ACC_MPS = 6; // meters per second^2
-        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(DriveConstants.TRACK * GenConstants.IN_TO_M); // convert to meters
+        public static final double MAX_SPEED_MPS = 1; // meters per second
+        public static final double MAX_ACC_MPS = 1; // meters per second^2
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(DriveConstants.TRACK / GenConstants.IN_TO_M); // convert to meters
         public static final double RAMSETE_B = 2;
         public static final double RAMSETE_ZETA = 0.7;
         // public static final SerialPort.Port NAVX_PORT = SerialPort.Port.kUSB2; // TODO kUSB vs kUSB1 vs kUSB2?

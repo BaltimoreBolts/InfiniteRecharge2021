@@ -20,7 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -259,14 +259,15 @@ public class RobotContainer {
         config
     );
 
-    // String trajectoryJSON = "Paths/barrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
-    // Trajectory trajectory = new Trajectory();
-    // try {
-    //   Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-    //   trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    // } catch (IOException ex){
-    //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    // }
+    String trajectoryJSON = "paths/slolam.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
+    Trajectory trajectory = new Trajectory();
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+      SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    } catch (IOException ex){
+      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    }
 
     // BiConsumer<Double, Double> setWheelSpeeds = (x,y) -> roboDT.setWheelSpeeds(x,y);
     BiConsumer<Double, Double> putWheelSpeeds = 
@@ -277,7 +278,7 @@ public class RobotContainer {
           };
 
     RamseteCommand ramseteCommand = new RamseteCommand(
-        exampleTrajectory,
+        trajectory,
         roboDT::getPose, 
         new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
         AutoConstants.DRIVE_KINEMATICS,
@@ -308,5 +309,9 @@ public class RobotContainer {
 
   public Elevator getElevator() {
     return this.roboElevator;
+  }
+  
+  public AHRS getNavx(){
+    return roboDT.getNavx();
   }
 }
