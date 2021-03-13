@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+
+
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -119,6 +121,12 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
+    driverAButton.whenPressed(
+      () -> roboElevator.engageRatchet()
+    );
+    driverBButton.whenPressed(
+      () -> roboElevator.disengageRatchet()
+    );
 
     // OPERATOR BUTTON ASSIGNMENTS
     operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
@@ -251,17 +259,17 @@ public class RobotContainer {
         config
     );
 
-    String trajectoryJSON = "Paths/BarrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
-    Trajectory trajectory = new Trajectory();
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException ex){
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    }
+    // String trajectoryJSON = "Paths/barrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
+    // Trajectory trajectory = new Trajectory();
+    // try {
+    //   Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+    //   trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    // } catch (IOException ex){
+    //   DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+    // }
 
     // BiConsumer<Double, Double> setWheelSpeeds = (x,y) -> roboDT.setWheelSpeeds(x,y);
-    BiConsumer<Double, Double> setWheelSpeeds = 
+    BiConsumer<Double, Double> putWheelSpeeds = 
         (x,y) -> {
               roboDT.setWheelSpeeds(x,y);
               SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
@@ -269,11 +277,11 @@ public class RobotContainer {
           };
 
     RamseteCommand ramseteCommand = new RamseteCommand(
-        trajectory,
+        exampleTrajectory,
         roboDT::getPose, 
         new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
         AutoConstants.DRIVE_KINEMATICS,
-        setWheelSpeeds,
+        putWheelSpeeds,
         roboDT
     );
 
@@ -289,11 +297,16 @@ public class RobotContainer {
 
   }
 
-  public XboxController GetDriverController() {
+  public XboxController getDriverController() {
     return this.driver;
   }
 
-  public Shooter GetShooter() {
+  public Shooter getShooter() {
     return this.roboShooter;
+  }
+
+
+  public Elevator getElevator() {
+    return this.roboElevator;
   }
 }

@@ -12,7 +12,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
 import frc.robot.Constants.AutoConstants;
 
-import com.analog.adis16470.frc.ADIS16470_IMU;
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
@@ -21,10 +20,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -42,7 +41,7 @@ public class DriveTrain extends SubsystemBase {
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   private DifferentialDrive driveTrain;
-  private final AHRS mNavx = new AHRS(AutoConstants.NAVX_PORT); // usb port coms w/ navx
+  private AHRS mNavx = null; // usb port coms w/ navx
   private final DifferentialDriveOdometry mOdometry;
       
   
@@ -59,6 +58,15 @@ public class DriveTrain extends SubsystemBase {
     
     setupMotors();
 
+    try {
+      mNavx = new AHRS(AutoConstants.NAVX_PORT, (byte) 100);
+    } catch (RuntimeException ex){
+      DriverStation.reportError("Error instantiantiating navX MXP: " + ex.getMessage(), true);
+      SmartDashboard.putBoolean("[Drivetrain] USB navX Error", true);
+    }
+    mNavx.calibrate();
+    mNavx.reset();
+    resetEncoders();
     mOdometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(mNavx.getAngle()));
 
   }
@@ -67,8 +75,8 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mOdometry.update(
-      Rotation2d.fromDegrees(mNavx.getAngle()), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M, 
-      mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M
+      Rotation2d.fromDegrees(mNavx.getAngle()), mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M, 
+      mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M
     );
     updateSmartdashboard();
   }
@@ -95,8 +103,8 @@ public class DriveTrain extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    double left_distance = mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M;
-    double right_distance = mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE * GenConstants.IN_TO_M;
+    double left_distance = mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M;
+    double right_distance = mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M;
 
     return (left_distance + right_distance) / 2.0;
   }
@@ -301,11 +309,16 @@ public class DriveTrain extends SubsystemBase {
   }
 
   private void updateSmartdashboard(){
-    SmartDashboard.putNumber("[Drivetrain] Left Encoder Position", mLeftBuiltInEncoder.getPosition());
-    SmartDashboard.putNumber("[Drivetrain] Right Encoder Position", mRightBuiltInEncoder.getPosition());
-    SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftBuiltInEncoder.getVelocity());
-    SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mLeftBuiltInEncoder.getVelocity());
-    
+    SmartDashboard.putNumber("[Drivetrain] Left Encoder Position", mLeftEncoder.getPosition());
+    SmartDashboard.putNumber("[Drivetrain] Right Encoder Position", mRightEncoder.getPosition());
+    SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("[Drivetrain] Heading", mOdometry.getPoseMeters().getRotation().getDegrees());
+    SmartDashboard.putNumber("[Drivetrain] NavX Angle", mNavx.getFusedHeading());
+    SmartDashboard.putBoolean("[Drivetrain] NavX Calibration", mNavx.isCalibrating());
+    SmartDashboard.putBoolean("[Drivetrain] NavX Connected", mNavx.isConnected());
+    SmartDashboard.putNumber("[Drivetrain] Odometry X Position", mOdometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("[Drivetrain] Odometry Y Position", mOdometry.getPoseMeters().getY());
   }
 }
 

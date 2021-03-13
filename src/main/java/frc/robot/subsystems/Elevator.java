@@ -40,7 +40,7 @@ public class Elevator extends SubsystemBase {
     mElevatorMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
     mElevatorEncoder = mElevatorMotor.getAlternateEncoder(kAltEncType,
                         Constants.GenConstants.REV_ENCODER_CPR); // Changed this, to match indexer, same encoder?
-    mElevatorRatchet = new Servo(8);
+    mElevatorRatchet = new Servo(9);
     mElevatorMotor.burnFlash();
   }
 
@@ -53,17 +53,17 @@ public class Elevator extends SubsystemBase {
     mElevatorMotor.set(speed);
   }
 
-  // engage ratched by turning servo to the right.
-  public void engageRatchet () {
-    mElevatorRatchet.set(1);
+  // disengage ratched by turning servo to the right.
+  public void disengageRatchet () {
+    mElevatorRatchet.set(100.0/180.0);
     long start_time = System.nanoTime();
     while ((System.nanoTime() - start_time) < 1e9) {
     };
   }
 
-  // Move servo to the left to engage disengage the ratchet
-  public void disengageRatchet() {
-    mElevatorRatchet.set(0);
+  // Move servo to the left to engage the ratchet
+  public void engageRatchet() {
+    mElevatorRatchet.set(90.0/180.0);
     long start_time = System.nanoTime();
     while ((System.nanoTime() - start_time) < 1e9) {
     };

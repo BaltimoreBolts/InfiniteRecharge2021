@@ -13,10 +13,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import frc.robot.commands.Autonomous;
 import frc.robot.commands.AutonomousShoot;
 import frc.robot.commands.MoveShooter;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj.Relay;
 
 
@@ -68,6 +71,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     // TODO: we may need to engage the servo ratchet for extra safety here
+    Elevator roboElevator = robotContainer.getElevator();
+    Shooter roboShooter = robotContainer.getShooter();
+    roboElevator.engageRatchet();
+    roboShooter.setShooterState(ShooterControlState.IDLE);
   }
 
   @Override
