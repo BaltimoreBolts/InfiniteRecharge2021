@@ -81,7 +81,7 @@ public class Harvester extends SubsystemBase {
     // we want to replace with with the indexer tof? range around <= 100 i think
   }
 
-  public void updateSmartdashboard() {
+  private void updateSmartdashboard() {
     SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
     SmartDashboard.putNumber("Harvester TOF Val", mHarvesterTOF.getRange());
   }

@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
+import frc.robot.Constants.AutoConstants;
 
 import com.analog.adis16470.frc.ADIS16470_IMU;
 import com.kauailabs.navx.frc.AHRS;
@@ -41,7 +42,7 @@ public class DriveTrain extends SubsystemBase {
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   private DifferentialDrive driveTrain;
-  private final AHRS mNavx = new AHRS();
+  private final AHRS mNavx = new AHRS(AutoConstants.NAVX_PORT); // usb port coms w/ navx
   private final DifferentialDriveOdometry mOdometry;
       
   
@@ -55,100 +56,8 @@ public class DriveTrain extends SubsystemBase {
 */
   public DriveTrain() {
     // Initialize all of the drive motors and set to correct settings. Burn to flash.
-    mLeftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
-    mLeftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
-    mRightDriveMotor1 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR1, MotorType.kBrushless);
-    mRightDriveMotor2 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR2, MotorType.kBrushless);
-    mLeftDriveMotor1.restoreFactoryDefaults();
-    mLeftDriveMotor2.restoreFactoryDefaults();
-    mRightDriveMotor1.restoreFactoryDefaults();
-    mRightDriveMotor2.restoreFactoryDefaults();
-    mLeftDriveMotor1.setSmartCurrentLimit(40);
-    mLeftDriveMotor2.setSmartCurrentLimit(40);
-    mRightDriveMotor1.setSmartCurrentLimit(40);
-    mRightDriveMotor2.setSmartCurrentLimit(40);
-    mLeftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    mLeftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    mRightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    mRightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
-
-    mLeftDriveMotor1.follow(mLeftDriveMotor2);
-    mRightDriveMotor1.follow(mRightDriveMotor2);
-
-    mLeftDriveMotor1.burnFlash();
-    mLeftDriveMotor2.burnFlash();
-    mRightDriveMotor1.burnFlash();
-    mRightDriveMotor2.burnFlash();
-
-    mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    mLeftBuiltInEncoder = mLeftDriveMotor2.getEncoder();
-    mLeftEncoder.setInverted(true);
-    mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    mRightBuiltInEncoder = mRightDriveMotor2.getEncoder();
-
-    mLeftDrivePID = mLeftDriveMotor2.getPIDController();
-    mLeftDrivePID.setFeedbackDevice(mLeftBuiltInEncoder);
-
-    mRightDrivePID = mRightDriveMotor2.getPIDController();
-    mRightDrivePID.setFeedbackDevice(mRightBuiltInEncoder);
-
-    // there are two different PID slots per side, one for moving forward (0) and one for autonomous turning (1)
-    mLeftDrivePID.setP(DriveConstants.kP);
-    mLeftDrivePID.setI(DriveConstants.kI);
-    mLeftDrivePID.setD(DriveConstants.kD);
-    //leftDrivePID.setIZone(kIz);
-    mLeftDrivePID.setFF(DriveConstants.kFF);
-    mLeftDrivePID.setOutputRange(-1, 1);
-
-    mRightDrivePID.setP(DriveConstants.kP);
-    mRightDrivePID.setI(DriveConstants.kI);
-    mRightDrivePID.setD(DriveConstants.kD);
-    //rightDrivePID.setIZone(kIz);
-    mRightDrivePID.setFF(DriveConstants.kFF);
-    mRightDrivePID.setOutputRange(-1, 1);
-
-
-    mLeftDrivePID.setP(DriveConstants.kP,1);
-    mLeftDrivePID.setI(DriveConstants.kI,1);
-    mLeftDrivePID.setD(DriveConstants.kD,1);
-    mLeftDrivePID.setFF(DriveConstants.kFF,1);
-
-    mRightDrivePID.setP(DriveConstants.kP,1);
-    mRightDrivePID.setI(DriveConstants.kI,1);
-    mRightDrivePID.setD(DriveConstants.kD,1);
-    mRightDrivePID.setFF(DriveConstants.kFF,1);
-
     
-    mLeftDrivePID.setP(DriveConstants.kP,2);
-    mLeftDrivePID.setI(DriveConstants.kI,2);
-    mLeftDrivePID.setD(DriveConstants.kD,2);
-    mLeftDrivePID.setFF(DriveConstants.kFF,2);
-
-    mRightDrivePID.setP(DriveConstants.kP,2);
-    mRightDrivePID.setI(DriveConstants.kI,2);
-    mRightDrivePID.setD(DriveConstants.kD,2);
-    mRightDrivePID.setFF(DriveConstants.kFF,2);
-
-
-    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
-    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
-    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
-    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
-
-    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
-    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
-    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
-    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
-
-    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
-    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
-    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
-    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
-
-    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
-    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
-    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
-    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
+    setupMotors();
 
     mOdometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(mNavx.getAngle()));
 
@@ -294,7 +203,104 @@ public class DriveTrain extends SubsystemBase {
     mLeftEncoder.setPosition(0);
   }
 
-  public void updateSmartdashboard(){
+  private void setupMotors(){
+    mLeftDriveMotor1 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR1, MotorType.kBrushless);
+    mLeftDriveMotor2 = new CANSparkMax(DriveConstants.LEFT_DRIVE_MOTOR2, MotorType.kBrushless);
+    mRightDriveMotor1 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR1, MotorType.kBrushless);
+    mRightDriveMotor2 = new CANSparkMax(DriveConstants.RIGHT_DRIVE_MOTOR2, MotorType.kBrushless);
+    mLeftDriveMotor1.restoreFactoryDefaults();
+    mLeftDriveMotor2.restoreFactoryDefaults();
+    mRightDriveMotor1.restoreFactoryDefaults();
+    mRightDriveMotor2.restoreFactoryDefaults();
+    mLeftDriveMotor1.setSmartCurrentLimit(40);
+    mLeftDriveMotor2.setSmartCurrentLimit(40);
+    mRightDriveMotor1.setSmartCurrentLimit(40);
+    mRightDriveMotor2.setSmartCurrentLimit(40);
+    mLeftDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mLeftDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mRightDriveMotor1.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mRightDriveMotor2.setIdleMode(CANSparkMax.IdleMode.kCoast);
+
+    mLeftDriveMotor1.follow(mLeftDriveMotor2);
+    mRightDriveMotor1.follow(mRightDriveMotor2);
+
+    mLeftDriveMotor1.burnFlash();
+    mLeftDriveMotor2.burnFlash();
+    mRightDriveMotor1.burnFlash();
+    mRightDriveMotor2.burnFlash();
+
+    mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mLeftBuiltInEncoder = mLeftDriveMotor2.getEncoder();
+    mLeftEncoder.setInverted(true);
+    mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mRightBuiltInEncoder = mRightDriveMotor2.getEncoder();
+
+    mLeftDrivePID = mLeftDriveMotor2.getPIDController();
+    mLeftDrivePID.setFeedbackDevice(mLeftBuiltInEncoder);
+
+    mRightDrivePID = mRightDriveMotor2.getPIDController();
+    mRightDrivePID.setFeedbackDevice(mRightBuiltInEncoder);
+
+    // there are two different PID slots per side, one for moving forward (0) and one for autonomous turning (1)
+    mLeftDrivePID.setP(DriveConstants.kP);
+    mLeftDrivePID.setI(DriveConstants.kI);
+    mLeftDrivePID.setD(DriveConstants.kD);
+    //leftDrivePID.setIZone(kIz);
+    mLeftDrivePID.setFF(DriveConstants.kFF);
+    mLeftDrivePID.setOutputRange(-1, 1);
+
+    mRightDrivePID.setP(DriveConstants.kP);
+    mRightDrivePID.setI(DriveConstants.kI);
+    mRightDrivePID.setD(DriveConstants.kD);
+    //rightDrivePID.setIZone(kIz);
+    mRightDrivePID.setFF(DriveConstants.kFF);
+    mRightDrivePID.setOutputRange(-1, 1);
+
+
+    mLeftDrivePID.setP(DriveConstants.kP,1);
+    mLeftDrivePID.setI(DriveConstants.kI,1);
+    mLeftDrivePID.setD(DriveConstants.kD,1);
+    mLeftDrivePID.setFF(DriveConstants.kFF,1);
+
+    mRightDrivePID.setP(DriveConstants.kP,1);
+    mRightDrivePID.setI(DriveConstants.kI,1);
+    mRightDrivePID.setD(DriveConstants.kD,1);
+    mRightDrivePID.setFF(DriveConstants.kFF,1);
+
+    
+    mLeftDrivePID.setP(DriveConstants.kP,2);
+    mLeftDrivePID.setI(DriveConstants.kI,2);
+    mLeftDrivePID.setD(DriveConstants.kD,2);
+    mLeftDrivePID.setFF(DriveConstants.kFF,2);
+
+    mRightDrivePID.setP(DriveConstants.kP,2);
+    mRightDrivePID.setI(DriveConstants.kI,2);
+    mRightDrivePID.setD(DriveConstants.kD,2);
+    mRightDrivePID.setFF(DriveConstants.kFF,2);
+
+
+    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
+    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
+    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
+    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+
+    mRightDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
+    mRightDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
+    mRightDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
+    mRightDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
+
+    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC, 1);
+    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL, 1);
+    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 1);
+    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 1);
+
+    mLeftDrivePID.setSmartMotionMaxAccel(DriveConstants.MAX_ACC/3.0, 2);
+    mLeftDrivePID.setSmartMotionMaxVelocity(DriveConstants.MAX_VEL/3.0, 2);
+    mLeftDrivePID.setSmartMotionAccelStrategy(CANPIDController.AccelStrategy.kTrapezoidal, 2);
+    mLeftDrivePID.setSmartMotionAllowedClosedLoopError(DriveConstants.ALLOWED_ERROR, 2);
+  }
+
+  private void updateSmartdashboard(){
     SmartDashboard.putNumber("[Drivetrain] Left Encoder Position", mLeftBuiltInEncoder.getPosition());
     SmartDashboard.putNumber("[Drivetrain] Right Encoder Position", mRightBuiltInEncoder.getPosition());
     SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftBuiltInEncoder.getVelocity());

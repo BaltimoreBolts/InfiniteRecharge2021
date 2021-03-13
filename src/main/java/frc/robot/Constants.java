@@ -9,6 +9,7 @@ package frc.robot;
 
 import java.lang.Math;
 
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 
 /**
@@ -193,5 +194,6 @@ public final class Constants {
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(DriveConstants.TRACK * GenConstants.IN_TO_M); // convert to meters
         public static final double RAMSETE_B = 2;
         public static final double RAMSETE_ZETA = 0.7;
+        public static final SerialPort.Port NAVX_PORT = SerialPort.Port.kUSB; // TODO kUSB vs kUSB1 vs kUSB2?
     }
 }
