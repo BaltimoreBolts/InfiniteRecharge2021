@@ -245,6 +245,9 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     // Again really dumb way to do this but the SequentialCommandGroup was breaking our code
+    
+    Trajectory trajectory = new Trajectory();
+
     TrajectoryConfig config = 
       new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
       .setKinematics(AutoConstants.DRIVE_KINEMATICS);
@@ -259,8 +262,7 @@ public class RobotContainer {
         config
     );
 
-    String trajectoryJSON = "paths/slolam.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
-    Trajectory trajectory = new Trajectory();
+    String trajectoryJSON = "paths/barrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
       SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
