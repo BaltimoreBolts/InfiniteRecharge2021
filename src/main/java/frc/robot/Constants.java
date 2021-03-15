@@ -197,5 +197,9 @@ public final class Constants {
         public static final double RAMSETE_ZETA = 0.7;
         // public static final SerialPort.Port NAVX_PORT = SerialPort.Port.kUSB2; // TODO kUSB vs kUSB1 vs kUSB2?
         public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;  
+        public static final String BARREL_RUN_JSON = "paths/barrelRun.wpilib.json";
+        public static final String BOUNCE_RUN_JSON = "paths/barrelRun.wpilib.json";
+        public static final String SLOLAM_RUN_JSON = "paths/slolam.wpilib.json";
+
     }
 }

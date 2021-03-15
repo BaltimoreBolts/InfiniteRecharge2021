@@ -40,7 +40,7 @@ import edu.wpi.first.wpilibj.Relay;
  * project.
  */
 public class Robot extends TimedRobot {
-  private Command autonomousCommand1, autonomousCommand2;
+  private Command autonomousCommand;
   private double AutonomousMode = 0;
   private RobotContainer robotContainer;
   private Relay LED;
@@ -108,14 +108,10 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     robotContainer.getNavx().zeroYaw();
-    autonomousCommand1 = robotContainer.getAutonomousCommand();
-    // autonomousCommand2 = robotContainer.getAutonomousCommand(false);
+    autonomousCommand = robotContainer.getAutonomousCommand();
     System.out.println("\n\nInside Autonomous Init\n\n");
-    // schedule the autonomous command (example)
-    if (autonomousCommand1 != null) {
-      // System.out.println("\n\nCalling Autonomous Shoot\n\n");
-      // autonomousCommand2.schedule();
-      autonomousCommand1.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
     }
   }
 
@@ -132,8 +128,8 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (autonomousCommand1 != null) {
-      autonomousCommand1.cancel();
+    if (autonomousCommand != null) {
+      autonomousCommand.cancel();
     }
   }
 

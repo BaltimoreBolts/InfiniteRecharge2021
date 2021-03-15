@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -24,6 +25,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -40,7 +42,6 @@ import edu.wpi.cscore.UsbCamera;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.*;
-
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -64,6 +65,24 @@ public class RobotContainer {
   private Command autoCommand = new AutonomousDrive(roboDT, 60);
   // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
+  SendableChooser<Command> mChooser = new SendableChooser<>();
+  Trajectory barrelRun = new Trajectory();
+  Trajectory slolam = new Trajectory();
+  Trajectory bounce = new Trajectory();
+  TrajectoryConfig config = 
+      new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
+      .setKinematics(AutoConstants.DRIVE_KINEMATICS);
+  
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
+        List.of( // pass interior way points, making 's' curve
+            new Translation2d(1, 1),
+            new Translation2d(2, -1)
+        ),
+        new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
+        config
+    );
+  
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
   private Joystick joystick = new Joystick(1);
@@ -108,6 +127,18 @@ public class RobotContainer {
 
     // Configure the camera
     configureCamera();
+  
+    barrelRun = loadPathJSON(AutoConstants.BARREL_RUN_JSON);
+    slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
+    bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
+    
+    // Configure Auton Chooser
+    mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRun));
+    mChooser.addOption("Slolam", pathAuto(slolam));
+    mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
+    mChooser.addOption("Do Nothing", new InstantCommand());
+    mChooser.addOption("Bounce", pathAuto(bounce));
+    SmartDashboard.putData(mChooser);
   }
 
   /**
@@ -243,42 +274,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    // Again really dumb way to do this but the SequentialCommandGroup was breaking our code
-    
-    Trajectory trajectory = new Trajectory();
+    return mChooser.getSelected();
+  }
 
-    TrajectoryConfig config = 
-      new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
-      .setKinematics(AutoConstants.DRIVE_KINEMATICS);
-
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
-        List.of( // pass interior way points, making 's' curve
-            new Translation2d(1, 1),
-            new Translation2d(2, -1)
-        ),
-        new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
-        config
-    );
-
-    String trajectoryJSON = "paths/barrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException ex){
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    }
-
-    // BiConsumer<Double, Double> setWheelSpeeds = (x,y) -> roboDT.setWheelSpeeds(x,y);
+  public Command pathAuto(Trajectory trajectory){
+  
     BiConsumer<Double, Double> putWheelSpeeds = 
         (x,y) -> {
               roboDT.setWheelSpeeds(x,y);
-              SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
-              SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
+              // SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
+              // SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
           };
-
+  
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         roboDT::getPose, 
@@ -287,17 +294,20 @@ public class RobotContainer {
         putWheelSpeeds,
         roboDT
     );
-
+  
     return ramseteCommand.andThen(() -> roboDT.stopDT());
+  }
 
-
-    // if (value) {
-    //   return autoCommand;
-    // } else {
-    //   return autoShoot;
-    // }
-
-
+  public Trajectory loadPathJSON(String file_path){
+    Trajectory trajectory = new Trajectory();
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(file_path);
+      SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    } catch (IOException ex){
+      DriverStation.reportError("Unable to open trajectory: " + AutoConstants.BARREL_RUN_JSON, ex.getStackTrace());
+    }
+    return trajectory;
   }
 
   public XboxController getDriverController() {
