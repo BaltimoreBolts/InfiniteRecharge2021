@@ -29,8 +29,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.DPadButton;
-import frc.robot.TriggerButton;
 import edu.wpi.first.cameraserver.CameraServer;
 
 import java.io.IOException;
@@ -62,9 +60,9 @@ public class RobotContainer {
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
 
-  private Command autoCommand = new AutonomousDrive(roboDT, 60);
+  // private Command autoCommand = new AutonomousDrive(roboDT, 60);
   // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
-  private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
+  // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   SendableChooser<Command> mChooser = new SendableChooser<>();
   Trajectory barrelRun = new Trajectory();
   Trajectory slolam = new Trajectory();
@@ -76,8 +74,8 @@ public class RobotContainer {
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
         List.of( // pass interior way points, making 's' curve
-            new Translation2d(1, 1),
-            new Translation2d(2, -1)
+            // new Translation2d(1, 1),
+            // new Translation2d(2, -1)
         ),
         new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
         config
@@ -138,7 +136,7 @@ public class RobotContainer {
     mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
     mChooser.addOption("Do Nothing", new InstantCommand());
     mChooser.addOption("Bounce", pathAuto(bounce));
-    SmartDashboard.putData(mChooser);
+    SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
   }
 
   /**
@@ -183,7 +181,7 @@ public class RobotContainer {
   private void configureDriveMode() {
 
     // Switch statement for drive mode, drive mode is set above in member variables
-    SmartDashboard.putString("Drive Mode", driveMode.toString());
+    SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
 
     switch (driveMode) {
       case kArcade:
@@ -302,7 +300,7 @@ public class RobotContainer {
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(file_path);
-      SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
+      SmartDashboard.putString("[Autonomous] Trajectory Path", trajectoryPath.toString());
       trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
     } catch (IOException ex){
       DriverStation.reportError("Unable to open trajectory: " + AutoConstants.BARREL_RUN_JSON, ex.getStackTrace());

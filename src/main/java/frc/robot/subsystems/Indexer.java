@@ -74,7 +74,7 @@ public class Indexer extends SubsystemBase {
 
     CANError pid_error = mIndexerPID.setFeedbackDevice(mMainEncoder);
     if (pid_error != CANError.kOk) {
-      SmartDashboard.putString("[Indexer] PID Error", pid_error.toString()); //TODO remove when not testing
+      SmartDashboard.putString("[Indexer] PID Error", pid_error.toString());
     }
 
     mIndexerPID.setP(IndexerConstants.kP);
@@ -96,7 +96,7 @@ public class Indexer extends SubsystemBase {
     // mDesiredSpeedNT = indexerTab.add("Desired Speed = ", 0).getEntry();
 
     this.resetEncoder(); // TODO if encoder gives absolute values do we need this?
-    SmartDashboard.setDefaultBooleanArray("[Indexer] PC Array", PCArray.getPCArray());
+    SmartDashboard.setDefaultBooleanArray("[Indexer] PC Array", PCArray.getPCArray()); // TODO why doesnt this work
 
   }
 
@@ -226,7 +226,7 @@ public class Indexer extends SubsystemBase {
     //SmartDashboard.putString("[Indexer] PC Positions", PCArray.toString())
     // PCArray.putPCArray(SmartDashboard.getBooleanArray("[Indexer] PC Array", new boolean[3]));
 
-    mIndexerSpeed = SmartDashboard.getNumber("[Indexer] Speed", 0);
+    // mIndexerSpeed = SmartDashboard.getNumber("[Indexer] Speed", 0);
     // double p = SmartDashboard.getNumber("[Indexer] P Gain", 0.07);
     // double i = SmartDashboard.getNumber("[Indexer] I Gain", 0.003);
     // double d = SmartDashboard.getNumber("[Indexer] D Gain", 0);

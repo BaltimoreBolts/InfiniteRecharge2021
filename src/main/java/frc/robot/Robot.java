@@ -8,28 +8,11 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.ShooterConstants.ShooterControlState;
-import frc.robot.commands.Autonomous;
-import frc.robot.commands.AutonomousShoot;
-import frc.robot.commands.MoveShooter;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Shooter;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-
-import java.io.IOException;
-import java.nio.file.Path;
-
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Relay;
 
 
@@ -41,11 +24,8 @@ import edu.wpi.first.wpilibj.Relay;
  */
 public class Robot extends TimedRobot {
   private Command autonomousCommand;
-  private double AutonomousMode = 0;
   private RobotContainer robotContainer;
   private Relay LED;
-  private Trajectory trajectory = new Trajectory();
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -56,18 +36,8 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     robotContainer.getNavx().zeroYaw();
-    SmartDashboard.putNumber("Autonomous Mode", AutonomousMode);
     LED = new Relay(1);
     LED.set(Relay.Value.kOn);
-
-    String trajectoryJSON = "paths/barrelRun.wpilib.json"; // Your name should be the name of the trajectory you made in pathweaver (i dont understand why the json isnt showing up)
-    try {
-      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
-      SmartDashboard.putString("Trajectory Path", trajectoryPath.toString());
-      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
-    } catch (IOException ex){
-      DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
-    }
   }
 
   /**

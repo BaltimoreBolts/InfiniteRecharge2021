@@ -82,7 +82,7 @@ public class Harvester extends SubsystemBase {
   }
 
   private void updateSmartdashboard() {
-    SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
-    SmartDashboard.putNumber("Harvester TOF Val", mHarvesterTOF.getRange());
+    SmartDashboard.putBoolean("[Harvester] Harvester TOF", this.getHarvesterTOF());
+    SmartDashboard.putNumber("[Harvester] Harvester TOF Val", mHarvesterTOF.getRange());
   }
 }

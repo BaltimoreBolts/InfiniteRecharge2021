@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GenConstants;
+import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -76,8 +77,8 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mOdometry.update(
-      Rotation2d.fromDegrees(mNavx.getAngle()), -mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M, 
-      mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M
+      Rotation2d.fromDegrees(mNavx.getAngle()), -mLeftEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE), 
+      mRightEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE)
     );
     updateSmartdashboard();
   }
@@ -86,9 +87,13 @@ public class DriveTrain extends SubsystemBase {
     return mOdometry.getPoseMeters();
   }
 
+  private Double mps2rpm(Double mps){
+    return DriveConstants.GEARBOX_RATIO * 60.0 * Constants.in2m(mps) / DriveConstants.WHEEL_CIRCUMFERENCE;
+  }
+
   public void setWheelSpeeds(Double left, Double right){
-    right = DriveConstants.GEARBOX_RATIO * 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * right * GenConstants.IN_TO_M; // convert m/s to rpm
-    left = DriveConstants.GEARBOX_RATIO * 60.0 / DriveConstants.WHEEL_CIRCUMFERENCE * left * GenConstants.IN_TO_M; // convert m/s to rpm
+    right = mps2rpm(right);
+    left = mps2rpm(left);
     mRightDrivePID.setReference(-right,ControlType.kVelocity, 1);
     mLeftDrivePID.setReference(left, ControlType.kVelocity, 1);
   }
@@ -104,8 +109,8 @@ public class DriveTrain extends SubsystemBase {
    * @return the average of the two encoder readings
    */
   public double getAverageEncoderDistance() {
-    double left_distance = mLeftEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M;
-    double right_distance = mRightEncoder.getPosition() * DriveConstants.WHEEL_CIRCUMFERENCE / GenConstants.IN_TO_M;
+    double left_distance = mLeftEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE);
+    double right_distance = mRightEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE);
 
     return (left_distance + right_distance) / 2.0;
   }
@@ -152,7 +157,7 @@ public class DriveTrain extends SubsystemBase {
     double left_set_point = (y+x)*DriveConstants.MAX_RPM;
     double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
 
-    SmartDashboard.putNumber("[Drivetrain] left set point", left_set_point);
+    SmartDashboard.putNumber("[Drivetrain] Left set point", left_set_point);
 
     mLeftDrivePID.setReference(left_set_point, ControlType.kSmartVelocity,1);
     mRightDrivePID.setReference(right_set_point, ControlType.kSmartVelocity,1);
@@ -166,6 +171,7 @@ public class DriveTrain extends SubsystemBase {
   public double getRightPosition() {
     return mRightBuiltInEncoder.getPosition();
   }
+
   public double inchesToCounts(double inches, int CPR ){
     double Counts = 0;
     // Due to the diameter of the wheels being 8, we divided by 8 PI which is the circumfrence/

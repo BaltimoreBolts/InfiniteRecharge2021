@@ -10,7 +10,6 @@ package frc.robot;
 import java.lang.Math;
 
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 
 /**
@@ -35,7 +34,13 @@ public final class Constants {
         public static final double SHOOTER_ANGLE_DEG = 0;
         public static final double COS_ANGLE = Math.cos(SHOOTER_ANGLE_DEG*DEG2RAD);
         public static final double TAN_ANGLE = Math.tan(SHOOTER_ANGLE_DEG*DEG2RAD);
-        public static final double IN_TO_M = 39.3701;
+        }; 
+    
+    public static double in2m(double inches){
+        return inches*39.3701;
+    }
+    public static Double in2m(Double inches){
+        return inches*39.3701;
     }
 
      // To import this elsewhere use import frc.robot.Constants.OIConstants;
@@ -192,10 +197,9 @@ public final class Constants {
     public static final class AutoConstants {
         public static final double MAX_SPEED_MPS = 1; // meters per second
         public static final double MAX_ACC_MPS = 1; // meters per second^2
-        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(DriveConstants.TRACK / GenConstants.IN_TO_M); // convert to meters
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(in2m(DriveConstants.TRACK)); // convert to meters
         public static final double RAMSETE_B = 2;
         public static final double RAMSETE_ZETA = 0.7;
-        // public static final SerialPort.Port NAVX_PORT = SerialPort.Port.kUSB2; // TODO kUSB vs kUSB1 vs kUSB2?
         public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;  
         public static final String BARREL_RUN_JSON = "paths/barrelRun.wpilib.json";
         public static final String BOUNCE_RUN_JSON = "paths/barrelRun.wpilib.json";
