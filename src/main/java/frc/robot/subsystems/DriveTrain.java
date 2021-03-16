@@ -326,6 +326,8 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putBoolean("[Drivetrain] NavX Connected", mNavx.isConnected());
     SmartDashboard.putNumber("[Drivetrain] Odometry X Position", mOdometry.getPoseMeters().getX());
     SmartDashboard.putNumber("[Drivetrain] Odometry Y Position", mOdometry.getPoseMeters().getY());
+    SmartDashboard.putNumber("[Drivetrain] NavX X Velocity", mNavx.getVelocityX());
+    SmartDashboard.putNumber("[Drivetrain] NavX Y Velocity", mNavx.getVelocityY());
   }
 
   public AHRS getNavx(){

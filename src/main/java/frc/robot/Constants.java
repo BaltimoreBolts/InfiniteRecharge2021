@@ -198,8 +198,8 @@ public final class Constants {
         public static final double MAX_SPEED_MPS = 1; // meters per second
         public static final double MAX_ACC_MPS = 1; // meters per second^2
         public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(in2m(DriveConstants.TRACK)); // convert to meters
-        public static final double RAMSETE_B = 2;
-        public static final double RAMSETE_ZETA = 0.7;
+        public static final double RAMSETE_B = 2; // think of this like P control with trajectory error
+        public static final double RAMSETE_ZETA = 0.7; // think of this like damping for trajectory error
         public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;  
         public static final String BARREL_RUN_JSON = "paths/barrelRun.wpilib.json";
         public static final String BOUNCE_RUN_JSON = "paths/barrelRun.wpilib.json";

@@ -292,6 +292,8 @@ public class RobotContainer {
         putWheelSpeeds,
         roboDT
     );
+
+    ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
   
     return ramseteCommand.andThen(() -> roboDT.stopDT());
   }
