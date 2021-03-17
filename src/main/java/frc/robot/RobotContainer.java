@@ -293,9 +293,9 @@ public class RobotContainer {
         roboDT
     );
 
-    ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
+    // ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
   
-    return ramseteCommand.andThen(() -> roboDT.stopDT());
+    return ramseteCommand.beforeStarting(() -> roboDT.resetEncoders()).andThen(() -> roboDT.stopDT());
   }
 
   public Trajectory loadPathJSON(String file_path){

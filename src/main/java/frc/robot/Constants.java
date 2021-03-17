@@ -36,11 +36,17 @@ public final class Constants {
         public static final double TAN_ANGLE = Math.tan(SHOOTER_ANGLE_DEG*DEG2RAD);
         }; 
     
+    public static double m2in(double meters){
+        return meters*39.3701;
+    }
+    public static Double m2in(Double meters){
+        return meters*39.3701;
+    }
     public static double in2m(double inches){
-        return inches*39.3701;
+        return inches/39.3701;
     }
     public static Double in2m(Double inches){
-        return inches*39.3701;
+        return inches/39.3701;
     }
 
      // To import this elsewhere use import frc.robot.Constants.OIConstants;

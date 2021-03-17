@@ -88,7 +88,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   private Double mps2rpm(Double mps){
-    return DriveConstants.GEARBOX_RATIO * 60.0 * Constants.in2m(mps) / DriveConstants.WHEEL_CIRCUMFERENCE;
+    return DriveConstants.GEARBOX_RATIO * 60.0 * Constants.m2in(mps) / DriveConstants.WHEEL_CIRCUMFERENCE;
   }
 
   public void setWheelSpeeds(Double left, Double right){
@@ -239,16 +239,16 @@ public class DriveTrain extends SubsystemBase {
     mLeftDriveMotor1.follow(mLeftDriveMotor2);
     mRightDriveMotor1.follow(mRightDriveMotor2);
 
+    mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mLeftEncoder.setInverted(true);
+    mLeftBuiltInEncoder = mLeftDriveMotor2.getEncoder();
+    mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
+    mRightBuiltInEncoder = mRightDriveMotor2.getEncoder();
+
     mLeftDriveMotor1.burnFlash();
     mLeftDriveMotor2.burnFlash();
     mRightDriveMotor1.burnFlash();
     mRightDriveMotor2.burnFlash();
-
-    mLeftEncoder = mLeftDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    mLeftBuiltInEncoder = mLeftDriveMotor2.getEncoder();
-    mLeftEncoder.setInverted(true);
-    mRightEncoder = mRightDriveMotor2.getAlternateEncoder(kAltEncType,GenConstants.REV_ENCODER_CPR);
-    mRightBuiltInEncoder = mRightDriveMotor2.getEncoder();
 
     mLeftDrivePID = mLeftDriveMotor2.getPIDController();
     mLeftDrivePID.setFeedbackDevice(mLeftBuiltInEncoder);
@@ -319,7 +319,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("[Drivetrain] Left Encoder Position", mLeftEncoder.getPosition());
     SmartDashboard.putNumber("[Drivetrain] Right Encoder Position", mRightEncoder.getPosition());
     SmartDashboard.putNumber("[Drivetrain] Left Encoder Velocity", mLeftEncoder.getVelocity());
-    SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mLeftEncoder.getVelocity());
+    SmartDashboard.putNumber("[Drivetrain] Right Encoder Velocity", mRightEncoder.getVelocity());
     SmartDashboard.putNumber("[Drivetrain] Heading", mOdometry.getPoseMeters().getRotation().getDegrees());
     SmartDashboard.putNumber("[Drivetrain] NavX Angle", mNavx.getAngle());
     SmartDashboard.putBoolean("[Drivetrain] NavX Calibration", mNavx.isCalibrating());
