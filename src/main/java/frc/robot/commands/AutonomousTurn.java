@@ -36,7 +36,7 @@ public class AutonomousTurn extends CommandBase {
   @Override
   public void initialize() {
     roboDT.resetEncoders();
-    roboDT.autonTurn(mRadius, mArcAngleToTravel_deg, mDirection);
+    // roboDT.autonTurn(mRadius, mArcAngleToTravel_deg, mDirection);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

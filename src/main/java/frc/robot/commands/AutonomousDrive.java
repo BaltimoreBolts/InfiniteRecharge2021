@@ -52,7 +52,7 @@ public class AutonomousDrive extends CommandBase {
     // mDesiredRightPosition = 0;
     // mInitialLeftPosition = 0;
     // mInitialRightPosition = 0;
-    roboDT.driveDistance(mDistToTravel_in);
+    // roboDT.driveDistance(mDistToTravel_in);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

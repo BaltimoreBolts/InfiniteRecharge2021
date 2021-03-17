@@ -77,7 +77,7 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     mOdometry.update(
-      Rotation2d.fromDegrees(mNavx.getAngle()), -mLeftEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE), 
+      Rotation2d.fromDegrees(mNavx.getAngle()), mLeftEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE), 
       mRightEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE)
     );
     updateSmartdashboard();
@@ -179,36 +179,6 @@ public class DriveTrain extends SubsystemBase {
     Counts = inches / (3 * Math.PI);
     return Counts;
 
-  }
-
-  public void driveDistance(double inches){
-    double rotations = DriveConstants.GEARBOX_RATIO * inches / DriveConstants.WHEEL_CIRCUMFERENCE;
-    mLeftDrivePID.setReference(rotations, ControlType.kSmartMotion, 2);
-    mRightDrivePID.setReference(-rotations, ControlType.kSmartMotion, 2);
-    // double distanceTraveled = DriveConstants.WHEEL_CIRCUMFERENCE * (mLeftEncoder.getPosition() + mRightEncoder.getPosition()) / 2.0;
-    // return (distanceTraveled >= inches);
-  }
-
-  public boolean autonTurn(double inches, double degrees, boolean clockwise){
-
-    double leftWheelTurns = 0;
-    double rightWheelTurns = 0;
-
-    if (clockwise) { // calculate inner and outer turning circumference
-      leftWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
-      rightWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
-    } else {
-      leftWheelTurns = ((inches - (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
-      rightWheelTurns = ((inches + (DriveConstants.TRACK / 2.0)) * Math.PI * 2.0) * degrees/360.0;
-    }
-    
-    mLeftDrivePID.setReference(leftWheelTurns, ControlType.kSmartMotion, 2);
-    mRightDrivePID.setReference(-rightWheelTurns, ControlType.kSmartMotion, 2);
-
-    double leftDistTraveled  =  mLeftEncoder.getPosition();
-    double rightDistTraveled =  mRightEncoder.getPosition();
-
-    return ((leftDistTraveled >= leftWheelTurns) && (rightDistTraveled >= rightWheelTurns));
   }
   
   public void resetEncoders() {
