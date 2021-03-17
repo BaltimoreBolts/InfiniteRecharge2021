@@ -137,7 +137,7 @@ public class DriveTrain extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
   */
   public double getTurnRate(){
-    return -mNavx.getRate(); // TODO check signs
+    return -mNavx.getRate(); 
   }
 
   public void stopDT(){
