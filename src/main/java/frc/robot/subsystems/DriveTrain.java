@@ -13,6 +13,9 @@ import frc.robot.Constants.GenConstants;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 
+import java.util.Map;
+import java.util.function.BiConsumer;
+
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
@@ -26,6 +29,11 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain extends SubsystemBase {
@@ -44,6 +52,7 @@ public class DriveTrain extends SubsystemBase {
   private DifferentialDrive driveTrain;
   private AHRS mNavx = null; // usb port coms w/ navx
   private final DifferentialDriveOdometry mOdometry;
+  private ShuffleboardTab mainTab; 
       
   
   /**
@@ -58,6 +67,7 @@ public class DriveTrain extends SubsystemBase {
     // Initialize all of the drive motors and set to correct settings. Burn to flash.
     
     setupMotors();
+    mainTab = Shuffleboard.getTab("Main");
 
     try {
       mNavx = new AHRS(AutoConstants.NAVX_PORT, (byte) 100);
@@ -81,6 +91,8 @@ public class DriveTrain extends SubsystemBase {
       mRightEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE)
     );
     updateSmartdashboard();
+    updateShuffleboard();
+
   }
 
   public Pose2d getPose(){
@@ -298,6 +310,13 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("[Drivetrain] Odometry Y Position", mOdometry.getPoseMeters().getY());
     SmartDashboard.putNumber("[Drivetrain] NavX X Velocity", mNavx.getVelocityX());
     SmartDashboard.putNumber("[Drivetrain] NavX Y Velocity", mNavx.getVelocityY());
+  }
+  
+  private void updateShuffleboard(){
+    ShuffleboardLayout drivetrainData = mainTab.getLayout("Drivetrain", BuiltInLayouts.kGrid).withProperties(Map.of("Number of columns", 2, "Number of rows", 3));
+    drivetrainData.add("Left Encoder", mLeftEncoder).withWidget(BuiltInWidgets.kEncoder);
+    drivetrainData.add("NavX Heading", mNavx).withWidget(BuiltInWidgets.kGyro);
+    drivetrainData.add("Odometry Heading", mOdometry.getPoseMeters().getRotation().getDegrees()).withWidget(BuiltInWidgets.kDial);
   }
 
   public AHRS getNavx(){

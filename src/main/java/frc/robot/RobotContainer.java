@@ -16,8 +16,13 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -35,6 +40,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import edu.wpi.cscore.UsbCamera;
 import frc.robot.commands.*;
@@ -80,6 +86,8 @@ public class RobotContainer {
         new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
         config
     );
+
+  private ShuffleboardTab mainTab;
   
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
@@ -137,6 +145,10 @@ public class RobotContainer {
     mChooser.addOption("Do Nothing", new InstantCommand());
     mChooser.addOption("Bounce", pathAuto(bounce));
     SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
+    mainTab = Shuffleboard.getTab("Main");
+    mainTab.add("Auton Chooser", mChooser);
+    mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
+
   }
 
   /**
@@ -277,19 +289,19 @@ public class RobotContainer {
 
   public Command pathAuto(Trajectory trajectory){
   
-    BiConsumer<Double, Double> putWheelSpeeds = 
-        (x,y) -> {
-              roboDT.setWheelSpeeds(x,y);
-              // SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
-              // SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
-          };
+    // BiConsumer<Double, Double> putWheelSpeeds = 
+    //     (x,y) -> {
+    //           roboDT.setWheelSpeeds(x,y);
+    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
+    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
+    //       };
   
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
         roboDT::getPose, 
         new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
         AutoConstants.DRIVE_KINEMATICS,
-        putWheelSpeeds,
+        (x,y) -> roboDT.setWheelSpeeds(x,y),
         roboDT
     );
 

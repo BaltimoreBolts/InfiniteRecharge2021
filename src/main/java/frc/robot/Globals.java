@@ -1,5 +1,7 @@
 package frc.robot;
 
+import java.util.function.Supplier;
+
 public final class Globals {
     public static class PCArray {
         private static boolean[] PCArray = { false, true, false }; // bottom, middle, top
@@ -22,6 +24,9 @@ public final class Globals {
 
         public static boolean[] getPCArray(){
             return PCArray;
+        }
+        public static Supplier<boolean[]> getPCArraySupplier(){
+            return () -> PCArray;
         }
 
         public static void putPCArray(boolean[] newPCArray){
