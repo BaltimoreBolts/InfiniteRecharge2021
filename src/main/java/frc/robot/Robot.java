@@ -61,7 +61,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    // TODO: we may need to engage the servo ratchet for extra safety here
     Elevator roboElevator = robotContainer.getElevator();
     Shooter roboShooter = robotContainer.getShooter();
     roboElevator.engageRatchet();
