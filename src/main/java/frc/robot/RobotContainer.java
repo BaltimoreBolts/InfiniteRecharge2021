@@ -87,7 +87,7 @@ public class RobotContainer {
         config
     );
 
-  private ShuffleboardTab mainTab;
+  // private ShuffleboardTab mainTab;
   
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
@@ -145,9 +145,9 @@ public class RobotContainer {
     mChooser.addOption("Do Nothing", new InstantCommand());
     mChooser.addOption("Bounce", pathAuto(bounce));
     SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
-    mainTab = Shuffleboard.getTab("Main");
-    mainTab.add("Auton Chooser", mChooser);
-    mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
+    // mainTab = Shuffleboard.getTab("Main");
+    // mainTab.add("Auton Chooser", mChooser);
+    // mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
 
   }
 
@@ -284,7 +284,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return mChooser.getSelected();
+    // return mChooser.getSelected();
+    return pathAuto(slolam);
   }
 
   public Command pathAuto(Trajectory trajectory){

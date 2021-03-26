@@ -91,7 +91,7 @@ public class DriveTrain extends SubsystemBase {
       mRightEncoder.getPosition() * Constants.in2m(DriveConstants.WHEEL_CIRCUMFERENCE)
     );
     updateSmartdashboard();
-    updateShuffleboard();
+    // updateShuffleboard();
 
   }
 
@@ -314,7 +314,7 @@ public class DriveTrain extends SubsystemBase {
   
   private void updateShuffleboard(){
     ShuffleboardLayout drivetrainData = mainTab.getLayout("Drivetrain", BuiltInLayouts.kGrid).withProperties(Map.of("Number of columns", 2, "Number of rows", 3));
-    drivetrainData.add("Left Encoder", mLeftEncoder).withWidget(BuiltInWidgets.kEncoder);
+    // drivetrainData.add("Left Encoder", mLeftEncoder).withWidget(BuiltInWidgets.kEncoder);
     drivetrainData.add("NavX Heading", mNavx).withWidget(BuiltInWidgets.kGyro);
     drivetrainData.add("Odometry Heading", mOdometry.getPoseMeters().getRotation().getDegrees()).withWidget(BuiltInWidgets.kDial);
   }
