@@ -207,9 +207,10 @@ public final class Constants {
         public static final double RAMSETE_B = 2; // think of this like P control with trajectory error
         public static final double RAMSETE_ZETA = 0.7; // think of this like damping for trajectory error
         public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;  
-        public static final String BARREL_RUN_JSON = "paths/barrelRun.wpilib.json";
-        public static final String BOUNCE_RUN_JSON = "paths/barrelRun.wpilib.json";
+        public static final String BARREL_RACE_JSON = "paths/barrelRace.wpilib.json";
+        public static final String BOUNCE_RUN_JSON = "paths/bounce.wpilib.json";
         public static final String SLOLAM_RUN_JSON = "paths/slolam.wpilib.json";
+        public static final String CALIBRATE_JSON = "paths/calibrate.wpilib.json";
 
     }
 }

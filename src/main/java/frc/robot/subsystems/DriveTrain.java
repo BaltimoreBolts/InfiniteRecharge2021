@@ -164,12 +164,12 @@ public class DriveTrain extends SubsystemBase {
   public void closedLoopArcadeDrive(double x, double y){
 
     x = Math.pow(x,3); 
-    y = Math.pow(y,3);
+    // y = Math.pow(y,3);
 
     double left_set_point = (y+x)*DriveConstants.MAX_RPM;
     double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
 
-    SmartDashboard.putNumber("[Drivetrain] Left set point", left_set_point);
+    // SmartDashboard.putNumber("[Drivetrain] Left set point", left_set_point);
 
     mLeftDrivePID.setReference(left_set_point, ControlType.kSmartVelocity,1);
     mRightDrivePID.setReference(right_set_point, ControlType.kSmartVelocity,1);

@@ -70,9 +70,10 @@ public class RobotContainer {
   // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   SendableChooser<Command> mChooser = new SendableChooser<>();
-  Trajectory barrelRun = new Trajectory();
+  Trajectory barrelRace = new Trajectory();
   Trajectory slolam = new Trajectory();
   Trajectory bounce = new Trajectory();
+  Trajectory calibrate = new Trajectory();
   TrajectoryConfig config = 
       new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
       .setKinematics(AutoConstants.DRIVE_KINEMATICS);
@@ -135,12 +136,13 @@ public class RobotContainer {
     // Configure the camera
     configureCamera();
   
-    barrelRun = loadPathJSON(AutoConstants.BARREL_RUN_JSON);
+    barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
     slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
     bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
+    calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
     
     // Configure Auton Chooser
-    mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRun));
+    mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRace));
     mChooser.addOption("Slolam", pathAuto(slolam));
     mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
     mChooser.addOption("Do Nothing", new InstantCommand());
@@ -234,7 +236,7 @@ public class RobotContainer {
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.55,
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,
               (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
             roboDT
           )
@@ -286,7 +288,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return mChooser.getSelected();
-    return pathAuto(slolam);
+    return pathAuto(calibrate);
   }
 
   public Command pathAuto(Trajectory trajectory){
@@ -321,7 +323,7 @@ public class RobotContainer {
       SmartDashboard.putString("[Autonomous] Trajectory Path", trajectoryPath.toString());
       trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
     } catch (IOException ex){
-      DriverStation.reportError("Unable to open trajectory: " + AutoConstants.BARREL_RUN_JSON, ex.getStackTrace());
+      DriverStation.reportError("Unable to open trajectory: " + AutoConstants.BARREL_RACE_JSON, ex.getStackTrace());
     }
     return trajectory;
   }
