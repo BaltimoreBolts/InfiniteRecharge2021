@@ -77,15 +77,16 @@ public class RobotContainer {
       new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
       .setKinematics(AutoConstants.DRIVE_KINEMATICS);
   
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
-        List.of( // pass interior way points, making 's' curve
-            // new Translation2d(1, 1),
-            // new Translation2d(2, -1)
-        ),
-        new Pose2d(3, 0, new Rotation2d(0)), // end 3m straight, facing forward
-        config
-    );
+  Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
+      List.of( // pass interior way points, making 's' curve
+        new Translation2d(1, 1),
+        new Translation2d(2, 0)
+          // new Translation2d(2, -1)
+      ),
+      new Pose2d(0, 0, new Rotation2d(180.0*2.0*Math.PI/360.0)), // end 3m straight, facing forward
+      config
+  );
 
   // private ShuffleboardTab mainTab;
   
@@ -302,13 +303,15 @@ public class RobotContainer {
         roboDT::getPose, 
         new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
         AutoConstants.DRIVE_KINEMATICS,
-        (x,y) -> roboDT.setWheelSpeeds(x,y),
+        (leftSpeed,rightSpeed) -> roboDT.setWheelSpeeds(leftSpeed,rightSpeed),
         roboDT
     );
 
     // ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
   
-    return ramseteCommand.beforeStarting(() -> roboDT.resetEncoders()).andThen(() -> roboDT.stopDT());
+    return ramseteCommand.beforeStarting(() -> roboDT.resetOdometry(
+      new Pose2d (0,0, new Rotation2d(0))
+      )).andThen(() -> roboDT.stopDT());
   }
 
   public Trajectory loadPathJSON(String file_path){
