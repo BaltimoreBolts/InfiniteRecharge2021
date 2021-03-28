@@ -83,7 +83,6 @@ public class MoveIndexer extends CommandBase {
     } else {
       PCArray.moveDown();
     }
-    
   }
 
   // Returns true when the command should end.
