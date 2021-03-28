@@ -114,11 +114,11 @@ public class DriveTrain extends SubsystemBase {
     mLSetpoint = left_profile.calculate(dt);
     mRSetpoint = right_profile.calculate(dt);
 
-    SmartDashboard.putNumber("Left Trapezoidal Setpoint", mLSetpoint.velocity);
-    SmartDashboard.putNumber("Right Trapezoidal Setpoint", mRSetpoint.velocity);
+    SmartDashboard.putNumber("Left Trapezoidal Setpoint", mLSetpoint.position); // since we're abusing it, this is actual velocity
+    SmartDashboard.putNumber("Right Trapezoidal Setpoint", mRSetpoint.position);
 
-    // mLeftDrivePID.setReference(mLSetpoint.velocity, ControlType.kVelocity,1);
-    // mRightDrivePID.setReference(mRSetpoint.velocity, ControlType.kVelocity,1);
+    // mLeftDrivePID.setReference(mLSetpoint.position, ControlType.kVelocity,1);
+    // mRightDrivePID.setReference(mRSetpoint.position, ControlType.kVelocity,1);
 
   }
 
