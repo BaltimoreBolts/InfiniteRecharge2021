@@ -253,7 +253,17 @@ public class RobotContainer {
       //     )
       //   );
       //   break;
-
+      
+      case kTrapGTA:
+        roboDT.setDefaultCommand(
+          new RunCommand(
+            () -> roboDT.motionProfileDriving(
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,
+              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
+            roboDT
+          )
+        );
+        break;
       default:
         System.out.println("Drive Mode is not a valid implemented option. Defaulting to GTA...");
         roboDT.setDefaultCommand(

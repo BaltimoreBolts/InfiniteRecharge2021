@@ -82,7 +82,8 @@ public final class Constants {
             kCLXboxArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
             // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
-            kArcade("Arcade"); // single joystick, open loop
+            kArcade("Arcade"), // single joystick, open loop
+            kTrapGTA("Closed Loop Trapezoidal GTA");
 
             private String name;
             private driveModes(String name) {
