@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
@@ -45,7 +44,7 @@ public class AutonomousShoot extends CommandBase {
     //for (int i = 0; i <3; i++) {
       //new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
     //}
-    new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
+    // new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
     //robotShooter.SetShooterSpeed(0);
   }
 

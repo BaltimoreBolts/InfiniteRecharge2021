@@ -1,0 +1,158 @@
+<xml version="1.0">
+<dashboard>
+	<widget field="Servo Pos" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="0"/>
+	</widget>
+	<widget field="[Shooter] State" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="521" y="485"/>
+	</widget>
+	<widget field="[Shooter] Encoder Velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="916" y="327"/>
+	</widget>
+	<widget field="[Shooter] Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="917" y="349"/>
+	</widget>
+	<widget field="[Shooter] Fudge Factor" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="913" y="307"/>
+	</widget>
+	<widget field="[Shooter] Camera Angle Dist" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="914" y="290"/>
+	</widget>
+	<widget field="[Shooter] Camera Y Dist" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="914" y="272"/>
+	</widget>
+	<widget field="[Shooter] Camera X Dist" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="249" y="203"/>
+	</widget>
+	<widget field="[Shooter] Calculated RPM" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="906" y="252"/>
+	</widget>
+	<widget field="[Shooter] Calculated velocity" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="1075" y="0"/>
+	</widget>
+	<widget field="[Shooter] Value or SetPID:" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="957" y="484"/>
+	</widget>
+	<widget field="[Shooter] Desired RPM = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="957" y="463"/>
+	</widget>
+	<widget field="[Shooter] Speed = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="918" y="411"/>
+	</widget>
+	<widget field="[Shooter] Current ffVal = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="918" y="390"/>
+	</widget>
+	<widget field="[Shooter] Current dVal = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="918" y="369"/>
+	</widget>
+	<widget field="[Shooter] Current iVal = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="708" y="486"/>
+	</widget>
+	<widget field="[Shooter] Current pVal = " type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="708" y="0"/>
+	</widget>
+	<widget field="[Indexer] Command Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="464"/>
+	</widget>
+	<widget field="[Indexer] Overshoot" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="443"/>
+	</widget>
+	<widget field="[Indexer] Motor Alternate Encoder" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="342"/>
+	</widget>
+	<widget field="[Indexer] Motor Encoder" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="293"/>
+	</widget>
+	<widget field="[Indexer] Encoder" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="334" y="182"/>
+	</widget>
+	<widget field="[Indexer] TOF Val" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="342" y="125"/>
+	</widget>
+	<widget field="[Indexer] TOF" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="186" y="125"/>
+	</widget>
+	<widget field="[Indexer] D Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="167" y="0"/>
+	</widget>
+	<widget field="[Indexer] I Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="312"/>
+	</widget>
+	<widget field="[Indexer] P Gain" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="218"/>
+	</widget>
+	<widget field="[Indexer] Speed" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="176"/>
+	</widget>
+		<widget field="[Indexer] PC Array" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="176"/>
+	</widget>
+	<static-widget class="edu.wpi.first.smartdashboard.gui.elements.CameraServerViewer">
+		<location x="563" y="51"/>
+		<width>339</width>
+		<height>281</height>
+		<property name="Camera Choice" value=""/>
+	</static-widget>
+	<widget field="Harvester TOF Val" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="302" y="161"/>
+	</widget>
+	<widget field="Autonomous Mode" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="328" y="23"/>
+	</widget>
+	<widget field="Elevator pos" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="315" y="321"/>
+	</widget>
+	<widget field="Right Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="41" y="382"/>
+	</widget>
+	<widget field="Left Encoder Position" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="75" y="446"/>
+	</widget>
+	<widget field="Harvester TOF" type="Boolean" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="342" y="4"/>
+	</widget>
+	<widget field="Drive Mode" type="String" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="14" y="155"/>
+	</widget>
+	<widget field="[Shooter] kF" type="Number" class="edu.wpi.first.smartdashboard.gui.elements.TextBox">
+		<location x="0" y="14"/>
+	</widget>
+</dashboard>
+<live-window>
+	<widget field="Indexer" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<location x="24" y="0"/>
+	</widget>
+	<widget field="DriveTrain" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<location x="20" y="19"/>
+	</widget>
+	<widget field="Harvester" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<location x="21" y="29"/>
+	</widget>
+	<widget field="Shooter" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<location x="11" y="9"/>
+	</widget>
+	<widget field="Elevator" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<location x="27" y="11"/>
+	</widget>
+	<widget field="Ungrouped" type="LW Subsystem" class="edu.wpi.first.smartdashboard.livewindow.elements.LWSubsystem">
+		<widget field="Relay[1]" type="Relay" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="16"/>
+			<height>20</height>
+			<width>293</width>
+		</widget>
+		<widget field="Servo[8]" type="Servo" class="edu.wpi.first.smartdashboard.livewindow.elements.ServoController">
+			<location x="6" y="36"/>
+			<height>45</height>
+			<width>293</width>
+		</widget>
+		<widget field="Relay[0]" type="Relay" class="edu.wpi.first.smartdashboard.livewindow.elements.RelayController">
+			<location x="6" y="81"/>
+			<height>20</height>
+			<width>293</width>
+		</widget>
+		<location x="9" y="10"/>
+		<width>305</width>
+		<height>107</height>
+	</widget>
+</live-window>
+</xml>

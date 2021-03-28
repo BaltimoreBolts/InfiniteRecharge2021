@@ -25,41 +25,46 @@ import frc.robot.Constants.ShooterConstants.ShooterControlState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-
-/* 
-** PURPOSE: Shooter subsystem 
-** STATUS: Motor functions are good. PID is not. 
-** I believe network table connection was working (we were getting values from the pi), 
+import edu.wpi.first.wpilibj.Relay;
+/*
+** PURPOSE: Shooter subsystem
+** STATUS: Motor functions are good. PID is not.
+** I believe network table connection was working (we were getting values from the pi),
 ** but not sure if things have changed since chameleon vision changed
 */
 public class Shooter extends SubsystemBase {
-  private CANSparkMax leftShooterMotor;
-  private CANSparkMax rightShooterMotor;
-  private double desiredRPM = 0;
-  private double absoluteRPMError = 0;
-  private double motor1ShooterSpeed = 0;
-  private double leftShooterRPM = 0.0;
-  private double leftShooterVoltage = 0.0;
-  private double leftShooterDutyCycle = 0.0;
+  private CANSparkMax mLeftShooterMotor;
+  private CANSparkMax mRightShooterMotor;
+  private double mDesiredRPM = 0;
+  private double mAbsoluteRPMError = 0;
+  private double mLeftShooterMotorSpeed = 0;
+  private double mLeftShooterRPM = 0.0;
+  private double mLeftShooterVoltage = 0.0;
+  private double mLeftShooterDutyCycle = 0.0;
+  private Relay  mPVRingLight;
 
   private CANPIDController shooterPID;
-  private double kP = 0.001; 
-  private double kI = 0; 
-  private double kD = 0; 
+  private double kP = 0.001;
+  private double kI = 0;
+  private double kD = 0;
   private double kFF = 0.000013;
   private int kFFSampleCount = 0;
   private int kFFCircularBufferCounter = 0;
   private double[] kFFCircularBuffer = new double[ShooterConstants.kFFCircularBufferSize];
   private boolean onTarget = false;
   private CANEncoder shooterEncoder;
-  
+  private double mPVVel = 0;
+  private double mPVRPM = 0;
+  private double mMedianKFF = 0;
+  private boolean mSetKFF = true;
+
   // Network table for chameleon vision
   NetworkTableInstance table = NetworkTableInstance.getDefault();
   NetworkTable cameraTable = table.getTable("chameleon-vision").getSubTable("PsThreeCam");
   private NetworkTableEntry targetPose;
-  private double targetArr[] = {0,0,0};
+  private double targetArr[] = {0, 0, 0};
   private double x, y, angle = 0;
-  private double fudgeFactor = 0; 
+  private double fudgeFactor = 0;
   private boolean readyToFire = false;
   private ShooterControlState shooterControlState = ShooterControlState.IDLE;
 
@@ -67,26 +72,27 @@ public class Shooter extends SubsystemBase {
    * Creates a new Shooter.
    */
   public Shooter() {
-    // Set up motors
-    leftShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_CHIP, MotorType.kBrushed);
-    rightShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_DALE, MotorType.kBrushed);
-    leftShooterMotor.restoreFactoryDefaults();
-    rightShooterMotor.restoreFactoryDefaults();
-    leftShooterMotor.setSmartCurrentLimit(30);
-    rightShooterMotor.setSmartCurrentLimit(30);
-    leftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    rightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
 
-    leftShooterMotor.burnFlash();
-    rightShooterMotor.burnFlash();
+    // Set up motors
+    mLeftShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_LEFT, MotorType.kBrushed);
+    mRightShooterMotor = new CANSparkMax(ShooterConstants.SHOOTER_MOTOR_RIGHT, MotorType.kBrushed);
+    mPVRingLight = new Relay(ShooterConstants.PV_RING_LIGHT);
+    mLeftShooterMotor.restoreFactoryDefaults();
+    mRightShooterMotor.restoreFactoryDefaults();
+    mLeftShooterMotor.setSmartCurrentLimit(30);
+    mRightShooterMotor.setSmartCurrentLimit(30);
+    mLeftShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mRightShooterMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mLeftShooterMotor.burnFlash();
+    mRightShooterMotor.burnFlash();
     // Set Right to follow Left, but inverted
-    rightShooterMotor.follow(leftShooterMotor,true);
-    
+    mRightShooterMotor.follow(mLeftShooterMotor, true);
+
     // Instantiate encoder
-    shooterEncoder = leftShooterMotor.getEncoder(EncoderType.kQuadrature, GenConstants.REV_ENCODER_CPR);
+    shooterEncoder = mLeftShooterMotor.getEncoder(EncoderType.kQuadrature, GenConstants.REV_ENCODER_CPR);
 
     // Start PID
-    shooterPID = leftShooterMotor.getPIDController();
+    shooterPID = mLeftShooterMotor.getPIDController();
     shooterPID.setFeedbackDevice(shooterEncoder);
     shooterPID.setP(kP);
     shooterPID.setI(kI);
@@ -95,28 +101,12 @@ public class Shooter extends SubsystemBase {
     shooterPID.setOutputRange(-1,1);
     shooterPID.setIZone(1000);
 
-    // Prints the initial PID values to smart dashboard
-    SmartDashboard.putNumber("Current pVal = ", kP);
-    SmartDashboard.putNumber("Current iVal = ", kI);
-    SmartDashboard.putNumber("Current dVal = ", kD);
-    SmartDashboard.putNumber("Current ffVal = ", kFF);
-    SmartDashboard.putNumber("Shooter Speed = ", motor1ShooterSpeed);
-    SmartDashboard.putNumber("Desired RPM = ", desiredRPM);
-    SmartDashboard.putBoolean("Value or SetPID:", true); // Set to true for using "Shooter Motor Speed" to control shooter speed
-    SmartDashboard.putNumber("Calculated velocity", 0);
-    SmartDashboard.putNumber("Calculated RPM", 0);
-    SmartDashboard.putNumber("Camera X Dist", x);
-    SmartDashboard.putNumber("Camera Y Dist", y);
-    SmartDashboard.putNumber("Camera Angle Dist", angle);
-    SmartDashboard.putNumber("Shooter Fudge Factor", fudgeFactor);
-}
+  }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Encoder", shooterEncoder.getPosition());
-    SmartDashboard.putNumber("Shooter Vel", shooterEncoder.getVelocity());
 
-    // Get distance data from camera 
+    // Get distance data from camera
     targetPose = cameraTable.getEntry("targetPose");
     targetArr = targetPose.getDoubleArray(targetArr);
 
@@ -125,58 +115,57 @@ public class Shooter extends SubsystemBase {
     y = targetArr[1];
     angle = targetArr[2];
 
-    // Display on SmartDashboard
-    SmartDashboard.putNumber("Camera X Dist", x);
-    SmartDashboard.putNumber("Camera Y Dist", y);
-    SmartDashboard.putNumber("Camera Angle Dist", angle);
-    SmartDashboard.getNumber("Shooter Fudge Factor", fudgeFactor);
-    SmartDashboard.putString("Shooter state", shooterControlState.toString());
-    
     // PIDTuner(); // Comment this out once we figure out our PID values.
     // getNeededRPM();
     closedLoopStateMachineManager();
+    updateSmartdashboard();
   }
 
   public void closedLoopStateMachineManager(){
-    leftShooterRPM = shooterEncoder.getVelocity();
-    leftShooterVoltage = leftShooterMotor.getBusVoltage();    
-    leftShooterDutyCycle = leftShooterMotor.getAppliedOutput();
+    mLeftShooterRPM = shooterEncoder.getVelocity();
+    mLeftShooterVoltage = mLeftShooterMotor.getBusVoltage();
+    mLeftShooterDutyCycle = mLeftShooterMotor.getAppliedOutput();
 
     // State Machine
-    if (shooterControlState == ShooterControlState.IDLE){
-
-      kP = 0.0005; 
-      kI = 0.0000025; 
-      kD = 0; 
+    if (shooterControlState == ShooterControlState.IDLE) {
+      kP = 0.0005;
+      kI = 0.0000025;
+      kD = 0;
       kFF = 0.000013;
+
       shooterPID.setP(kP);
       shooterPID.setI(kI);
       shooterPID.setD(kD);
       shooterPID.setFF(kFF);
-      leftShooterMotor.set(0);
+
+      // System.out.println("Setting Default kF");
+      mLeftShooterMotor.set(0);
+      mSetKFF = true;
+      mPVRingLight.set(Relay.Value.kOff);
+
 
     } else if (shooterControlState == ShooterControlState.SPINUP) {
       // figure out desired speed
-      //desiredRPM = getNeededRPM();
-      desiredRPM = -8000;
+      // desiredRPM = getNeededRPM(); // for when we have camera control
       // pid spin up
-      SetShooterSpeed(desiredRPM);
-      
+      setShooterSpeed(mDesiredRPM);
+      mPVRingLight.set(Relay.Value.kOn);
+
+
       shooterControlState = ShooterControlState.HOLDWHENREADY;
 
     } else if (shooterControlState == ShooterControlState.HOLDWHENREADY) {
-      SmartDashboard.putNumber("Shooter kF", kFcalculator(leftShooterDutyCycle, leftShooterRPM));
-      absoluteRPMError = Math.abs(desiredRPM - leftShooterRPM);
+      mAbsoluteRPMError = Math.abs(mDesiredRPM - mLeftShooterRPM);
 
-      if (absoluteRPMError < 100 && !onTarget) {
+      if (mAbsoluteRPMError < 100 && !onTarget) {
         onTarget = true;
-      } else if (absoluteRPMError > 100) {
+      } else if (mAbsoluteRPMError > 100) {
         resetHold(); // onTarget is now false
       }
 
       if (onTarget) {
         // record value in kFFCircularBuffer
-        kFFCircularBuffer[kFFCircularBufferCounter % ShooterConstants.kFFCircularBufferSize] = kFcalculator(leftShooterVoltage, leftShooterRPM);
+        kFFCircularBuffer[kFFCircularBufferCounter % ShooterConstants.kFFCircularBufferSize] = kFcalculator(mLeftShooterVoltage, mLeftShooterRPM);
         kFFCircularBufferCounter++;
         kFFSampleCount++;
       }
@@ -184,29 +173,34 @@ public class Shooter extends SubsystemBase {
       if (kFFSampleCount >= ShooterConstants.kFFCircularBufferSize) {
         shooterControlState = ShooterControlState.HOLD;
       } else {
-        SetShooterSpeed(desiredRPM);
+        setShooterSpeed(mDesiredRPM);
       }
 
-      double kFFToAddToBuffer = kFcalculator(leftShooterMotor.getBusVoltage(), shooterEncoder.getVelocity()); // TODO not sure about units of get velocity
+      double kFFToAddToBuffer = kFcalculator(mLeftShooterMotor.getBusVoltage(), shooterEncoder.getVelocity());
       kFFCircularBuffer[kFFCircularBufferCounter % ShooterConstants.kFFCircularBufferSize] = kFFToAddToBuffer;
       kFFCircularBufferCounter++;
     }
 
     if (shooterControlState == ShooterControlState.HOLD) {
       // set shooter pid values to 0
-      shooterPID.setP(0);
-      shooterPID.setI(0);
-      shooterPID.setD(0);
 
-      // replace with calculated kF
-      Arrays.sort(kFFCircularBuffer);
-      double medianKFF = kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2];
-      shooterPID.setFF(medianKFF); // get median value
-
-      SetShooterSpeed(desiredRPM);
+      if (mSetKFF){
+        shooterPID.setP(0);
+        shooterPID.setI(0);
+        shooterPID.setD(0);
+  
+        // replace with calculated kF
+        Arrays.sort(kFFCircularBuffer);
+        mMedianKFF = kFFCircularBuffer[ShooterConstants.kFFCircularBufferSize/2];
+        shooterPID.setFF(mMedianKFF); // get median value
+        System.out.print("Setting Calculated kF");
+        System.out.println(mMedianKFF);
+        mSetKFF = false;
+      }
+      setShooterSpeed(mDesiredRPM);
     }
-
   }
+
   public void PIDTuner() {
     double pTemp = 0;
     double iTemp = 0;
@@ -214,78 +208,75 @@ public class Shooter extends SubsystemBase {
     double ffTemp = 0;
     boolean valueOrPID;
 
-    pTemp = SmartDashboard.getNumber("Current pVal = ", 0);
-    iTemp = SmartDashboard.getNumber("Current iVal = ", 0);
-    dTemp = SmartDashboard.getNumber("Current dVal = ", 0);
-    ffTemp = SmartDashboard.getNumber("Current ffVal = ", 0);
-    motor1ShooterSpeed = SmartDashboard.getNumber("Shooter Speed = ", 0); 
-    desiredRPM = SmartDashboard.getNumber("Desired RPM = ", 0);
-    valueOrPID = SmartDashboard.getBoolean("Value or SetPID:", true);
+    pTemp = SmartDashboard.getNumber("[Shooter] Current pVal = ", 0);
+    iTemp = SmartDashboard.getNumber("[Shooter] Current iVal = ", 0);
+    dTemp = SmartDashboard.getNumber("[Shooter] Current dVal = ", 0);
+    ffTemp = SmartDashboard.getNumber("[Shooter] Current ffVal = ", 0);
+    mLeftShooterMotorSpeed = SmartDashboard.getNumber("[Shooter] Speed = ", 0);
+    mDesiredRPM = SmartDashboard.getNumber("[Shooter] Desired RPM = ", 0);
+    valueOrPID = SmartDashboard.getBoolean("[Shooter] Value or SetPID:", true);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if((pTemp != kP)) { shooterPID.setP(pTemp); kP = pTemp; }
-    if((kI != iTemp)) { shooterPID.setI(iTemp); kI = iTemp; }
-    if((dTemp != kD)) { shooterPID.setD(dTemp); kD = dTemp; }
-    if((ffTemp != kFF)) { shooterPID.setFF(ffTemp); kFF = ffTemp; }
-   
+    if (pTemp != kP) { shooterPID.setP(pTemp); kP = pTemp; }
+    if (kI != iTemp) { shooterPID.setI(iTemp); kI = iTemp; }
+    if (dTemp != kD) { shooterPID.setD(dTemp); kD = dTemp; }
+    if (ffTemp != kFF) { shooterPID.setFF(ffTemp); kFF = ffTemp; }
 
-    if (motor1ShooterSpeed >= 1.0) {
-      motor1ShooterSpeed = 1.0;
-    } else if (motor1ShooterSpeed <= -1.0) {
-      motor1ShooterSpeed = -1.0;
+    if (mLeftShooterMotorSpeed >= 1.0) {
+      mLeftShooterMotorSpeed = 1.0;
+    } else if (mLeftShooterMotorSpeed <= -1.0) {
+      mLeftShooterMotorSpeed = -1.0;
     }
 
     if (valueOrPID) {
-      leftShooterMotor.set(motor1ShooterSpeed);
-      //SMotorDale.set(-motor1ShooterSpeed);
-      SmartDashboard.putNumber("Output Chip", leftShooterMotor.getAppliedOutput());
-      SmartDashboard.putNumber("Output Dale", rightShooterMotor.getAppliedOutput());
+      mLeftShooterMotor.set(mLeftShooterMotorSpeed); // right shooter motor follows left
+      SmartDashboard.putNumber("Output Left Shooter", mLeftShooterMotor.getAppliedOutput());
+      SmartDashboard.putNumber("Output Right Shooter", mRightShooterMotor.getAppliedOutput());
     } else {
       // Use PID value
-      shooterPID.setReference(desiredRPM, ControlType.kVelocity);
-      //SmartDashboard.putNumber("Shooter Vel", shooterEncoder.getVelocity());
-      SmartDashboard.putNumber("Output Chip", leftShooterMotor.getAppliedOutput());
-      SmartDashboard.putNumber("Output Dale", rightShooterMotor.getAppliedOutput());
+      shooterPID.setReference(mDesiredRPM, ControlType.kVelocity);
+      // SmartDashboard.putNumber("Shooter Vel", shooterEncoder.getVelocity());
+      SmartDashboard.putNumber("Output Left Shooter", mLeftShooterMotor.getAppliedOutput());
+      SmartDashboard.putNumber("Output Right Shooter", mRightShooterMotor.getAppliedOutput());
     }
   }
 
   /**
-   * Determine RPM of shooter needed to score power cells in power port 
+   * Determine RPM of shooter needed to score power cells in power port
    * xdist - distance from power port in m from vision processing
    * fudgeFactor - multiplication needed to turn velocity into RPM
    */
   public double getNeededRPM() {
 
-    double vel, RPM;
-
     // Convert xdist to feet
     double xDist_ft = x * GenConstants.M_TO_FEET;
-   
-    // Ya know math 
-    vel = (xDist_ft/Constants.GenConstants.COS_ANGLE)
-      *Math.pow(-Constants.GenConstants.G_FT_PER_SEC2/
-      (Constants.GenConstants.INNER_PORT_HEIGHT_FT-Constants.GenConstants.TAN_ANGLE*xDist_ft
-      -Constants.GenConstants.SHOOTER_HEIGHT_FT),0.5);
 
-    RPM = fudgeFactor*vel;
+    // TODO confirm math
+    mPVVel = (xDist_ft/Constants.GenConstants.COS_ANGLE)
+      * Math.pow(-Constants.GenConstants.G_FT_PER_SEC2
+      / (Constants.GenConstants.INNER_PORT_HEIGHT_FT - Constants.GenConstants.TAN_ANGLE * xDist_ft
+      - Constants.GenConstants.SHOOTER_HEIGHT_FT), 0.5);
 
-    SmartDashboard.putNumber("Calculated velocity", vel);
-    SmartDashboard.putNumber("Calculated RPM", RPM);
+    mPVRPM = fudgeFactor * 2 * mPVVel / (Math.PI * Constants.ShooterConstants.SHOOTER_FLYWHEEL_DIAMETER); // COM PC velocity is half surface velocity 
 
-    return RPM;
+    return mPVRPM;
   }
-  
-  public void SetShooterSpeed(double speed) {
+
+  public double getDesiredRPM() {
+    return mDesiredRPM;
+  }
+
+  public void setDesiredRPM(double desiredRPM) {
+    this.mDesiredRPM = desiredRPM;
+  }
+
+  public void setShooterSpeed(double speed) {
     shooterPID.setReference(speed, ControlType.kVelocity);
-    //double voltage = 1.02e-3*speed + 0.459;
-    //leftShooterMotor.setVoltage(voltage); //manually set motor speed (voltage), negative shoots
-    
-    // double shooterSpeed = ShooterEncoder.getVelocity();
-    // boolean isDone = shooterSpeed > speed;
-    // return isDone;
+    // double voltage = 1.02e-3*speed + 0.459;
+    // leftShooterMotor.setVoltage(voltage); //manually set motor speed (voltage), negative shoots
   }
 
-  public boolean AtSpeed(double referenceSpeed) {
+  public boolean atSpeed(double referenceSpeed) {
     double shooterSpeed = shooterEncoder.getVelocity();
     boolean isDone = Math.abs(shooterSpeed) > Math.abs(referenceSpeed);
     return isDone;
@@ -295,13 +286,9 @@ public class Shooter extends SubsystemBase {
     if (Math.abs(rpm) < 0.1) {
       return 0;
     }
-    //double kf = (1023.0/12.0) * voltage / ((4096.0/600.0) * rpm);
+    // double kf = (1023.0/12.0) * voltage / ((4096.0/600.0) * rpm);
     double kf = dutyCycle / ((4096.0/600.0) * rpm);
     return kf;
-  }
-
-  public void stopFlywheel(){
-    leftShooterMotor.setVoltage(0);
   }
 
   public boolean getReadyToFire() {
@@ -324,5 +311,35 @@ public class Shooter extends SubsystemBase {
     Arrays.fill(kFFCircularBuffer, 0.0);
     kFFSampleCount = 0;
     onTarget = false;
+  }
+
+  private void updateSmartdashboard(){
+    SmartDashboard.putNumber("[Shooter] Calculated velocity", mPVVel);
+    SmartDashboard.putNumber("[Shooter] Calculated RPM", mPVRPM);
+    SmartDashboard.putNumber("[Shooter] kF", kFcalculator(mLeftShooterDutyCycle, mLeftShooterRPM));
+    SmartDashboard.putNumber("[Shooter] Encoder Position", shooterEncoder.getPosition());
+    SmartDashboard.putNumber("[Shooter] Encoder Velocity", shooterEncoder.getVelocity());
+    SmartDashboard.putNumber("[Shooter] Current pVal = ", kP);
+    SmartDashboard.putNumber("[Shooter] Current iVal = ", kI);
+    SmartDashboard.putNumber("[Shooter] Current dVal = ", kD);
+    SmartDashboard.putNumber("[Shooter] Current ffVal = ", kFF);
+    SmartDashboard.putNumber("[Shooter] Speed = ", mLeftShooterMotorSpeed);
+    SmartDashboard.putNumber("[Shooter] Desired RPM = ", mDesiredRPM);
+    SmartDashboard.putBoolean("[Shooter] Value or SetPID:", true); // Set to true for using "Shooter Motor Speed" to control shooter speed
+    SmartDashboard.putNumber("[Shooter] Calculated velocity", 0);
+    SmartDashboard.putNumber("[Shooter] Calculated RPM", 0);
+    SmartDashboard.putNumber("[Shooter] Camera X Dist", x);
+    SmartDashboard.putNumber("[Shooter] Camera Y Dist", y);
+    SmartDashboard.putNumber("[Shooter] Camera Angle Dist", angle);
+
+    SmartDashboard.putNumber("[Shooter] Fudge Factor", fudgeFactor);
+    SmartDashboard.getNumber("[Shooter] Fudge Factor", fudgeFactor);
+
+    SmartDashboard.putNumber("[Shooter] Camera X Dist", x);
+    SmartDashboard.putNumber("[Shooter] Camera Y Dist", y);
+    SmartDashboard.putNumber("[Shooter] Camera Angle Dist", angle);
+    SmartDashboard.putString("[Shooter] State", shooterControlState.toString());
+    String median_kff = String.format("%e", kFF);
+    SmartDashboard.putString("[Shooter] Calculated kFF", median_kff);
   }
 }

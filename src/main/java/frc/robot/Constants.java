@@ -9,6 +9,9 @@ package frc.robot;
 
 import java.lang.Math;
 
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -16,8 +19,8 @@ import java.lang.Math;
  *
  * It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
- * 
- * PURPOSE: Constants file 
+ *
+ * PURPOSE: Constants file
  */
 public final class Constants {
     // General constants
@@ -25,19 +28,32 @@ public final class Constants {
         public static final int REV_ENCODER_CPR = 8192;
         public static final double DEG2RAD = Math.PI/180.0;
         public static final double G_FT_PER_SEC2 = 32.2; //ft per second squared
-        public static final double M_TO_FEET = 3.28084; 
+        public static final double M_TO_FEET = 3.28084;
         public static final double INNER_PORT_HEIGHT_FT = 8.17;
         public static final double SHOOTER_HEIGHT_FT = 1;
         public static final double SHOOTER_ANGLE_DEG = 0;
         public static final double COS_ANGLE = Math.cos(SHOOTER_ANGLE_DEG*DEG2RAD);
         public static final double TAN_ANGLE = Math.tan(SHOOTER_ANGLE_DEG*DEG2RAD);
+        }; 
+    
+    public static double m2in(double meters){
+        return meters*39.3701;
+    }
+    public static Double m2in(Double meters){
+        return meters*39.3701;
+    }
+    public static double in2m(double inches){
+        return inches/39.3701;
+    }
+    public static Double in2m(Double inches){
+        return inches/39.3701;
     }
 
      // To import this elsewhere use import frc.robot.Constants.OIConstants;
      public static final class OIConstants {
         // These need to be public within the class so they are accessible
         public static final int DRIVER_CONTROLLER = 0;
-        public static final int OPERATOR_CONTROLLER = 1;
+        public static final int OPERATOR_CONTROLLER = 3;
     }
 
     public static final class DriveConstants {
@@ -45,10 +61,27 @@ public final class Constants {
         public static final int LEFT_DRIVE_MOTOR2 = 2;
         public static final int RIGHT_DRIVE_MOTOR1 = 3;
         public static final int RIGHT_DRIVE_MOTOR2 = 4;
+
+        public static final double WHEEL_CIRCUMFERENCE = 6 * Math.PI;
+        public static final double GEARBOX_RATIO = 12.05; 
+        public static final double MAX_RPM = 5676; // REV Neo free sped = 5676 rpm, gearbox = 12.05:1;
+        public static final double TRACK = 24; // width from center of left wheel to right wheel in inches
+
+        public static final double kP = 0.0001;  
+        public static final double kI = 0;
+        public static final double kD = 0; 
+        public static final double kFF = 1.0 / MAX_RPM; 
+
+        public static final double MAX_VEL = MAX_RPM;    // rpm
+        public static final double MIN_VEL = 0;      // rpm
+        public static final double MAX_ACC = 5000;    // rpm/s
+        public static final double ALLOWED_ERROR = 0; // rpm? 
+
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
-            kCLArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
+            kCLXboxArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
+            // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
             kArcade("Arcade"); // single joystick, open loop
 
             private String name;
@@ -64,8 +97,9 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int SHOOTER_MOTOR_CHIP = 9;
-        public static final int SHOOTER_MOTOR_DALE = 10;
+        public static final int SHOOTER_MOTOR_LEFT = 9;
+        public static final int SHOOTER_MOTOR_RIGHT = 10;
+        public static final int PV_RING_LIGHT = 0;
         public static enum ShooterControlState {
             IDLE("Idle"),
             SPINUP("Spin Up"),
@@ -83,28 +117,40 @@ public final class Constants {
             }
         }
         public static final int kFFCircularBufferSize = 20;
+        public static final double SHOOTER_FLYWHEEL_DIAMETER = 5; // TODO set this correctly with appropriate units
+    }
+
+    public static final class PowerCellConstants {
     }
 
     public static final class HarvesterConstants {
-        public static final int HARVESTER_MOTOR_MICKEY = 6;
-        public static final int HARVESTER_MOTOR_MINNIE = 5;
+        public static final int HARVESTER_FRONT_MOTOR = 6;
+        public static final int HARVESTER_BACK_MOTOR = 5;
         public static final int HARVESTER_LIMIT_SWITCH = 0;
         // tof is the time of flight sensor
         public static final int HARVESTER_TOF = 11;
     }
 
     public static final class IndexerConstants {
-        public static final int INDEXER_MOTOR_DONALD = 7;
+        public static final int INDEXER_MOTOR = 7;
         public static final int INDEXER_LIMIT_SWITCH1 = 1;
         public static final int INDEXER_LIMIT_SWITCH2 = 2;
         public static final int INDEXER_LIMIT_SWITCH3 = 3;
         public static final int INDEXER_LIMIT_SWITCH4 = 4;
         public static final int INDEXER_LIMIT_SWITCH5 = 5;
         public static final int INDEXER_TOF = 12;
-    } 
+
+        public static final double kP = 0.07; // 2e-5 initial test value
+        public static final double kI = 0.03; // 0 initial test value
+        public static final double kD = 0.0; // had success 0.03 but need to check
+        public static final double kFF = 0;
+
+        public static final double kMaxPIDduration = 1e9; // 1 second in nano seconds
+
+    }
 
     public static final class ElevatorConstants {
-        public static final int ELEVATOR_MOTOR_GOOFY = 8;
+        public static final int ELEVATOR_MOTOR = 8;
     }
 
     // Add controller constant
@@ -116,12 +162,12 @@ public final class Constants {
             public static final int Y = 4;
             public static final int BACK = 7;
             public static final int START = 8;
-            
+
             public static final class BUMPER {
                 public static final int LEFT = 5;
                 public static final int RIGHT = 6;
             }
-            
+
             // handy boolean conversion
             // if (controller.getPOV() == Controller.DPAD.UP) == true
             public static final class DPAD {
@@ -134,24 +180,37 @@ public final class Constants {
                 public static final int LEFT = 270;
                 public static final int UP_LEFT = 315;
             }
-            
+
             public static final class TRIGGER {
                 public static final int LEFT = 2;
                 public static final int RIGHT = 3;
             }
-            
+
             public static final class STICK {
                 public static final class LEFT {
                     public static final int X = 0;
                     public static final int Y = 1;
                 }
-                
+
                 public class RIGHT {
                     public static final int X = 4;
                     public static final int Y = 5;
                 }
             }
-
         }
+    }
+
+    public static final class AutoConstants {
+        public static final double MAX_SPEED_MPS = 1; // meters per second
+        public static final double MAX_ACC_MPS = 1; // meters per second^2
+        public static final DifferentialDriveKinematics DRIVE_KINEMATICS = new DifferentialDriveKinematics(in2m(DriveConstants.TRACK)); // convert to meters
+        public static final double RAMSETE_B = 2; // think of this like P control with trajectory error
+        public static final double RAMSETE_ZETA = 0.7; // think of this like damping for trajectory error
+        public static final SPI.Port NAVX_PORT = SPI.Port.kMXP;  
+        public static final String BARREL_RACE_JSON = "paths/barrelRace.wpilib.json";
+        public static final String BOUNCE_RUN_JSON = "paths/bounce.wpilib.json";
+        public static final String SLOLAM_RUN_JSON = "paths/slolam.wpilib.json";
+        public static final String CALIBRATE_JSON = "paths/calibrate.wpilib.json";
+
     }
 }

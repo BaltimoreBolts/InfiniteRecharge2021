@@ -7,39 +7,45 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.FirePowerCell;
-import frc.robot.commands.IndexerCaptain;
-import frc.robot.commands.PowerCellSucker;
-import frc.robot.commands.RapidFire;
-import frc.robot.commands.ShootPowerCell;
-import frc.robot.commands.AutonomousDrive;
-import frc.robot.commands.AutonomousShoot;
-import frc.robot.commands.ElevatorGoUp;
-import frc.robot.commands.ElevatorGoDown;
-import frc.robot.commands.MoveIndexer;
-import frc.robot.commands.ReverseIndexer;
-import frc.robot.commands.HarvesterIn;
-import frc.robot.commands.Autonomous;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Harvester;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Indexer;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import com.kauailabs.navx.frc.AHRS;
+
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.DriveConstants;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.Controller;
-import frc.robot.subsystems.Elevator;
 import edu.wpi.first.cameraserver.CameraServer;
 
-import edu.wpi.cscore.UsbCamera;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
+import edu.wpi.cscore.UsbCamera;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+import frc.robot.Constants.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -48,73 +54,168 @@ import edu.wpi.cscore.UsbCamera;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // The robot's subsystems and commands are defined here...
   private final DriveTrain roboDT = new DriveTrain();
   private final Indexer roboIndexer = new Indexer();
-  private final Shooter roboShoot = new Shooter();
-  private final Harvester roboHarvest = new Harvester(roboIndexer, roboShoot);
+  private final Shooter roboShooter = new Shooter();
+  private final Harvester roboHarvester = new Harvester(roboIndexer, roboShooter);
   private final Elevator roboElevator = new Elevator();
-  
+
   // Define CameraServer
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
- 
-  private Command autoCommand = new AutonomousDrive(roboDT, 18);
-  private Command autoShoot = new AutonomousShoot(roboShoot); // Stupid way to do this but a hot fix for testing 
+
+  // private Command autoCommand = new AutonomousDrive(roboDT, 60);
+  // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
+  // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
+  SendableChooser<Command> mChooser = new SendableChooser<>();
+  Trajectory barrelRace = new Trajectory();
+  Trajectory slolam = new Trajectory();
+  Trajectory bounce = new Trajectory();
+  Trajectory calibrate = new Trajectory();
+  TrajectoryConfig config = 
+      new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
+      .setKinematics(AutoConstants.DRIVE_KINEMATICS);
+  
+  Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(0)), // start at origin facing +X
+      List.of( // pass interior way points, making 's' curve
+        new Translation2d(1, 1),
+        new Translation2d(2, 0)
+          // new Translation2d(2, -1)
+      ),
+      new Pose2d(0, 0, new Rotation2d(180.0*2.0*Math.PI/360.0)), // end 3m straight, facing forward
+      config
+  );
+
+  // private ShuffleboardTab mainTab;
+  
   private XboxController driver = new XboxController(OIConstants.DRIVER_CONTROLLER);
   private XboxController operator = new XboxController(OIConstants.OPERATOR_CONTROLLER);
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
   private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
-  JoystickButton rightDriverBumper; 
-  JoystickButton leftDriverBumper; 
-  JoystickButton xDriverButton;
-  JoystickButton aDriverButton;
-  JoystickButton bDriverButton;
 
-  JoystickButton aOperatorButton;
-  JoystickButton bOperatorButton;
-  JoystickButton xOperatorButton;
-  JoystickButton yOperatorButton;
-  JoystickButton rightOperatorBumper;
-  JoystickButton leftOperatorBumper;
+  // Initialize Driver Buttons
+  JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
+  JoystickButton driverStartButton = new JoystickButton(driver, Constants.Controller.XBOX.START);
+  JoystickButton driverBackButton = new JoystickButton(driver, Constants.Controller.XBOX.BACK);
+  JoystickButton driverAButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
+  JoystickButton driverBButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
+
+  // Initialize Operator Buttons
+  JoystickButton operatorAButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
+  JoystickButton operatorBButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
+  JoystickButton operatorXButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
+  JoystickButton operatorYButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
+  JoystickButton operatorLeftBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
+  JoystickButton operatorRightBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
+  JoystickButton operatorStartButton = new JoystickButton(operator, Constants.Controller.XBOX.START);
+  JoystickButton operatorBackButton = new JoystickButton(operator, Constants.Controller.XBOX.BACK);
+  TriggerButton operatorLeftTrigger = new TriggerButton(operator, TriggerButton.TriggerSelection.LEFT);
+  TriggerButton operatorRightTrigger = new TriggerButton(operator, TriggerButton.TriggerSelection.RIGHT);
+  DPadButton operatorUpDpad = new DPadButton(operator, DPadButton.Direction.UP);
+  DPadButton operatorDownDpad = new DPadButton(operator, DPadButton.Direction.DOWN);
+  DPadButton operatorLeftDpad = new DPadButton(operator, DPadButton.Direction.LEFT);
+  DPadButton operatorRightDpad = new DPadButton(operator, DPadButton.Direction.RIGHT);
+  
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
     // Configure the button bindings
     configureButtonBindings();
-    //initializeRobot(); //doesnt work, goal was to move the indexer on boot
 
-    // Set default drive command
-    // Negative in the Y direction makes robot go forward 2/6
-    // This seemed like kinda wonky way to get drive to work, but it was the only way
-    // we could figure out in 2019/2020 for command based programming. There may be 
-    // a better way
+    // Configure the control scheme for the drive train
+    configureDriveMode();
+
+    // Configure the camera
+    configureCamera();
+  
+    barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
+    slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
+    bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
+    calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
     
+    // Configure Auton Chooser
+    mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRace));
+    mChooser.addOption("Slolam", pathAuto(slolam));
+    mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
+    mChooser.addOption("Do Nothing", new InstantCommand());
+    mChooser.addOption("Bounce", pathAuto(bounce));
+    SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
+    // mainTab = Shuffleboard.getTab("Main");
+    // mainTab.add("Auton Chooser", mChooser);
+    // mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
+
+  }
+
+  /**
+   * Use this method to define your button->command mappings.  Buttons can be created by
+   * instantiating a {@link GenericHID} or one of its subclasses ({@link
+   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
+   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   */
+  private void configureButtonBindings() {
+
+    // DRIVER BUTTON ASSIGNMENTS
+    // operatorStartButton.whenPressed(); // pause robot
+    // operatorBackButton.whenPressed(); // emergency stop robot
+    driverAButton.whenPressed(
+      () -> roboElevator.engageRatchet()
+    );
+    driverBButton.whenPressed(
+      () -> roboElevator.disengageRatchet()
+    );
+
+    // OPERATOR BUTTON ASSIGNMENTS
+    operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
+    operatorBButton.whenPressed(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
+    operatorXButton.whenPressed(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
+    operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
+    // operatorStartButton.whenPressed(); // pause robot
+    // operatorBackButton.whenPressed(); // emergency stop robot
+
+    operatorLeftBumper.whenHeld(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
+    operatorRightBumper.whenHeld(new MoveElevator(roboElevator, true));
+
+    operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
+    operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
+
+    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, true));
+    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, false));
+    operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
+    operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
+
+  }
+
+  private void configureDriveMode() {
+
     // Switch statement for drive mode, drive mode is set above in member variables
-    SmartDashboard.putString("Drive Mode", driveMode.toString());
+    SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
+
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.arcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
-              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
+              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)),
             roboDT
           )
         );
         break;
 
-      case kCLArcade: 
+      case kCLXboxArcade:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X), 
-              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)), 
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
+              -driver.getRawAxis(Controller.XBOX.STICK.LEFT.Y)),
             roboDT
           )
         );
@@ -124,8 +225,8 @@ public class RobotContainer {
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              joystick.getX(), 
-              -leftJoystick.getY()), 
+              joystick.getX(),
+              -leftJoystick.getY()),
             roboDT
           )
         );
@@ -135,12 +236,23 @@ public class RobotContainer {
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.55,
-              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))*0.7), 
+              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,
+              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
             roboDT
           )
         );
         break;
+
+      // case kCLFlightArcade:
+      //   roboDT.setDefaultCommand(
+      //     new RunCommand(
+      //       () -> roboDT.closedLoopArcadeDrive(
+      //         leftJoystick.getZ(),
+      //         -leftJoystick.getY()),
+      //       roboDT
+      //     )
+      //   );
+      //   break;
 
       default:
         System.out.println("Drive Mode is not a valid implemented option. Defaulting to GTA...");
@@ -148,21 +260,17 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X),
-              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))), 
+              -(driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT) - driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT))),
             roboDT
           )
         );
     }
-       
-    // roboShoot.setDefaultCommand(
-    //   new RunCommand(
-    //     () -> roboShoot.closedLoopStateMachineManager(), roboShoot
-    //   )
-    // );
-    
+  }
+
+  private void configureCamera() {
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
-  
+
     // Camera code
     // serverOne = CameraServer.getInstance();
     // // serverOne.startAutomaticCapture();
@@ -171,65 +279,6 @@ public class RobotContainer {
     // camera.setResolution(RobotMap.IMG_WIDTH, RobotMap.IMG_HEIGHT);
     // camera.setBrightness(50);
     // camera.setExposureManual(50);
-      
-
-  }
-  /**
-   * Use this method to define your button->command mappings.  Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  private void configureButtonBindings() {  
-
-
-    // INITIALIZE DRIVER CONTROLLER BUTTONS
-    rightDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftDriverBumper = new JoystickButton(driver, Constants.Controller.XBOX.BUMPER.LEFT);
-    xDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.X);
-    aDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.A);
-    bDriverButton = new JoystickButton(driver, Constants.Controller.XBOX.B);
-
-
-    // INITIALIZE OPERATOR CONTROLLER BUTTONS
-    aOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.A);
-    bOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.B);
-    xOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.X);
-    yOperatorButton = new JoystickButton(operator, Constants.Controller.XBOX.Y);
-    rightOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.RIGHT);
-    leftOperatorBumper = new JoystickButton(operator, Constants.Controller.XBOX.BUMPER.LEFT);
-    
-
-    // DRIVER BUTTON ASSIGNMENTS
-    // rightDriverTrigger.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest)); // Triggers are axis but that's hard
-    // rightDriverBumper.whenPressed(new FirePowerCell(roboShoot, roboIndexer, roboHarvest));
-    rightDriverBumper.whenHeld(new ShootPowerCell(roboShoot));
-    leftDriverBumper.whenHeld(new HarvesterIn(roboHarvest));
-    // leftDriverBumper.whenPressed(new RapidFire(roboIndexer));
-    // xDriverButton.whenPressed(new IndexerCaptain(roboIndexer));
-    // xDriverButton.whenHeld(new HarvesterIn(roboHarvest));
-
-    // Testing Indexer rotation
-    aDriverButton.whenPressed(new MoveIndexer(roboIndexer, roboHarvest));
-    bDriverButton.whenPressed(new ReverseIndexer(roboIndexer));
-
-
-    // OPERATOR BUTTON ASSIGNMENTS
-    bOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, -1.0, true), true); // top (near indexer) sucks in 
-    xOperatorButton.whenHeld(new PowerCellSucker(roboHarvest, 1.0, true), true); // top (near indexer) pushes out 
-    rightOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, 1.0, false), true); // front pushes out 
-    leftOperatorBumper.whenHeld(new PowerCellSucker(roboHarvest, -1.0, false), true); // front sucks in 
-
-    yOperatorButton.whenPressed(new ElevatorGoUp(roboElevator));
-    aOperatorButton.whenPressed(new ElevatorGoDown(roboElevator));
-  }
-  
-  public void initializeRobot(){
-    double initialPosition = roboIndexer.getEncoderValue();
-    double startingPos = roboIndexer.getAbsEncoderValue();
-    double resetDistance = (startingPos % (1.0/3.0)) > 1/6 ? 1.0/3.0 - (startingPos % (1.0/3.0 )) : -(startingPos % (1.0/3.0)); //determine which +-1/3 is closer
-    SmartDashboard.putNumber("Initialize Distance", initialPosition + 70*resetDistance);
-    roboIndexer.MoveToPosition(initialPosition + 70*resetDistance, 0);
   }
 
   /**
@@ -237,22 +286,62 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public Command getAutonomousCommand(boolean value) {
-    // An ExampleCommand will run in autonomous
-    // Again really dumb way to do this but the SequentialCommandGroup was breaking our code 
-    if (value) {
-      return autoCommand;
-    } else {
-      return autoShoot;
-    }
+  public Command getAutonomousCommand() {
+    // return mChooser.getSelected();
+    return pathAuto(calibrate);
   }
 
-  public XboxController GetDriverController() {
+  public Command pathAuto(Trajectory trajectory){
+  
+    // BiConsumer<Double, Double> putWheelSpeeds = 
+    //     (x,y) -> {
+    //           roboDT.setWheelSpeeds(x,y);
+    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
+    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
+    //       };
+  
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        trajectory,
+        roboDT::getPose, 
+        new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
+        AutoConstants.DRIVE_KINEMATICS,
+        (leftSpeed,rightSpeed) -> roboDT.setWheelSpeeds(leftSpeed,rightSpeed),
+        roboDT
+    );
+
+    // ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
+  
+    return ramseteCommand.beforeStarting(() -> roboDT.resetOdometry(
+      new Pose2d (0,0, new Rotation2d(0))
+      )).andThen(() -> roboDT.stopDT());
+  }
+
+  public Trajectory loadPathJSON(String file_path){
+    Trajectory trajectory = new Trajectory();
+    try {
+      Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(file_path);
+      SmartDashboard.putString("[Autonomous] Trajectory Path", trajectoryPath.toString());
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    } catch (IOException ex){
+      DriverStation.reportError("Unable to open trajectory: " + AutoConstants.BARREL_RACE_JSON, ex.getStackTrace());
+    }
+    return trajectory;
+  }
+
+  public XboxController getDriverController() {
     return this.driver;
   }
 
-  public Shooter GetShooter() {
-    return this.roboShoot;
+  public Shooter getShooter() {
+    return this.roboShooter;
   }
 
+
+  public Elevator getElevator() {
+    return this.roboElevator;
+  }
+  
+  public AHRS getNavx(){
+    return roboDT.getNavx();
+  }
 }

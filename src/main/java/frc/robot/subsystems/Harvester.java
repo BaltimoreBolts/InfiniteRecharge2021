@@ -13,99 +13,76 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.shuffleboard.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.HarvesterConstants;
-import frc.robot.commands.*;
 
-/* 
-** PURPOSE: Harvester subsystem 
-** STATUS: Motor functions are good. Note correct directions are set in the commands, 
-** not here (may or may not have been the best idea). TOF sensor stuff has not been tested
-** or really completed coding
-*/
+/*
+ * PURPOSE: Harvester subsystem
+ * STATUS: Motor functions are good. Note correct directions are set in the commands,
+ * not here (may or may not have been the best idea). TOF sensor stuff has not been tested
+ * or really completed coding
+ */
 
 public class Harvester extends SubsystemBase {
-  private CANSparkMax harvesterMickeyMotor; // The front one dawg
-  private CANSparkMax harvesterMinnieMotor; // The back one (closer to the indexer)
-  //private DigitalInput LimitSwitch0;
-  private Indexer roboIndexer;
-  private Relay harvesterRelease;
-  private Shooter roboShooter;
-  private TimeOfFlight harvesterTOF;
-  NetworkTableEntry desiredFrontSpeedNT, desiredBackSpeedNT;
+  private CANSparkMax mHarvesterFrontMotor;
+  private CANSparkMax mHarvesterBackMotor; // Closer to the indexer
+  // private DigitalInput LimitSwitch0;
+  private TimeOfFlight mHarvesterTOF;
+  NetworkTableEntry mDesiredFrontSpeedNT, mDesiredBackSpeedNT;
 
   /**
    * Creates a new Harvester.
    */
-  public Harvester(Indexer robotIndex, Shooter robotShooter) {
-  
-    roboIndexer = robotIndex;
-    roboShooter = robotShooter;
-    harvesterMickeyMotor = new CANSparkMax (HarvesterConstants.HARVESTER_MOTOR_MICKEY, MotorType.kBrushless);
-    harvesterMinnieMotor = new CANSparkMax (HarvesterConstants.HARVESTER_MOTOR_MINNIE, MotorType.kBrushless);
-    harvesterMickeyMotor.restoreFactoryDefaults();
-    harvesterMinnieMotor.restoreFactoryDefaults();
-    harvesterMickeyMotor.setSmartCurrentLimit(30);
-    harvesterMinnieMotor.setSmartCurrentLimit(30);
-    harvesterMickeyMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    harvesterMinnieMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-   
+  public Harvester(Indexer robotIndexer, Shooter robotShooter) {
+
+    mHarvesterFrontMotor = new CANSparkMax(HarvesterConstants.HARVESTER_FRONT_MOTOR, MotorType.kBrushless);
+    mHarvesterBackMotor = new CANSparkMax(HarvesterConstants.HARVESTER_BACK_MOTOR, MotorType.kBrushless);
+    mHarvesterFrontMotor.restoreFactoryDefaults();
+    mHarvesterBackMotor.restoreFactoryDefaults();
+    mHarvesterFrontMotor.setSmartCurrentLimit(30);
+    mHarvesterBackMotor.setSmartCurrentLimit(30);
+    mHarvesterFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mHarvesterBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mHarvesterFrontMotor.burnFlash();
+    mHarvesterBackMotor.burnFlash();
+
     // LimitSwitch0 = new DigitalInput(HarvesterConstants.HARVESTER_LIMIT_SWITCH);
-    harvesterTOF = new TimeOfFlight(HarvesterConstants.HARVESTER_TOF);
-    harvesterRelease = new Relay(0);
-
-    harvesterRelease.set(Relay.Value.kOn);
-
-    harvesterMickeyMotor.burnFlash();
-    harvesterMinnieMotor.burnFlash();
+    mHarvesterTOF = new TimeOfFlight(HarvesterConstants.HARVESTER_TOF);
 
     ShuffleboardTab harvesterTab = Shuffleboard.getTab("Harvester");
-    desiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();
-    desiredBackSpeedNT = harvesterTab.add("Desired Back Speed = ", 0).getEntry();
+    mDesiredFrontSpeedNT = harvesterTab.add("Desired Front Speed = ", 0).getEntry();
+    mDesiredBackSpeedNT = harvesterTab.add("Desired Back Speed = ", 0).getEntry();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putBoolean("Harvester TOF", this.getHarvesterTOF());
-    SmartDashboard.putNumber("Harvester TOF Val", harvesterTOF.getRange());
-    desiredFrontSpeedNT.getDouble(0);
-    desiredBackSpeedNT.getDouble(0);
 
-    // Idea here was, if we see a PC in front of us, automatically start ingesting if we have room
-    if (this.getHarvesterTOF() == true){
-        //new IndexerHarvestMayhem(roboIndexer, this, roboShooter);
-    }
+    mDesiredFrontSpeedNT.getDouble(0);
+    mDesiredBackSpeedNT.getDouble(0);
+    updateSmartdashboard();
+
   }
 
-  // Mickey is the front harvester motor
-  public void setMickeySpeed(double speed){
-    harvesterMickeyMotor.set(speed);
-  }
-  
-  // Minnie is the back harvester motor
-  public void setMinnieSpeed(double speed){
-    harvesterMinnieMotor.set(speed);
+  public void setHarvesterFrontSpeed(double speed){
+    mHarvesterFrontMotor.set(speed);
   }
 
-  //Return value of first position optical sensor
+  public void setHarvesterBackSpeed(double speed){
+    mHarvesterBackMotor.set(speed);
+  }
+
+  // Return value of first position optical sensor
   public boolean getHarvesterTOF(){
     // return LimitSwitch0.get();
-    // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range 
-    return harvesterTOF.getRange() >= 15 && harvesterTOF.getRange() <= 25; 
+    // Because the ball is curved we want to stop when the center of the ball is in front of the sensor hence the range
+    return mHarvesterTOF.getRange() >= 15 && mHarvesterTOF.getRange() <= 25;
+    // we want to replace with with the indexer tof? range around <= 100 i think
   }
 
-  // TESTING FUNCTIONS
-  //For testing, this will be disabled later
-  public double getFrontDesiredSpeed() {
-    return desiredFrontSpeedNT.getDouble(0);
+  private void updateSmartdashboard() {
+    SmartDashboard.putBoolean("[Harvester] Harvester TOF", this.getHarvesterTOF());
+    SmartDashboard.putNumber("[Harvester] Harvester TOF Val", mHarvesterTOF.getRange());
   }
-  //For testing, this will be disabled later
-  public double getBackDesiredSpeed() {
-    return desiredBackSpeedNT.getDouble(0);
-  }
-
-
 }

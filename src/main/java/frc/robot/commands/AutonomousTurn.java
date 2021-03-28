@@ -8,51 +8,52 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.DriveTrain;
 
-
-/* 
-** PURPOSE: Rapid fire all power cells in the indexer until it's empty
-** STATUS: Not tested, not sure if current configuration of code works
-*/
-public class RapidFire extends CommandBase {
-  Indexer indexer;
-  boolean[] indexerArray;
-
+ 
+public class AutonomousTurn extends CommandBase {
   /**
-   * Creates a new RapidFire.
+   * Creates a new Autonomous.
    */
-  public RapidFire(Indexer inputIndexer) {
-    indexer = inputIndexer;
+
+  double mArcAngleToTravel_deg = 0;
+  double mRadius = 0;
+  boolean mDirection = true;
+ 
+   
+  DriveTrain roboDT;
+  public AutonomousTurn(DriveTrain robotDT, double radius, double angle, boolean clockwise) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(indexer);
+    roboDT = robotDT;
+    mArcAngleToTravel_deg = angle;
+    mRadius = radius;
+    mDirection = clockwise;
+     // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(roboDT);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    indexerArray = indexer.getPCArray();
+    roboDT.resetEncoders();
+    // roboDT.autonTurn(mRadius, mArcAngleToTravel_deg, mDirection);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.Movement(0.25);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    indexer.Movement(0);
+    roboDT.stopDT();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (indexerArray[0] == false && indexerArray[1]== false && indexerArray[2]== false && indexerArray[3]== false) {
-      return true;
-    } else {
-      return false;
-    } 
+    // return roboDT.autonTurn(mRadius, mArcAngleToTravel_deg, mDirection);
+    return false;
   }
 }

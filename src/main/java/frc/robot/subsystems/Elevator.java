@@ -16,57 +16,65 @@ import frc.robot.Constants.ElevatorConstants;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Relay.Value;
-import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Servo;
 
 
-/* 
-** PURPOSE: Elevator sub-system. 
+/*
+** PURPOSE: Elevator sub-system.
 ** STATUS: Tested pretty well
 */
 
 public class Elevator extends SubsystemBase {
-  private CANSparkMax ElevatorGoofyMotor;
-  private Relay elevatoRelay;
-  CANEncoder elevatorEncoder;
+  private CANSparkMax mElevatorMotor;
+  private Servo mElevatorRatchet;
+  CANEncoder mElevatorEncoder;
   private static final AlternateEncoderType kAltEncType = AlternateEncoderType.kQuadrature;
 
   /**
    * Creates a new Elevator.
    */
   public Elevator() {
-    ElevatorGoofyMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR_GOOFY,MotorType.kBrushless);
-    ElevatorGoofyMotor.restoreFactoryDefaults();
-    ElevatorGoofyMotor.setSmartCurrentLimit(40);
-    ElevatorGoofyMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    elevatorEncoder = ElevatorGoofyMotor.getAlternateEncoder(kAltEncType, 
+    mElevatorMotor = new CANSparkMax(ElevatorConstants.ELEVATOR_MOTOR,MotorType.kBrushless);
+    mElevatorMotor.restoreFactoryDefaults();
+    mElevatorMotor.setSmartCurrentLimit(40);
+    mElevatorMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mElevatorEncoder = mElevatorMotor.getAlternateEncoder(kAltEncType,
                         Constants.GenConstants.REV_ENCODER_CPR); // Changed this, to match indexer, same encoder?
-    elevatoRelay = new Relay(2, Relay.Direction.kForward);
-    ElevatorGoofyMotor.burnFlash();
-  }
-  
-  public void setSpeed(double speed){
-    ElevatorGoofyMotor.set(speed);
-  }
-
-  // engage ratched by having the relay off. 
-  // This way when power is cut to the robot, it doesn't drop
-  public void engageRatchet () {
-    elevatoRelay.set(Value.kOff);
-  }
-
-  // Must turn relay on to disengage ratchet and allow elevator movement
-  public void disengageRatchet() {
-    elevatoRelay.set(Value.kOn);
-  }
-
-  // Encoder was reading negative (I think), which is why we return the negative value
-  public double getElevatorEncoder() {
-    return -elevatorEncoder.getPosition();
+    mElevatorRatchet = new Servo(9);
+    mElevatorMotor.burnFlash();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator pos", -elevatorEncoder.getPosition());
+    updateSmartdashboard();
+  }
+
+  public void setSpeed(double speed){
+    mElevatorMotor.set(speed);
+  }
+
+  // disengage ratched by turning servo to the right.
+  public void disengageRatchet () {
+    mElevatorRatchet.set(100.0/180.0);
+    long start_time = System.nanoTime();
+    while ((System.nanoTime() - start_time) < 1e9) {
+    };
+  }
+
+  // Move servo to the left to engage the ratchet
+  public void engageRatchet() {
+    mElevatorRatchet.set(90.0/180.0);
+    long start_time = System.nanoTime();
+    while ((System.nanoTime() - start_time) < 1e9) {
+    };
+  }
+
+  // Encoder was reading negative (I think), which is why we return the negative value
+  public double getElevatorEncoder() {
+    return -mElevatorEncoder.getPosition();
+  }
+
+  private void updateSmartdashboard(){
+    SmartDashboard.putNumber("[Elevator] Elevator pos", -mElevatorEncoder.getPosition());
   }
 }
