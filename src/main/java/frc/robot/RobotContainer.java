@@ -71,7 +71,7 @@ public class RobotContainer {
   // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   SendableChooser<Command> mChooser = new SendableChooser<>();
   Trajectory barrelRace = new Trajectory();
-  Trajectory slolam = new Trajectory();
+  Trajectory slalom = new Trajectory();
   Trajectory bounce = new Trajectory();
   Trajectory calibrate = new Trajectory();
   TrajectoryConfig config = 
@@ -137,13 +137,13 @@ public class RobotContainer {
     configureCamera();
   
     barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
-    slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
+    slalom = loadPathJSON(AutoConstants.SLALOM_RUN_JSON);
     bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
     calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
     
     // Configure Auton Chooser
     mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRace));
-    mChooser.addOption("Slolam", pathAuto(slolam));
+    mChooser.addOption("Slalom", pathAuto(slalom));
     mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
     mChooser.addOption("Do Nothing", new InstantCommand());
     mChooser.addOption("Bounce", pathAuto(bounce));
@@ -288,7 +288,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // return mChooser.getSelected();
-    return pathAuto(calibrate);
+    return pathAuto(slalom);
   }
 
   public Command pathAuto(Trajectory trajectory){

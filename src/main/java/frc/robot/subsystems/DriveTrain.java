@@ -14,8 +14,6 @@ import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 
 import java.util.Map;
-import java.util.function.BiConsumer;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
