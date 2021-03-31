@@ -54,10 +54,8 @@ public class DriveTrain extends SubsystemBase {
   private AHRS mNavx = null; // usb port coms w/ navx
   private final DifferentialDriveOdometry mOdometry;
   private ShuffleboardTab mainTab; 
-  private TrapezoidProfile.State mLSetpoint = new TrapezoidProfile.State(0,0);
-  private TrapezoidProfile.State mRSetpoint = new TrapezoidProfile.State(0,0);
-  private TrapezoidProfile.Constraints mConstraints = 
-                      new TrapezoidProfile.Constraints(DriveConstants.MAX_ACC, 10000000);
+  private double mLSetpoint = 0;
+  private double mRSetpoint = 0;
   private double dt = 0.02; // wpilib runs at 50Hz
       
   
@@ -105,21 +103,19 @@ public class DriveTrain extends SubsystemBase {
     double left_set_point = (y+x)*DriveConstants.MAX_RPM;
     double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
 
-    TrapezoidProfile.State left_goal = new TrapezoidProfile.State(left_set_point, 0); // abuse of class, maybe we can use vel/acc
-    TrapezoidProfile.State right_goal = new TrapezoidProfile.State(right_set_point, 0); // instead of pos/vel here
+    double leftError = left_set_point - mLSetpoint;
+    mLSetpoint = (leftError)/Math.abs(leftError) * DriveConstants.MAX_ACC * dt + mLSetpoint;
+    double rightError = right_set_point - mRSetpoint;
+    mRSetpoint = (rightError)/Math.abs(rightError) * DriveConstants.MAX_ACC * dt + mRSetpoint;
 
-    var left_profile = new TrapezoidProfile(mConstraints, left_goal, mLSetpoint);
-    var right_profile = new TrapezoidProfile(mConstraints, right_goal, mRSetpoint);
+    mLSetpoint = (Math.abs(mLSetpoint) > Math.abs(left_set_point)) ? left_set_point : mLSetpoint;
+    mRSetpoint = (Math.abs(mRSetpoint) > Math.abs(right_set_point)) ? right_set_point : mRSetpoint;
 
-    mLSetpoint = left_profile.calculate(dt);
-    mRSetpoint = right_profile.calculate(dt);
+    // SmartDashboard.putNumber("Left Trapezoidal Setpoint", mLSetpoint); 
+    // SmartDashboard.putNumber("Right Trapezoidal Setpoint", mRSetpoint);
 
-    SmartDashboard.putNumber("Left Trapezoidal Setpoint", mLSetpoint.position); // since we're abusing it, this is actual velocity
-    SmartDashboard.putNumber("Right Trapezoidal Setpoint", mRSetpoint.position);
-
-    // mLeftDrivePID.setReference(mLSetpoint.position, ControlType.kVelocity,1);
-    // mRightDrivePID.setReference(mRSetpoint.position, ControlType.kVelocity,1);
-
+    mLeftDrivePID.setReference(mLSetpoint, ControlType.kVelocity,1);
+    mRightDrivePID.setReference(mRSetpoint, ControlType.kVelocity,1);
   }
 
   public Pose2d getPose(){

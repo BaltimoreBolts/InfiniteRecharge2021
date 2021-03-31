@@ -254,7 +254,7 @@ public class RobotContainer {
       //   );
       //   break;
       
-      case kTrapGTA:
+      case kMotionProfiledGTA:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.motionProfileDriving(
