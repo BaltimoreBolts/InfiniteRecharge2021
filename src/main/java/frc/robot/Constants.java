@@ -212,6 +212,8 @@ public final class Constants {
         public static final String BOUNCE_RUN_JSON = "paths/bounce.wpilib.json";
         public static final String SLOLAM_RUN_JSON = "paths/slolam.wpilib.json";
         public static final String CALIBRATE_JSON = "paths/calibrate.wpilib.json";
+        public static final String[] BOUNCE_JSONS = {"paths/bounce1.wpilib.json", "paths/bounce2.wpilib.json",
+                                                    "paths/bounce3.wpilib.json","paths/finish.wpilib.json"};
 
     }
 }

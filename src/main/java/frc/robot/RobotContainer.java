@@ -72,7 +72,7 @@ public class RobotContainer {
   SendableChooser<Command> mChooser = new SendableChooser<>();
   Trajectory barrelRace = new Trajectory();
   Trajectory slolam = new Trajectory();
-  Trajectory bounce = new Trajectory();
+  Trajectory[] bounce = {new Trajectory(), new Trajectory(), new Trajectory(), new Trajectory()};
   Trajectory calibrate = new Trajectory();
   TrajectoryConfig config = 
       new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
@@ -138,8 +138,10 @@ public class RobotContainer {
   
     barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
     slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
-    bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
     calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
+    for (int i = 0; i < AutoConstants.BOUNCE_JSONS.length; i++) {
+      bounce[i] = loadPathJSON(AutoConstants.BOUNCE_JSONS[i]);
+    }
     
     // Configure Auton Chooser
     mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRace));
@@ -299,16 +301,10 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return mChooser.getSelected();
     return pathAuto(barrelRace); // change trajectory here
+    // return pathAuto()
   }
 
   public Command pathAuto(Trajectory trajectory){
-  
-    // BiConsumer<Double, Double> putWheelSpeeds = 
-    //     (x,y) -> {
-    //           roboDT.setWheelSpeeds(x,y);
-    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Left Wheel Speed", x);
-    //           // SmartDashboard.putNumber("[Autonomous] Ramsete Right Wheel Speed", y);
-    //       };
   
     RamseteCommand ramseteCommand = new RamseteCommand(
         trajectory,
@@ -318,11 +314,29 @@ public class RobotContainer {
         (leftSpeed,rightSpeed) -> roboDT.setWheelSpeeds(leftSpeed,rightSpeed),
         roboDT
     );
-
-    // ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
   
     return ramseteCommand.beforeStarting(() -> roboDT.resetOdometry(
       trajectory.getInitialPose()
+      )).andThen(() -> roboDT.stopDT());
+  }
+
+  public Command pathAuto(Trajectory[] trajectories){
+    RamseteCommand[] commands = new RamseteCommand[trajectories.length];
+    Command outputCommand = new InstantCommand();
+    for (int i = 0; i < trajectories.length; i++){
+      commands[i] = new RamseteCommand(
+        trajectories[i],
+        roboDT::getPose, 
+        new RamseteController(AutoConstants.RAMSETE_B, AutoConstants.RAMSETE_ZETA),
+        AutoConstants.DRIVE_KINEMATICS,
+        (leftSpeed,rightSpeed) -> roboDT.setWheelSpeeds(leftSpeed,rightSpeed),
+        roboDT
+      );
+      outputCommand = outputCommand.andThen(commands[i]);
+    }
+  
+    return outputCommand.beforeStarting(() -> roboDT.resetOdometry(
+      trajectories[0].getInitialPose()
       )).andThen(() -> roboDT.stopDT());
   }
 
