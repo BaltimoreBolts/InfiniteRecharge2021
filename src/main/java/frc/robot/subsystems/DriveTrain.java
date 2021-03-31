@@ -13,9 +13,8 @@ import frc.robot.Constants.GenConstants;
 import frc.robot.Constants;
 import frc.robot.Constants.AutoConstants;
 
+import java.sql.Time;
 import java.util.Map;
-import java.util.function.BiConsumer;
-
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.AlternateEncoderType;
 import com.revrobotics.CANPIDController;
@@ -25,6 +24,7 @@ import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 
 public class DriveTrain extends SubsystemBase {
   private CANSparkMax mLeftDriveMotor1;
@@ -53,6 +54,9 @@ public class DriveTrain extends SubsystemBase {
   private AHRS mNavx = null; // usb port coms w/ navx
   private final DifferentialDriveOdometry mOdometry;
   private ShuffleboardTab mainTab; 
+  private double mLSetpoint = 0;
+  private double mRSetpoint = 0;
+  private double dt = 0.02; // wpilib runs at 50Hz
       
   
   /**
@@ -68,7 +72,6 @@ public class DriveTrain extends SubsystemBase {
     
     setupMotors();
     mainTab = Shuffleboard.getTab("Main");
-
     try {
       mNavx = new AHRS(AutoConstants.NAVX_PORT, (byte) 100);
     } catch (RuntimeException ex){
@@ -93,6 +96,32 @@ public class DriveTrain extends SubsystemBase {
     updateSmartdashboard();
     // updateShuffleboard();
 
+  }
+
+  public void motionProfileDriving(double x, double y){
+    x = Math.pow(x,3); 
+    double left_set_point = (y+x)*DriveConstants.MAX_RPM;
+    double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
+
+    double leftError = left_set_point - mLSetpoint;
+    if (leftError != 0) {
+      mLSetpoint = (leftError)/Math.abs(leftError) * DriveConstants.MAX_ACC * dt + mLSetpoint;
+    }
+    double rightError = right_set_point - mRSetpoint;
+    if (rightError != 0) {
+      mRSetpoint = (rightError)/Math.abs(rightError) * DriveConstants.MAX_ACC * dt + mRSetpoint;
+    }
+    
+    double leftDesiredAccel = Math.abs(leftError/dt);
+    double rightDesiredAccel = Math.abs(rightError/dt);
+    mLSetpoint = (leftDesiredAccel < DriveConstants.MAX_ACC) ? left_set_point : mLSetpoint;
+    mRSetpoint = (rightDesiredAccel < DriveConstants.MAX_ACC) ? right_set_point : mRSetpoint;
+
+    SmartDashboard.putNumber("[Drivertrain] Left Setpoint", mLSetpoint); 
+    SmartDashboard.putNumber("[Drivertrain] Right Setpoint", mRSetpoint);
+
+    mLeftDrivePID.setReference(mLSetpoint, ControlType.kVelocity,1);
+    mRightDrivePID.setReference(mRSetpoint, ControlType.kVelocity,1);
   }
 
   public Pose2d getPose(){
@@ -312,12 +341,12 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("[Drivetrain] NavX Y Velocity", mNavx.getVelocityY());
   }
   
-  private void updateShuffleboard(){
-    ShuffleboardLayout drivetrainData = mainTab.getLayout("Drivetrain", BuiltInLayouts.kGrid).withProperties(Map.of("Number of columns", 2, "Number of rows", 3));
-    // drivetrainData.add("Left Encoder", mLeftEncoder).withWidget(BuiltInWidgets.kEncoder);
-    drivetrainData.add("NavX Heading", mNavx).withWidget(BuiltInWidgets.kGyro);
-    drivetrainData.add("Odometry Heading", mOdometry.getPoseMeters().getRotation().getDegrees()).withWidget(BuiltInWidgets.kDial);
-  }
+  // private void updateShuffleboard(){
+  //   ShuffleboardLayout drivetrainData = mainTab.getLayout("Drivetrain", BuiltInLayouts.kGrid).withProperties(Map.of("Number of columns", 2, "Number of rows", 3));
+  //   // drivetrainData.add("Left Encoder", mLeftEncoder).withWidget(BuiltInWidgets.kEncoder);
+  //   drivetrainData.add("NavX Heading", mNavx).withWidget(BuiltInWidgets.kGyro);
+  //   drivetrainData.add("Odometry Heading", mOdometry.getPoseMeters().getRotation().getDegrees()).withWidget(BuiltInWidgets.kDial);
+  // }
 
   public AHRS getNavx(){
     return mNavx;
