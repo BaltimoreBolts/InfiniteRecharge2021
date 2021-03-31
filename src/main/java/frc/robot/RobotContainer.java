@@ -39,8 +39,6 @@ import edu.wpi.first.cameraserver.CameraServer;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 import edu.wpi.cscore.UsbCamera;
 import frc.robot.commands.*;
@@ -69,9 +67,9 @@ public class RobotContainer {
   // private Command autoCommand = new AutonomousDrive(roboDT, 60);
   // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
-  SendableChooser<Command> mChooser = new SendableChooser<>();
+  SendableChooser<Command> mChooser = new SendableChooser<Command>();
   Trajectory barrelRace = new Trajectory();
-  Trajectory slolam = new Trajectory();
+  Trajectory slalom = new Trajectory();
   Trajectory[] bounce = {new Trajectory(), new Trajectory(), new Trajectory(), new Trajectory()};
   Trajectory calibrate = new Trajectory();
   TrajectoryConfig config = 
@@ -137,7 +135,7 @@ public class RobotContainer {
     configureCamera();
   
     barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
-    slolam = loadPathJSON(AutoConstants.SLOLAM_RUN_JSON);
+    slalom = loadPathJSON(AutoConstants.SLALOM_RUN_JSON);
     calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
     for (int i = 0; i < AutoConstants.BOUNCE_JSONS.length; i++) {
       bounce[i] = loadPathJSON(AutoConstants.BOUNCE_JSONS[i]);
@@ -145,10 +143,10 @@ public class RobotContainer {
     
     // Configure Auton Chooser
     mChooser.setDefaultOption("Barrel Run", pathAuto(barrelRace));
-    mChooser.addOption("Slolam", pathAuto(slolam));
+    mChooser.addOption("Slalom", pathAuto(slalom));
     mChooser.addOption("Example Auto", pathAuto(exampleTrajectory));
-    mChooser.addOption("Do Nothing", new InstantCommand());
     mChooser.addOption("Bounce", pathAuto(bounce));
+    mChooser.addOption("Do Nothing", new InstantCommand());
     SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
     // mainTab = Shuffleboard.getTab("Main");
     // mainTab.add("Auton Chooser", mChooser);
@@ -299,8 +297,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return mChooser.getSelected();
-    return pathAuto(barrelRace); // change trajectory here
+    return mChooser.getSelected();
+    // return pathAuto(barrelRace); // change trajectory here
   }
 
   public Command pathAuto(Trajectory trajectory){
