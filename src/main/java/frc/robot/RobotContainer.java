@@ -301,7 +301,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // return mChooser.getSelected();
     return pathAuto(barrelRace); // change trajectory here
-    // return pathAuto()
   }
 
   public Command pathAuto(Trajectory trajectory){
