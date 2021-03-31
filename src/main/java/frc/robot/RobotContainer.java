@@ -322,7 +322,7 @@ public class RobotContainer {
     // ramseteCommand.addRequirements(roboDT); // this might not be necessary or break things
   
     return ramseteCommand.beforeStarting(() -> roboDT.resetOdometry(
-      new Pose2d (0,0, new Rotation2d(0))
+      trajectory.getInitialPose()
       )).andThen(() -> roboDT.stopDT());
   }
 
