@@ -104,15 +104,21 @@ public class DriveTrain extends SubsystemBase {
     double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
 
     double leftError = left_set_point - mLSetpoint;
-    mLSetpoint = (leftError)/Math.abs(leftError) * DriveConstants.MAX_ACC * dt + mLSetpoint;
+    if (leftError != 0) {
+      mLSetpoint = (leftError)/Math.abs(leftError) * DriveConstants.MAX_ACC * dt + mLSetpoint;
+    }
     double rightError = right_set_point - mRSetpoint;
-    mRSetpoint = (rightError)/Math.abs(rightError) * DriveConstants.MAX_ACC * dt + mRSetpoint;
+    if (rightError != 0) {
+      mRSetpoint = (rightError)/Math.abs(rightError) * DriveConstants.MAX_ACC * dt + mRSetpoint;
+    }
+    
+    double leftDesiredAccel = Math.abs(leftError/dt);
+    double rightDesiredAccel = Math.abs(rightError/dt);
+    mLSetpoint = (leftDesiredAccel < DriveConstants.MAX_ACC) ? left_set_point : mLSetpoint;
+    mRSetpoint = (rightDesiredAccel < DriveConstants.MAX_ACC) ? right_set_point : mRSetpoint;
 
-    mLSetpoint = (Math.abs(mLSetpoint) > Math.abs(left_set_point)) ? left_set_point : mLSetpoint;
-    mRSetpoint = (Math.abs(mRSetpoint) > Math.abs(right_set_point)) ? right_set_point : mRSetpoint;
-
-    // SmartDashboard.putNumber("Left Trapezoidal Setpoint", mLSetpoint); 
-    // SmartDashboard.putNumber("Right Trapezoidal Setpoint", mRSetpoint);
+    SmartDashboard.putNumber("[Drivertrain] Left Setpoint", mLSetpoint); 
+    SmartDashboard.putNumber("[Drivertrain] Right Setpoint", mRSetpoint);
 
     mLeftDrivePID.setReference(mLSetpoint, ControlType.kVelocity,1);
     mRightDrivePID.setReference(mRSetpoint, ControlType.kVelocity,1);
