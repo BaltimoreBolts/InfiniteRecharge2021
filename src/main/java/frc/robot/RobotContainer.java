@@ -70,7 +70,7 @@ public class RobotContainer {
   SendableChooser<Command> mChooser = new SendableChooser<Command>();
   Trajectory barrelRace = new Trajectory();
   Trajectory slalom = new Trajectory();
-  Trajectory bounce = new Trajectory();
+  Trajectory bounce[] = {new Trajectory(),new Trajectory(),new Trajectory(),new Trajectory()};
   Trajectory calibrate = new Trajectory();
   TrajectoryConfig config = 
       new TrajectoryConfig(AutoConstants.MAX_SPEED_MPS, AutoConstants.MAX_ACC_MPS)
@@ -136,7 +136,6 @@ public class RobotContainer {
   
     barrelRace = loadPathJSON(AutoConstants.BARREL_RACE_JSON);
     slalom = loadPathJSON(AutoConstants.SLALOM_RUN_JSON);
-    bounce = loadPathJSON(AutoConstants.BOUNCE_RUN_JSON);
     calibrate = loadPathJSON(AutoConstants.CALIBRATE_JSON);
     for (int i = 0; i < AutoConstants.BOUNCE_JSONS.length; i++) {
       bounce[i] = loadPathJSON(AutoConstants.BOUNCE_JSONS[i]);
