@@ -82,7 +82,8 @@ public final class Constants {
             kCLXboxArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
             // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
-            kArcade("Arcade"); // single joystick, open loop
+            kArcade("Arcade"), // single joystick, open loop
+            kMotionProfiledGTA("Motion Profiled Closed Loop GTA");
 
             private String name;
             private driveModes(String name) {
@@ -211,6 +212,8 @@ public final class Constants {
         public static final String BOUNCE_RUN_JSON = "paths/bounce.wpilib.json";
         public static final String SLALOM_RUN_JSON = "paths/slalom.wpilib.json";
         public static final String CALIBRATE_JSON = "paths/calibrate.wpilib.json";
+        public static final String[] BOUNCE_JSONS = {"paths/bounce1.wpilib.json", "paths/bounce2.wpilib.json",
+                                                    "paths/bounce3.wpilib.json","paths/finish.wpilib.json"};
 
     }
 }
