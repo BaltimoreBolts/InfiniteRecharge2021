@@ -297,8 +297,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // return mChooser.getSelected();
-    return pathAuto(slalom);
+    return mChooser.getSelected(
+      
+    );
+    // return pathAuto(slalom);
   }
 
   public Command pathAuto(Trajectory trajectory){
