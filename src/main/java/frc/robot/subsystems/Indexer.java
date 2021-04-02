@@ -81,7 +81,8 @@ public class Indexer extends SubsystemBase {
     mIndexerPID.setI(IndexerConstants.kI);
     mIndexerPID.setD(IndexerConstants.kD);
     // indexerPID.setFF(IndexerConstants.kFF);
-    mIndexerPID.setOutputRange(-0.2, 0.2); // output range for motor power
+    mIndexerPID.setOutputRange(-0.8, 0.8
+    ); // output range for motor power
     mIndexerPID.setIZone(1); // only use integral constant within 1 degree error
 
     // int smartMotionSlot = 0;

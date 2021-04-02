@@ -44,6 +44,7 @@ import edu.wpi.cscore.UsbCamera;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.Constants.*;
+import frc.robot.Constants.DriveConstants.driveModes;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -68,6 +69,7 @@ public class RobotContainer {
   // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
   // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
   SendableChooser<Command> mChooser = new SendableChooser<Command>();
+  SendableChooser<DriveConstants.driveModes> teleChooser = new SendableChooser<DriveConstants.driveModes>();
   Trajectory barrelRace = new Trajectory();
   Trajectory slalom = new Trajectory();
   Trajectory bounce[] = {new Trajectory(),new Trajectory(),new Trajectory(),new Trajectory()};
@@ -94,7 +96,7 @@ public class RobotContainer {
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
-  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
+  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kMotionProfiledGTA; // CHANGE ROBOT DRIVE TYPE HERE
 
   // Initialize Driver Buttons
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
@@ -124,6 +126,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    teleChooser.setDefaultOption("MP GTA", driveModes.kMotionProfiledGTA);
+    teleChooser.addOption("CL GTA", driveModes.kCLGTA);
+    teleChooser.addOption("MP Split Arcade", driveModes.kMotionProfiledSplitArcade);
+
+    SmartDashboard.putData("[Drivetrain] Teleop Chooser", teleChooser);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -148,6 +155,7 @@ public class RobotContainer {
     mChooser.addOption("Bounce", pathAuto(bounce));
     mChooser.addOption("Do Nothing", new InstantCommand());
     SmartDashboard.putData("[Autonomous] Autonomous Chooser", mChooser);
+
     // mainTab = Shuffleboard.getTab("Main");
     // mainTab.add("Auton Chooser", mChooser);
     // mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
@@ -197,7 +205,8 @@ public class RobotContainer {
 
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
-
+    driveMode = teleChooser.getSelected();
+    driveMode = driveModes.kMotionProfiledSplitArcade;
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
@@ -264,6 +273,16 @@ public class RobotContainer {
           )
         );
         break;
+      case kMotionProfiledSplitArcade:
+        roboDT.setDefaultCommand(
+          new RunCommand(
+            () -> roboDT.motionProfileDriving(
+              joystick.getX(),
+              -leftJoystick.getY()),
+            roboDT
+          )
+        );
+        break;
       default:
         System.out.println("Drive Mode is not a valid implemented option. Defaulting to GTA...");
         roboDT.setDefaultCommand(
@@ -298,7 +317,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     return mChooser.getSelected(
-      
+
     );
     // return pathAuto(slalom);
   }

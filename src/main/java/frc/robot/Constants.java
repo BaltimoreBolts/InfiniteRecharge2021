@@ -83,7 +83,8 @@ public final class Constants {
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
             // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
             kArcade("Arcade"), // single joystick, open loop
-            kMotionProfiledGTA("Motion Profiled Closed Loop GTA");
+            kMotionProfiledGTA("Motion Profiled Closed Loop GTA"),
+            kMotionProfiledSplitArcade("Motion Profiled Split Arcade");
 
             private String name;
             private driveModes(String name) {

@@ -4,7 +4,7 @@ import java.util.function.Supplier;
 
 public final class Globals {
     public static class PCArray {
-        private static boolean[] PCArray = { false, true, false }; // bottom, middle, top
+        private static boolean[] PCArray = { true, true, true }; // bottom, middle, top
 
         public static void moveUp() {
             PCArray[2] = PCArray[1];
