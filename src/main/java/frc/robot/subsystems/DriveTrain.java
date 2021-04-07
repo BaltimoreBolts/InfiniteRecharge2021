@@ -99,7 +99,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void motionProfileDriving(double x, double y){
-    x = Math.pow(x,3); 
     double left_set_point = (y+x)*DriveConstants.MAX_RPM;
     double right_set_point = -(y-x)*DriveConstants.MAX_RPM;
 

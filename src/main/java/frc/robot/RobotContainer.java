@@ -206,7 +206,7 @@ public class RobotContainer {
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
     driveMode = teleChooser.getSelected();
-    driveMode = driveModes.kMotionProfiledSplitArcade;
+    driveMode = driveModes.kCLFlightArcade;
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
@@ -252,22 +252,22 @@ public class RobotContainer {
         );
         break;
 
-      // case kCLFlightArcade:
-      //   roboDT.setDefaultCommand(
-      //     new RunCommand(
-      //       () -> roboDT.closedLoopArcadeDrive(
-      //         leftJoystick.getZ(),
-      //         -leftJoystick.getY()),
-      //       roboDT
-      //     )
-      //   );
-      //   break;
+      case kCLFlightArcade:
+        roboDT.setDefaultCommand(
+          new RunCommand(
+            () -> roboDT.motionProfileDriving(
+              joystick.getZ(),
+              -joystick.getY()),
+            roboDT
+          )
+        );
+        break;
       
       case kMotionProfiledGTA:
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.motionProfileDriving(
-              driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,
+              Math.pow(driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,3),
               (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
             roboDT
           )
@@ -277,7 +277,7 @@ public class RobotContainer {
         roboDT.setDefaultCommand(
           new RunCommand(
             () -> roboDT.motionProfileDriving(
-              joystick.getX(),
+              Math.pow(joystick.getX(),3),
               -leftJoystick.getY()),
             roboDT
           )

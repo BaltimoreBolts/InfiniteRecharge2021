@@ -74,14 +74,14 @@ public final class Constants {
 
         public static final double MAX_VEL = MAX_RPM;    // rpm
         public static final double MIN_VEL = 0;      // rpm
-        public static final double MAX_ACC = 5000;    // rpm/s
+        public static final double MAX_ACC = 7000;    // rpm/s
         public static final double ALLOWED_ERROR = 0; // rpm? 
 
         public static enum driveModes {
             kCLGTA("Closed Loop GTA"), // Triggers on XBOX controller + left axis, closed loop
             kCLXboxArcade("Closed Loop Arcade"), // left axis on XBOX controller, closed loop
             kCLSplitArcade("Closed Loop Split Arcade"), // two joysticks closed loop
-            // kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
+            kCLFlightArcade("Closed Loop Single Arcade"), // TODO: single joystick closed loop
             kArcade("Arcade"), // single joystick, open loop
             kMotionProfiledGTA("Motion Profiled Closed Loop GTA"),
             kMotionProfiledSplitArcade("Motion Profiled Split Arcade");
