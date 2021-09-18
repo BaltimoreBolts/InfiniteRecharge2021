@@ -57,9 +57,11 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void initialize() {
     if (direction) {
-      indexerSpeed = -roboIndexer.getDesiredSpeed(); // negative to move updward
+      // indexerSpeed = -roboIndexer.getDesiredSpeed(); // negative to move updward
+      indexerSpeed = -0.5;
     } else {
-      indexerSpeed = roboIndexer.getDesiredSpeed();
+      // indexerSpeed = roboIndexer.getDesiredSpeed();
+      indexerSpeed = 0.5;
     }
     findHomingOffset();
     // start a timer to check later if we exceed 1 second for a rotation
@@ -70,7 +72,7 @@ public class MoveIndexer extends CommandBase {
   @Override
   public void execute() {
     roboIndexer.setIndexerSpeed(indexerSpeed);
-    mAtDesiredPosition = roboIndexer.moveToPosition(numPos * mDesiredPosition, 0);
+    // mAtDesiredPosition = roboIndexer.moveToPosition(numPos * mDesiredPosition, 0);
   }
 
   // Called once the command ends or is interrupted.
@@ -98,7 +100,8 @@ public class MoveIndexer extends CommandBase {
 
      // return if at the right value or too long of a duration
     double duration = System.nanoTime() - startTime;
-    return mAtDesiredPosition || duration > IndexerConstants.kMaxPIDduration;
+    // return mAtDesiredPosition || duration > IndexerConstants.kMaxPIDduration;
+    return false;
   }
 
   private void findHomingOffset(){

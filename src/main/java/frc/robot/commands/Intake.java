@@ -29,6 +29,7 @@ public class Intake extends SequentialCommandGroup {
         // deadline group will end when moveIndexer is done
             new MoveIndexer(roboIndexer, true, 1), 
             new MoveHarvester(roboHarvester, true)
+        
         ) 
     );
     PCArray.intakePC(); // set lowest index to true

@@ -43,8 +43,8 @@ public class Harvester extends SubsystemBase {
     mHarvesterBackMotor.restoreFactoryDefaults();
     mHarvesterFrontMotor.setSmartCurrentLimit(30);
     mHarvesterBackMotor.setSmartCurrentLimit(30);
-    mHarvesterFrontMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
-    mHarvesterBackMotor.setIdleMode(CANSparkMax.IdleMode.kCoast);
+    mHarvesterFrontMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
+    mHarvesterBackMotor.setIdleMode(CANSparkMax.IdleMode.kBrake);
     mHarvesterFrontMotor.burnFlash();
     mHarvesterBackMotor.burnFlash();
 

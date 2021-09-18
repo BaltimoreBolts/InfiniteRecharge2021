@@ -183,7 +183,7 @@ public class RobotContainer {
     // OPERATOR BUTTON ASSIGNMENTS
     operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
     operatorBButton.whenPressed(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
-    operatorXButton.whenPressed(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
+    operatorXButton.whenHeld(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
     operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
@@ -194,8 +194,8 @@ public class RobotContainer {
     operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
     operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
 
-    operatorUpDpad.whenPressed(new MoveIndexer(roboIndexer, true));
-    operatorDownDpad.whenPressed(new MoveIndexer(roboIndexer, false));
+    operatorUpDpad.whenHeld(new MoveIndexer(roboIndexer, true));
+    operatorDownDpad.whenHeld(new MoveIndexer(roboIndexer, false));
     operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
     operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
 

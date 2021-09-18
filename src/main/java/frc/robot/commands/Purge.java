@@ -22,7 +22,7 @@ public class Purge extends ParallelDeadlineGroup {
   public Purge(Shooter roboShooter, Indexer roboIndexer, Harvester roboHarvester) {
     super (
         new MoveHarvester(roboHarvester, true),
-        new MoveIndexer(roboIndexer, false)
+        new MoveIndexer(roboIndexer, true)
     );
   }
 }
