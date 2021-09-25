@@ -101,7 +101,9 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int SHOOTER_MOTOR_LEFT = 9;
         public static final int SHOOTER_MOTOR_RIGHT = 10;
-        public static final int PV_RING_LIGHT = 0;
+        public static final int PV_RING_LIGHT = 1;
+        // PV_RING_LIGHT is on relay 0, but set this to 1 to 
+        // allow the relay to be initialized in Robot.java for testing
         public static enum ShooterControlState {
             IDLE("Idle"),
             SPINUP("Spin Up"),

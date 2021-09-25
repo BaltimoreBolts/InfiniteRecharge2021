@@ -36,7 +36,10 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     robotContainer = new RobotContainer();
     robotContainer.getNavx().zeroYaw();
-    LED = new Relay(1);
+    // We probably want to keep this in Shooter.java but for testing 
+    // we wanted the RingLight to always be on. Remove LED initialization 
+    // from here later.
+    LED = new Relay(0);
     LED.set(Relay.Value.kOn);
   }
 
