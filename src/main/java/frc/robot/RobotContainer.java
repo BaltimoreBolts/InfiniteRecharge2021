@@ -96,7 +96,7 @@ public class RobotContainer {
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
-  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kMotionProfiledGTA; // CHANGE ROBOT DRIVE TYPE HERE
+  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
 
   // Initialize Driver Buttons
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
@@ -182,7 +182,7 @@ public class RobotContainer {
 
     // OPERATOR BUTTON ASSIGNMENTS
     operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
-    operatorBButton.whenPressed(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
+    operatorBButton.whenHeld(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
     operatorXButton.whenHeld(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
     operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
@@ -206,7 +206,7 @@ public class RobotContainer {
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
     driveMode = teleChooser.getSelected();
-    driveMode = driveModes.kCLFlightArcade;
+    driveMode = driveModes.kCLFlightArcade; // TODO Don't hard code this!!!
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
