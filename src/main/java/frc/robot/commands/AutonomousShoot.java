@@ -41,6 +41,7 @@ public class AutonomousShoot extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    new MoveShooter(robotShooter, true, 8000);
     //for (int i = 0; i <3; i++) {
       //new FirePowerCell(robotShooter, roboIndexer, roboHarvester);
     //}

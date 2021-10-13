@@ -173,26 +173,28 @@ public class RobotContainer {
     // DRIVER BUTTON ASSIGNMENTS
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
-    driverAButton.whenPressed(
-      () -> roboElevator.engageRatchet()
-    );
-    driverBButton.whenPressed(
-      () -> roboElevator.disengageRatchet()
-    );
+
+    //Used to test the ratchet. Commented out 10/5/2021 JJJ
+    //driverAButton.whenPressed(
+    //  () -> roboElevator.engageRatchet()
+    //);
+    //driverBButton.whenPressed(
+    //  () -> roboElevator.disengageRatchet()
+    //);
 
     // OPERATOR BUTTON ASSIGNMENTS
-    operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
+    //operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
     operatorBButton.whenHeld(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
-    operatorXButton.whenHeld(new Purge(roboShooter, roboIndexer, roboHarvester)); // purge powercells from robot
-    operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
+    operatorXButton.whenHeld(new Acquire(roboIndexer, roboHarvester)); // acquire powercells for robot
+    //operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
 
     operatorLeftBumper.whenHeld(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
     operatorRightBumper.whenHeld(new MoveElevator(roboElevator, true));
 
-    operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
-    operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
+    //operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
+    //operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
 
     operatorUpDpad.whenHeld(new MoveIndexer(roboIndexer, true));
     operatorDownDpad.whenHeld(new MoveIndexer(roboIndexer, false));
@@ -206,7 +208,8 @@ public class RobotContainer {
     // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
     driveMode = teleChooser.getSelected();
-    driveMode = driveModes.kCLFlightArcade; // TODO Don't hard code this!!!
+    //driveMode = driveModes.kCLFlightArcade; // TODO Don't hard code this!!!
+    driveMode = driveModes.kCLGTA;
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
@@ -316,10 +319,10 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return mChooser.getSelected(
-
-    );
+    //return mChooser.getSelected(
+    //);
     // return pathAuto(slalom);
+    return new InstantCommand();
   }
 
   public Command pathAuto(Trajectory trajectory){

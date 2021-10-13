@@ -46,7 +46,15 @@ public class MoveElevator extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    if (direction) {
+      // Disengage ratchet and engages motor to move lift up
+      elevator.disengageRatchet();
+      elevator.setSpeed(0.5);
+    } else {
+      // Engage ratchet so the robot doesn't fall down
+      elevator.engageRatchet();
+      elevator.setSpeed(-0.5);
+    }  
   }
 
   // Called once the command ends or is interrupted.

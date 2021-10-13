@@ -8,18 +8,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Harvester;
 
 /**
- * PURPOSE: This is the sequential command to shoot power cells, move indexer up, and then harvest
- * STATUS: Never tested
+ * PURPOSE: This is the sequential command move indexer up and harvester at same time
  */
-public class Purge extends ParallelDeadlineGroup {
+public class Acquire extends ParallelDeadlineGroup {
 
    // Creates a new FirePowerCell
-  public Purge(Shooter roboShooter, Indexer roboIndexer, Harvester roboHarvester) {
+  public Acquire(Indexer roboIndexer, Harvester roboHarvester) {
     super (
         new MoveHarvester(roboHarvester, true),
         new MoveIndexer(roboIndexer, true)

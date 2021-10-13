@@ -64,7 +64,7 @@ public class MoveShooter extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //roboShooter.setShooterState(ShooterControlState.IDLE);
+    roboShooter.setShooterState(ShooterControlState.IDLE);
   }
 
   // Returns true when the command should end.
