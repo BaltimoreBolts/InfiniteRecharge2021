@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.DigitalInput;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
@@ -33,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -64,10 +66,11 @@ public class RobotContainer {
   // Define CameraServer
   public CameraServer RobotCamera;
   public UsbCamera frontRobotCamera;
+  public UsbCamera shooterRobotCamera;
 
-  // private Command autoCommand = new AutonomousDrive(roboDT, 60);
-  // private Command autoCommand = new AutonomousTurn(roboDT, 60, 90, true);
-  // private Command autoShoot = new AutonomousShoot(roboShooter); // Stupid way to do this but a hot fix for testing
+  // Digital Input for power cell sensor
+  public DigitalInput powerCellSensor = new DigitalInput(8);
+
   SendableChooser<Command> mChooser = new SendableChooser<Command>();
   SendableChooser<DriveConstants.driveModes> teleChooser = new SendableChooser<DriveConstants.driveModes>();
   Trajectory barrelRace = new Trajectory();
@@ -96,7 +99,7 @@ public class RobotContainer {
   private Joystick joystick = new Joystick(1);
   private Joystick leftJoystick = new Joystick(2);
 
-  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // CHANGE ROBOT DRIVE TYPE HERE
+  private DriveConstants.driveModes driveMode = DriveConstants.driveModes.kCLGTA; // Default value, changed in ConfigureDriveMode()
 
   // Initialize Driver Buttons
   JoystickButton driverYButton = new JoystickButton(driver, Constants.Controller.XBOX.Y);
@@ -131,6 +134,7 @@ public class RobotContainer {
     teleChooser.addOption("MP Split Arcade", driveModes.kMotionProfiledSplitArcade);
 
     SmartDashboard.putData("[Drivetrain] Teleop Chooser", teleChooser);
+    SmartDashboard.putBoolean("[Shooter] PC Sensor", getPowerCellSensorValue());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -159,7 +163,6 @@ public class RobotContainer {
     // mainTab = Shuffleboard.getTab("Main");
     // mainTab.add("Auton Chooser", mChooser);
     // mainTab.addBooleanArray("PC Array", Globals.PCArray.getPCArraySupplier()).withWidget(BuiltInWidgets.kBooleanBox);
-
   }
 
   /**
@@ -171,45 +174,43 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // DRIVER BUTTON ASSIGNMENTS
-    // operatorStartButton.whenPressed(); // pause robot
-    // operatorBackButton.whenPressed(); // emergency stop robot
+    // driverStartButton.whenPressed(); // pause robot
+    // driverBackButton.whenPressed(); // emergency stop robot
 
-    //Used to test the ratchet. Commented out 10/5/2021 JJJ
-    //driverAButton.whenPressed(
-    //  () -> roboElevator.engageRatchet()
-    //);
-    //driverBButton.whenPressed(
-    //  () -> roboElevator.disengageRatchet()
-    //);
+    // Used to test the ratchet. Commented out 10/5/2021 JJJ
+    // driverAButton.whenPressed(
+    //   () -> roboElevator.engageRatchet()
+    // );
+    // driverBButton.whenPressed(
+    //   () -> roboElevator.disengageRatchet()
+    // );
 
     // OPERATOR BUTTON ASSIGNMENTS
-    //operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
+    // operatorAButton.whenPressed(new MoveIndexer(roboIndexer, false)); // run intake state machine
     operatorBButton.whenHeld(new Shoot(roboIndexer, roboShooter)); // run shooting state machine
     operatorXButton.whenHeld(new Acquire(roboIndexer, roboHarvester)); // acquire powercells for robot
-    //operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
+    // operatorYButton.whenPressed(new MoveIndexer(roboIndexer, true)); // possibly rapid fire
     // operatorStartButton.whenPressed(); // pause robot
     // operatorBackButton.whenPressed(); // emergency stop robot
 
     operatorLeftBumper.whenHeld(new MoveElevator(roboElevator, false)); // commented until further testing is performed (ratchet wiring!!!)
     operatorRightBumper.whenHeld(new MoveElevator(roboElevator, true));
 
-    //operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
-    //operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
+    // operatorLeftTrigger.whenHeld(new MoveShooter(roboShooter, false)); // reverse shooter
+    // operatorRightTrigger.whenHeld(new MoveShooter(roboShooter, true)); // run shooter when held
 
     operatorUpDpad.whenHeld(new MoveIndexer(roboIndexer, true));
     operatorDownDpad.whenHeld(new MoveIndexer(roboIndexer, false));
     operatorLeftDpad.whenHeld(new MoveHarvester(roboHarvester, false));
     operatorRightDpad.whenHeld(new MoveHarvester(roboHarvester, true));
-
   }
 
   private void configureDriveMode() {
+    // driveMode = teleChooser.getSelected();
+    driveMode = driveModes.kCLGTA; // SET DRIVE MODE HERE
 
-    // Switch statement for drive mode, drive mode is set above in member variables
     SmartDashboard.putString("[Drivetrain] Drive Mode", driveMode.toString());
-    driveMode = teleChooser.getSelected();
-    //driveMode = driveModes.kCLFlightArcade; // TODO Don't hard code this!!!
-    driveMode = driveModes.kCLGTA;
+        
     switch (driveMode) {
       case kArcade:
         roboDT.setDefaultCommand(
@@ -249,7 +250,8 @@ public class RobotContainer {
           new RunCommand(
             () -> roboDT.closedLoopArcadeDrive(
               driver.getRawAxis(Controller.XBOX.STICK.LEFT.X)*0.65,
-              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))),
+              (driver.getRawAxis(Controller.XBOX.TRIGGER.RIGHT) - driver.getRawAxis(Controller.XBOX.TRIGGER.LEFT))
+            ),
             roboDT
           )
         );
@@ -302,6 +304,7 @@ public class RobotContainer {
   private void configureCamera() {
     RobotCamera = CameraServer.getInstance();
     frontRobotCamera = RobotCamera.startAutomaticCapture(0);
+    shooterRobotCamera = RobotCamera.startAutomaticCapture(1);
 
     // Camera code
     // serverOne = CameraServer.getInstance();
@@ -319,10 +322,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    //return mChooser.getSelected(
-    //);
+    // return mChooser.getSelected(
+    // );
     // return pathAuto(slalom);
-    return new InstantCommand();
+
+    // return new InstantCommand(); // DO NOTHING
+
+    return new SequentialCommandGroup(
+      // new AutonomousShoot(roboShooter),
+      //new Shoot(roboIndexer, roboShooter),
+      new AutonomousDrive(roboDT, 60)
+    );
+
   }
 
   public Command pathAuto(Trajectory trajectory){
@@ -381,12 +392,15 @@ public class RobotContainer {
     return this.roboShooter;
   }
 
-
   public Elevator getElevator() {
     return this.roboElevator;
   }
   
   public AHRS getNavx(){
     return roboDT.getNavx();
+  }
+
+  public boolean getPowerCellSensorValue() {
+    return powerCellSensor.get();
   }
 }

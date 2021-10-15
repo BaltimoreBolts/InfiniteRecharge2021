@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
     // we wanted the RingLight to always be on. Remove LED initialization 
     // from here later.
     LED = new Relay(0);
-    LED.set(Relay.Value.kOn);
+    LED.set(Relay.Value.kOff);
   }
 
   /**
